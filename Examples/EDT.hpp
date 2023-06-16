@@ -171,7 +171,7 @@ namespace CForge {
             }
             m_RenderWin.update();
 
-            defaultCameraUpdate(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse(), 0.1f * 60.0f / m_FPS, 1.0f, 8.0f);
+            defaultCameraUpdate(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse(), 0.1f * 60.0f / m_FPS, 0.5f, 2.0f);
             // make sure to always walk on the ground if not flying
             if (!m_Fly) {
                 Vector3f CamPos = m_Cam.position();
@@ -219,7 +219,7 @@ namespace CForge {
         }//scaleModel
         flecs::world world;
         flecs::entity myTreeEntity;
-        float countdown = 10 * 60;
+        float countdown = 100 * 60;
         flecs::system move_sys;
         SGNTransformation m_RootSGN;
 

@@ -282,23 +282,13 @@ namespace CForge {
 			if (pKeyboard->keyPressed(Keyboard::KEY_A)) pCamera->right(-S * MovementSpeed);
 			if (pKeyboard->keyPressed(Keyboard::KEY_D)) pCamera->right(S * MovementSpeed);
 
-			if (pMouse->buttonState(Mouse::BTN_RIGHT) || pMouse->buttonState(Mouse::BTN_LEFT)) {
-				if (m_CameraRotation) {
-					const Eigen::Vector2f MouseDelta = pMouse->movement();
-					pCamera->rotY(CForgeMath::degToRad(-0.1f * RotationSpeed * MouseDelta.x()));
-					pCamera->pitch(CForgeMath::degToRad(-0.1f * RotationSpeed * MouseDelta.y()));
-					
-				}
-				else {
-					m_CameraRotation = true;
-					
-				}
-				pMouse->movement(Eigen::Vector2f::Zero());
-			}
-			else {
-				m_CameraRotation = false;
-			}
-		}//defaultCameraUpdate
+			const Eigen::Vector2f MouseDelta = pMouse->movement();
+			pCamera->rotY(CForgeMath::degToRad(-0.1f * RotationSpeed * MouseDelta.x()));
+			pCamera->pitch(CForgeMath::degToRad(-0.1f * RotationSpeed * MouseDelta.y()));
+
+			pMouse->movement(Eigen::Vector2f::Zero());
+		}
+		//defaultCameraUpdate
 
 		void defaultKeyboardUpdate(Keyboard* pKeyboard) {
 			if (nullptr == pKeyboard) throw NullpointerExcept("pKeyboard");
