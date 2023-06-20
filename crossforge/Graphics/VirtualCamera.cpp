@@ -104,7 +104,11 @@ namespace CForge {
 	}//position
 
 	void VirtualCamera::forward(float Speed) {
-		m_Position += Speed * dir();
+		Vector3f forwardDir = dir();
+		forwardDir.y() = 0.0f;  // Setze die y-Komponente auf 0, um nur in der Horizontalen zu bewegen
+		forwardDir.normalize();
+
+		m_Position += Speed * forwardDir;
 		m_ViewFrustum.update();
 		notifyListeners(VirtualCameraMsg::POSITION_CHANGED);
 	}//forward
