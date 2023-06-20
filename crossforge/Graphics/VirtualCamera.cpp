@@ -237,4 +237,16 @@ namespace CForge {
 		return &m_ViewFrustum;
 	}//viewFrustum
 
+	float VirtualCamera::getPitch()const {
+		// Berechnung des Pitch-Winkels aus der Rotation der Kamera
+		float sinPitch = 2.0f * (m_Rotation.x() * m_Rotation.w() - m_Rotation.y() * m_Rotation.z());
+		float pitch = std::asin(sinPitch);
+
+		// Umrechnung in Grad
+		pitch = CForgeMath::radToDeg(pitch);
+
+		// Rückgabe des Pitch-Winkels
+		return pitch;
+	}
+
 }//name space
