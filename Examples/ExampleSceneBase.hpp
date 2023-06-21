@@ -282,22 +282,31 @@ namespace CForge {
 			if (pKeyboard->keyPressed(Keyboard::KEY_A)) pCamera->right(-S * MovementSpeed);
 			if (pKeyboard->keyPressed(Keyboard::KEY_D)) pCamera->right(S * MovementSpeed);
 
-			if (pMouse->buttonState(Mouse::BTN_RIGHT) || pMouse->buttonState(Mouse::BTN_LEFT)) {
-				if (m_CameraRotation) {
-					const Eigen::Vector2f MouseDelta = pMouse->movement();
-					pCamera->rotY(CForgeMath::degToRad(-0.1f * RotationSpeed * MouseDelta.x()));
-					pCamera->pitch(CForgeMath::degToRad(-0.1f * RotationSpeed * MouseDelta.y()));
-					
-				}
-				else {
-					m_CameraRotation = true;
-					
-				}
-				pMouse->movement(Eigen::Vector2f::Zero());
+			const Eigen::Vector2f MouseDelta = pMouse->movement();
+			const float pitchLimitUp = 87.0f; // Maximaler Pitch-Winkel nach oben (in Grad)
+			const float pitchLimitDown = -87.0f; // Maximaler Pitch-Winkel nach unten (in Grad)
+			const float pitchAmount = -0.1f * RotationSpeed * MouseDelta.y();
+
+			const float currentPitch = pCamera->getPitch();
+
+			// Überprüfen, ob die Mausbewegung ausreichend ist, um die Kamera zu drehen
+			if (std::abs(MouseDelta.y()) > std::numeric_limits<float>::epsilon()) {
+				// Neuer Pitch-Winkel nach der Mausbewegung
+				const float newPitch = currentPitch + pitchAmount;
+
+				// Begrenzen des Pitch-Winkels innerhalb des zulässigen Bereichs
+				const float clampedPitch = std::clamp(newPitch, pitchLimitDown, pitchLimitUp);
+
+				// Änderung des Pitch-Winkels
+				const float pitchChange = clampedPitch - currentPitch;
+				pCamera->pitch(CForgeMath::degToRad(pitchChange));
 			}
-			else {
-				m_CameraRotation = false;
+
+			if (std::abs(MouseDelta.x()) > std::numeric_limits<float>::epsilon()) {
+				pCamera->rotY(CForgeMath::degToRad(-0.1f * RotationSpeed * MouseDelta.x()));
 			}
+
+			pMouse->movement(Eigen::Vector2f::Zero());
 		}//defaultCameraUpdate
 
 		void defaultKeyboardUpdate(Keyboard* pKeyboard) {

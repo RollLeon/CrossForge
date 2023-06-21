@@ -22,6 +22,8 @@ namespace CForge {
 		clear();
 		if (nullptr == pWin) throw NullpointerExcept("pWin");
 		m_pWin = pWin;
+		// Maus einfangen
+		glfwSetInputMode(m_pWin, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}//initialize
 
 	void Mouse::clear(void) {

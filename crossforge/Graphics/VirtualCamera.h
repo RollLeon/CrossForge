@@ -87,6 +87,8 @@ namespace CForge {
 		void rotY(float Theta);
 		void rotZ(float Theta);
 
+		float getPitch() const;
+
 		float getFOV();
 		uint32_t viewportWidth(void)const;
 		uint32_t viewportHeight(void)const;

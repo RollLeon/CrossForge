@@ -104,7 +104,11 @@ namespace CForge {
 	}//position
 
 	void VirtualCamera::forward(float Speed) {
-		m_Position += Speed * dir();
+		Vector3f forwardDir = dir();
+		forwardDir.y() = 0.0f;  // Setze die y-Komponente auf 0, um nur in der Horizontalen zu bewegen
+		forwardDir.normalize();
+
+		m_Position += Speed * forwardDir;
 		m_ViewFrustum.update();
 		notifyListeners(VirtualCameraMsg::POSITION_CHANGED);
 	}//forward
@@ -236,5 +240,17 @@ namespace CForge {
 	const ViewFrustum* VirtualCamera::viewFrustum(void)const {
 		return &m_ViewFrustum;
 	}//viewFrustum
+
+	float VirtualCamera::getPitch()const {
+		// Berechnung des Pitch-Winkels aus der Rotation der Kamera
+		float sinPitch = 2.0f * (m_Rotation.x() * m_Rotation.w() - m_Rotation.y() * m_Rotation.z());
+		float pitch = std::asin(sinPitch);
+
+		// Umrechnung in Grad
+		pitch = CForgeMath::radToDeg(pitch);
+
+		// Rückgabe des Pitch-Winkels
+		return pitch;
+	}
 
 }//name space
