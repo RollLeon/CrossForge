@@ -23,6 +23,7 @@
 #include "ExampleSceneBase.hpp"
 #include "Examples/edt/AIComponent.h"
 #include <flecs.h>
+#include <iostream>
 
 namespace CForge {
     class EDT : public ExampleSceneBase {
@@ -154,24 +155,25 @@ namespace CForge {
 
 
             move_sys = world.system<SGNTransformation, AIComponent>()
-                    .iter([](flecs::iter it, SGNTransformation *p, AIComponent *ai) {
-                        for (int i: it) {
+                .iter([](flecs::iter it, SGNTransformation* p, AIComponent* ai) {
+                for (int i : it) {
+                    
+                    if ((p[i].translation() - ai[i].targetPosition).norm() < 1) {
+                        ai[i].targetPosition.setRandom();
+                        ai[i].targetPosition.y() = 0;
+                        ai[i].targetPosition *= 20;
+                    }
 
-                            if ((p[i].translation() - ai[i].targetPosition).norm() < 1) {
-                                ai[i].targetPosition.setRandom();
-                                ai[i].targetPosition.y() = 0;
-                                ai[i].targetPosition *= 20;
-                            }
+                    Eigen::Vector3f desired_velocity = (p[i].translation() - ai[i].targetPosition).normalized() * -0.07f;
+                    Eigen::Vector3f steering_force = desired_velocity - p[i].translationDelta();
 
-                            Eigen::Vector3f desired_velocity =
-                                    (p[i].translation() - ai[i].targetPosition).normalized() * -0.1f;
-                            auto steering_force = (desired_velocity - p[i].translationDelta()) / 50.0;
-                            p[i].translationDelta(p[i].translationDelta() + steering_force);
-                            p[i].rotation((Quaternionf) AngleAxisf(
-                                    atan2(p[i].translationDelta().y(), p[i].translationDelta().x()) - 3.141592f / 4.0f,
-                                    Vector3f::UnitY()));
-                            p[i].update(it.delta_time());
-                        }
+                    p[i].translationDelta(p[i].translationDelta() + steering_force);
+
+                    Eigen::Quaternionf rotation = Eigen::Quaternionf::FromTwoVectors(Vector3f::UnitX(), p[i].translationDelta().normalized());
+                    p[i].rotation(rotation);
+
+                    p[i].update(it.delta_time());
+                }
                     });
 
         }//initialize
@@ -184,10 +186,6 @@ namespace CForge {
         }//clear
 
         void mainLoop(void) override {
-            countdown--;
-            if (countdown < 0 && roboter.is_alive()) {
-                roboter.destruct();
-            }
             m_RenderWin.update();
 
             defaultCameraUpdate(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse(), 0.1f * 60.0f / m_FPS, 0.5f, 2.0f);
@@ -238,7 +236,6 @@ namespace CForge {
         }//scaleModel
         flecs::world world;
         flecs::entity roboter;
-        float countdown = 100 * 60;
         flecs::system move_sys;
         SGNTransformation m_RootSGN;
 
