@@ -21,6 +21,7 @@
 
 #include <crossforge/MeshProcessing/PrimitiveShapeFactory.h>
 #include "ExampleSceneBase.hpp"
+#include "Examples/edt/AIComponent.h"
 #include <flecs.h>
 
 namespace CForge {
@@ -67,7 +68,7 @@ namespace CForge {
             m_GroundSGN.init(&m_GroundTransformSGN, &m_Ground);
 
             // load the tree models
-            SAssetIO::load("Assets/ExampleScenes/Trees/LowPolyTree_01.gltf", &M);
+            SAssetIO::load("Assets/placeholder/giesroboter.glb", &M);
             setMeshShader(&M, 0.8f, 0.04f);
             M.computePerVertexNormals();
             scaleAndOffsetModel(&M, 0.5f);
@@ -139,18 +140,36 @@ namespace CForge {
             pKeybindings->color(0.0f, 0.0f, 0.0f, 1.0f);
             m_DrawHelpTexts = true;
 
-            myTreeEntity = world.entity();
-            myTreeEntity.add<SGNTransformation>();
-            auto transformation = myTreeEntity.get_mut<SGNTransformation>();
+            roboter = world.entity();
+            roboter.add<AIComponent>();
+            AIComponent *target = roboter.get_mut<AIComponent>();
+            target->targetPosition.setRandom();
+            target->targetPosition.y() = 0;
+            target->targetPosition *= 20;
+            roboter.add<SGNTransformation>();
+            auto transformation = roboter.get_mut<SGNTransformation>();
             transformation->init(&m_RootSGN);
-            transformation->rotationDelta(
-                    (Quaternionf) AngleAxisf(CForgeMath::degToRad(-10 / 60.0f), Vector3f::UnitY()));
             SGNGeometry *entityGeom = new SGNGeometry();
             entityGeom->init(transformation, &m_Trees[0]);
 
-            move_sys = world.system<SGNTransformation>()
-                    .iter([](flecs::iter it, SGNTransformation *p) {
+
+            move_sys = world.system<SGNTransformation, AIComponent>()
+                    .iter([](flecs::iter it, SGNTransformation *p, AIComponent *ai) {
                         for (int i: it) {
+
+                            if ((p[i].translation() - ai[i].targetPosition).norm() < 1) {
+                                ai[i].targetPosition.setRandom();
+                                ai[i].targetPosition.y() = 0;
+                                ai[i].targetPosition *= 20;
+                            }
+
+                            Eigen::Vector3f desired_velocity =
+                                    (p[i].translation() - ai[i].targetPosition).normalized() * -0.1f;
+                            auto steering_force = (desired_velocity - p[i].translationDelta()) / 50.0;
+                            p[i].translationDelta(p[i].translationDelta() + steering_force);
+                            p[i].rotation((Quaternionf) AngleAxisf(
+                                    atan2(p[i].translationDelta().y(), p[i].translationDelta().x()) - 3.141592f / 4.0f,
+                                    Vector3f::UnitY()));
                             p[i].update(it.delta_time());
                         }
                     });
@@ -166,8 +185,8 @@ namespace CForge {
 
         void mainLoop(void) override {
             countdown--;
-            if (countdown < 0 && myTreeEntity.is_alive()) {
-                myTreeEntity.destruct();
+            if (countdown < 0 && roboter.is_alive()) {
+                roboter.destruct();
             }
             m_RenderWin.update();
 
@@ -218,7 +237,7 @@ namespace CForge {
             for (uint32_t i = 0; i < pModel->vertexCount(); ++i) pModel->vertex(i) = Sc * pModel->vertex(i) - Offset;
         }//scaleModel
         flecs::world world;
-        flecs::entity myTreeEntity;
+        flecs::entity roboter;
         float countdown = 100 * 60;
         flecs::system move_sys;
         SGNTransformation m_RootSGN;

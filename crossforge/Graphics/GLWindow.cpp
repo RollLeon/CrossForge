@@ -14,233 +14,242 @@ using namespace Eigen;
 
 namespace CForge {
 
-	std::map<GLWindow*, GLFWwindow*> GLWindow::m_WindowList;
+    std::map<GLWindow *, GLFWwindow *> GLWindow::m_WindowList;
 
-	void GLWindow::sizeCallback(GLFWwindow* pHandle, int Width, int Height) {
-		
-		// find corresponding window
-		for (auto i : m_WindowList) {
-			if (i.second == pHandle) {
-				// create message
-				GLWindowMsg Msg;
-				Msg.pHandle = (void*)i.first;
-				Msg.Code = GLWindowMsg::MC_RESIZE;
-				Msg.iParam[0] = Width;
-				Msg.iParam[1] = Height;
-				i.first->broadcast(Msg);
-			}
-		}//for[available windows]
+    void GLWindow::sizeCallback(GLFWwindow *pHandle, int Width, int Height) {
 
-	}//sizeCallback
+        // find corresponding window
+        for (auto i: m_WindowList) {
+            if (i.second == pHandle) {
+                // create message
+                GLWindowMsg Msg;
+                Msg.pHandle = (void *) i.first;
+                Msg.Code = GLWindowMsg::MC_RESIZE;
+                Msg.iParam[0] = Width;
+                Msg.iParam[1] = Height;
+                i.first->broadcast(Msg);
+            }
+        }//for[available windows]
+
+    }//sizeCallback
 
 
-	GLWindow::GLWindow(void): CForgeObject("GLWindow") {
-		m_pHandle = nullptr;
-		m_pInputMan = nullptr;
-	}//Constructor
+    GLWindow::GLWindow(void) : CForgeObject("GLWindow") {
+        m_pHandle = nullptr;
+        m_pInputMan = nullptr;
+    }//Constructor
 
-	GLWindow::~GLWindow(void) {
-		clear();
-	}//Destructor
+    GLWindow::~GLWindow(void) {
+        clear();
+    }//Destructor
 
-	void GLWindow::init(Vector2i Position, Vector2i Size, std::string WindowTitle, uint32_t Multisample, uint32_t GLMajorVersion, uint32_t GLMinorVersion) {
-		clear();
-		GLFWwindow* pWin = nullptr;
+    void GLWindow::init(Vector2i Position, Vector2i Size, std::string WindowTitle, uint32_t Multisample,
+                        uint32_t GLMajorVersion, uint32_t GLMinorVersion) {
+        clear();
+        GLFWwindow *pWin = nullptr;
 
 
 #if defined(__EMSCRIPTEN__)
-		GLMajorVersion = 2;
-		GLMinorVersion = 0;
-		glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
-		pWin = createGLWindow(Size.x(), Size.y(), WindowTitle, GLMajorVersion, GLMinorVersion);
-		if (nullptr == pWin) {
-			printf("Failed creating OpenGL window!\n");
-			throw CForgeExcept("Failed creating OpenGL window");
-		}
-		glfwMakeContextCurrent(pWin);
+        GLMajorVersion = 2;
+        GLMinorVersion = 0;
+        glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+        pWin = createGLWindow(Size.x(), Size.y(), WindowTitle, GLMajorVersion, GLMinorVersion);
+        if (nullptr == pWin) {
+            printf("Failed creating OpenGL window!\n");
+            throw CForgeExcept("Failed creating OpenGL window");
+        }
+        glfwMakeContextCurrent(pWin);
 
-		GLenum err = glewInit();
-		if (GLEW_OK != err) {
-			std::string e = "GLEW init failed: ";
-			throw CForgeExcept("Failed initialiing glew!");
-		}
+        GLenum err = glewInit();
+        if (GLEW_OK != err) {
+            std::string e = "GLEW init failed: ";
+            throw CForgeExcept("Failed initialiing glew!");
+        }
 
 #else
-		if (GLMajorVersion == 0) GLMajorVersion = 4;
-		if (GLMinorVersion == 0) GLMinorVersion = 6;
+        if (GLMajorVersion == 0) GLMajorVersion = 4;
+        if (GLMinorVersion == 0) GLMinorVersion = 6;
 
-		if(GLMajorVersion >= 3) glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+        if (GLMajorVersion >= 3) glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 
-		if (Multisample > 0) {
-			glfwWindowHint(GLFW_SAMPLES, Multisample);
-		}
+        if (Multisample > 0) {
+            glfwWindowHint(GLFW_SAMPLES, Multisample);
+        }
 
-		pWin = createGLWindow(Size.x(), Size.y(), WindowTitle, GLMajorVersion, GLMinorVersion);
+        pWin = createGLWindow(Size.x(), Size.y(), WindowTitle, GLMajorVersion, GLMinorVersion);
 
-		if (nullptr == pWin) {
-			GLMajorVersion = 4;
-			GLMinorVersion = 6;
-			while (nullptr == pWin && GLMinorVersion > 1) {	
-				pWin = createGLWindow(Size.x(), Size.y(), WindowTitle, GLMajorVersion, GLMinorVersion);
-				GLMinorVersion -= 1;
-			}	
-		}
+        if (nullptr == pWin) {
+            GLMajorVersion = 4;
+            GLMinorVersion = 6;
+            while (nullptr == pWin && GLMinorVersion > 1) {
+                pWin = createGLWindow(Size.x(), Size.y(), WindowTitle, GLMajorVersion, GLMinorVersion);
+                GLMinorVersion -= 1;
+            }
+        }
 
-		if (nullptr == pWin) {
-			GLMajorVersion = 3;
-			GLMinorVersion = 3;
-			pWin = createGLWindow(Size.x(), Size.y(), WindowTitle, GLMajorVersion, GLMinorVersion);
-		}
+        if (nullptr == pWin) {
+            GLMajorVersion = 3;
+            GLMinorVersion = 3;
+            pWin = createGLWindow(Size.x(), Size.y(), WindowTitle, GLMajorVersion, GLMinorVersion);
+        }
 
-		if (nullptr == pWin) {
-			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
-			#ifdef __OPENGL_ES
-			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ES_API);
-			#endif
-			pWin = createGLWindow(Size.x(), Size.y(), WindowTitle, 1, 0);
-		}		
-		if (nullptr == pWin) throw CForgeExcept("Failed to crate OpenGL window. OpenGL seems not to be available!");
-
-		glfwMakeContextCurrent(pWin);
-		// initialize glad
-		gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
-		vsync(true);
+        if (nullptr == pWin) {
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
+#ifdef __OPENGL_ES
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ES_API);
 #endif
-		
+            pWin = createGLWindow(Size.x(), Size.y(), WindowTitle, 1, 0);
+        }
+        if (nullptr == pWin) throw CForgeExcept("Failed to crate OpenGL window. OpenGL seems not to be available!");
+
+        glfwMakeContextCurrent(pWin);
+        // initialize glad
+        gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+
+        vsync(true);
+#endif
+
 
 #ifdef __OPENGLES__
-		gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress);
+        gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress);
 
-		// glad does not load these on default with OpenGL es
-		glGetUniformBlockIndex = (PFNGLGETUNIFORMBLOCKINDEXPROC)glfwGetProcAddress("glGetUniformBlockIndex");
-		glUniformBlockBinding = (PFNGLUNIFORMBLOCKBINDINGPROC)glfwGetProcAddress("glUniformBlockBinding");
-		glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)glfwGetProcAddress("glGenVertexArrays");
-		glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)glfwGetProcAddress("glBindVertexArray");
-		glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC)glfwGetProcAddress("glDrawRangeElements");
-		glBindBufferBase = (PFNGLBINDBUFFERBASEPROC)glfwGetProcAddress("glBindBufferBase");
+        // glad does not load these on default with OpenGL es
+        glGetUniformBlockIndex = (PFNGLGETUNIFORMBLOCKINDEXPROC)glfwGetProcAddress("glGetUniformBlockIndex");
+        glUniformBlockBinding = (PFNGLUNIFORMBLOCKBINDINGPROC)glfwGetProcAddress("glUniformBlockBinding");
+        glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)glfwGetProcAddress("glGenVertexArrays");
+        glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)glfwGetProcAddress("glBindVertexArray");
+        glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC)glfwGetProcAddress("glDrawRangeElements");
+        glBindBufferBase = (PFNGLBINDBUFFERBASEPROC)glfwGetProcAddress("glBindBufferBase");
 
-		glBeginQuery = (PFNGLBEGINQUERYPROC)glfwGetProcAddress("glBeginQuery");
-		glEndQuery = (PFNGLENDQUERYPROC)glfwGetProcAddress("glEndQuery");
-		glGetQueryObjectuiv = (PFNGLGETQUERYOBJECTUIVPROC)glfwGetProcAddress("glGetQueryObjectuiv");
+        glBeginQuery = (PFNGLBEGINQUERYPROC)glfwGetProcAddress("glBeginQuery");
+        glEndQuery = (PFNGLENDQUERYPROC)glfwGetProcAddress("glEndQuery");
+        glGetQueryObjectuiv = (PFNGLGETQUERYOBJECTUIVPROC)glfwGetProcAddress("glGetQueryObjectuiv");
 #endif
 
-		glViewport(0, 0, Size.x(), Size.y());
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
+        glViewport(0, 0, Size.x(), Size.y());
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
 
-		//if (Multisample > 0) glEnable(GL_MULTISAMPLE);
+        //if (Multisample > 0) glEnable(GL_MULTISAMPLE);
 
-		m_pHandle = pWin;
+        m_pHandle = pWin;
 
-		// register keyboard and mouse
-		m_pInputMan = SInputManager::instance();
-		m_Mouse.init(pWin);
-		m_Keyboard.init(pWin);
-		m_pInputMan->registerDevice(pWin, &m_Keyboard);
-		m_pInputMan->registerDevice(pWin, &m_Mouse);
+        // register keyboard and mouse
+        m_pInputMan = SInputManager::instance();
+        m_Mouse.init(pWin);
+        m_Keyboard.init(pWin);
+        m_pInputMan->registerDevice(pWin, &m_Keyboard);
+        m_pInputMan->registerDevice(pWin, &m_Mouse);
 
-		glfwSetWindowSizeCallback((GLFWwindow*)this->m_pHandle, sizeCallback);
-		m_WindowList.insert(std::pair<GLWindow*, GLFWwindow*>(this, pWin));
+        glfwSetWindowSizeCallback((GLFWwindow *) this->m_pHandle, sizeCallback);
+        m_WindowList.insert(std::pair<GLWindow *, GLFWwindow *>(this, pWin));
 
-		std::string ErrorMsg;
-		if (GL_NO_ERROR != CForgeUtility::checkGLError(&ErrorMsg)) {
-			SLogger::log("Not handled OpenGL error occurred before initialization of RenderDevice: " + ErrorMsg, "RenderDevice", SLogger::LOGTYPE_ERROR);
-		}
+        std::string ErrorMsg;
+        if (GL_NO_ERROR != CForgeUtility::checkGLError(&ErrorMsg)) {
+            SLogger::log("Not handled OpenGL error occurred before initialization of RenderDevice: " + ErrorMsg,
+                         "RenderDevice", SLogger::LOGTYPE_ERROR);
+        }
 
-	}//initialize
+    }//initialize
 
-	GLFWwindow* GLWindow::createGLWindow(uint32_t Width, uint32_t Height, std::string Title, uint32_t GLMajorVersion, uint32_t GLMinorVersion) {
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLMajorVersion);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLMinorVersion);
-		GLFWwindow* pRval = glfwCreateWindow(Width, Height, Title.c_str(), nullptr, nullptr);
-		m_Title = Title;
-		return pRval;
-	}//createGLWindow
+    GLFWwindow *GLWindow::createGLWindow(uint32_t Width, uint32_t Height, std::string Title, uint32_t GLMajorVersion,
+                                         uint32_t GLMinorVersion) {
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLMajorVersion);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLMinorVersion);
+        GLFWwindow *pRval = glfwCreateWindow(Width, Height, Title.c_str(), nullptr, nullptr);
+        m_Title = Title;
+        return pRval;
+    }//createGLWindow
 
-	void GLWindow::clear(void) {
-		if (m_pInputMan != nullptr) {
-			m_pInputMan->unregisterDevice(&m_Mouse);
-			m_pInputMan->unregisterDevice(&m_Keyboard);
-			m_pInputMan->release();
-		}
-		m_pInputMan = nullptr;	
-		m_pHandle = nullptr;
-		m_Mouse.clear();
-		m_Keyboard.clear();
-	}//clear
+    void GLWindow::toggleCaptureMouse() {
+        auto new_mode =
+                glfwGetInputMode((GLFWwindow *) m_pHandle, GLFW_CURSOR) == GLFW_CURSOR_DISABLED ? GLFW_CURSOR_NORMAL
+                                                                                                : GLFW_CURSOR_DISABLED;
+        glfwSetInputMode((GLFWwindow *) m_pHandle, GLFW_CURSOR, new_mode);
+    }
 
-	void GLWindow::update(void) {
-		glfwPollEvents();
-	}//update
+    void GLWindow::clear(void) {
+        if (m_pInputMan != nullptr) {
+            m_pInputMan->unregisterDevice(&m_Mouse);
+            m_pInputMan->unregisterDevice(&m_Keyboard);
+            m_pInputMan->release();
+        }
+        m_pInputMan = nullptr;
+        m_pHandle = nullptr;
+        m_Mouse.clear();
+        m_Keyboard.clear();
+    }//clear
 
-	void GLWindow::swapBuffers(void) {
-		glfwSwapBuffers((GLFWwindow*)m_pHandle);
-	}//swapBuffers
+    void GLWindow::update(void) {
+        glfwPollEvents();
+    }//update
 
-	bool GLWindow::shutdown(void) const {
-		return (nullptr == m_pHandle || glfwWindowShouldClose((GLFWwindow*)m_pHandle));
-	}//shutdown
+    void GLWindow::swapBuffers(void) {
+        glfwSwapBuffers((GLFWwindow *) m_pHandle);
+    }//swapBuffers
 
-	void* GLWindow::handle(void)const {
-		return m_pHandle;
-	}//handle
+    bool GLWindow::shutdown(void) const {
+        return (nullptr == m_pHandle || glfwWindowShouldClose((GLFWwindow *) m_pHandle));
+    }//shutdown
 
-	void GLWindow::closeWindow(void) {
-		if(nullptr != m_pHandle) glfwDestroyWindow((GLFWwindow*)m_pHandle);
-		m_pHandle = nullptr;
-	}//closeWindow
+    void *GLWindow::handle(void) const {
+        return m_pHandle;
+    }//handle
 
-	uint32_t GLWindow::width(void)const {
-		int32_t Rval = 0;
-		glfwGetWindowSize((GLFWwindow*)m_pHandle, &Rval, nullptr);
-		return (uint32_t)Rval;
-	}//width
+    void GLWindow::closeWindow(void) {
+        if (nullptr != m_pHandle) glfwDestroyWindow((GLFWwindow *) m_pHandle);
+        m_pHandle = nullptr;
+    }//closeWindow
 
-	uint32_t GLWindow::height(void)const {
-		int32_t Rval = 0;
-		glfwGetWindowSize((GLFWwindow*)m_pHandle, nullptr, &Rval);
-		return Rval;
-	}//height
+    uint32_t GLWindow::width(void) const {
+        int32_t Rval = 0;
+        glfwGetWindowSize((GLFWwindow *) m_pHandle, &Rval, nullptr);
+        return (uint32_t) Rval;
+    }//width
 
-	Keyboard* GLWindow::keyboard(void) {
-		return &m_Keyboard;
-	}//keyboard
+    uint32_t GLWindow::height(void) const {
+        int32_t Rval = 0;
+        glfwGetWindowSize((GLFWwindow *) m_pHandle, nullptr, &Rval);
+        return Rval;
+    }//height
 
-	Mouse* GLWindow::mouse(void) {
-		return &m_Mouse;
-	}//mouse
+    Keyboard *GLWindow::keyboard(void) {
+        return &m_Keyboard;
+    }//keyboard
 
-	std::string GLWindow::title(void)const {
-		return m_Title;
-	}//title
+    Mouse *GLWindow::mouse(void) {
+        return &m_Mouse;
+    }//mouse
 
-	void GLWindow::title(const std::string Title) {
-		m_Title = Title;
-		glfwSetWindowTitle((GLFWwindow*)m_pHandle, m_Title.c_str());
-	}//title
+    std::string GLWindow::title(void) const {
+        return m_Title;
+    }//title
 
-	void GLWindow::vsync(bool Enable, int8_t ThrottleFactor) {
-		if (Enable) {
-			glfwSwapInterval((ThrottleFactor >= 0) ? ThrottleFactor : 1);
-			m_ThrottleFactor = ThrottleFactor;
-			m_VSync = true;
-		}
-		else {
-			glfwSwapInterval(0);
-			m_VSync = false;
-		}
-	}//vsync
+    void GLWindow::title(const std::string Title) {
+        m_Title = Title;
+        glfwSetWindowTitle((GLFWwindow *) m_pHandle, m_Title.c_str());
+    }//title
 
-	bool GLWindow::vsync(int8_t *pThrottleFactor)const {
-		if (nullptr != pThrottleFactor) (*pThrottleFactor) = m_ThrottleFactor;
-		return m_VSync;
-	}//vsync
+    void GLWindow::vsync(bool Enable, int8_t ThrottleFactor) {
+        if (Enable) {
+            glfwSwapInterval((ThrottleFactor >= 0) ? ThrottleFactor : 1);
+            m_ThrottleFactor = ThrottleFactor;
+            m_VSync = true;
+        } else {
+            glfwSwapInterval(0);
+            m_VSync = false;
+        }
+    }//vsync
 
-	void GLWindow::makeCurrent(void)const {
-		if(nullptr != m_pHandle)	glfwMakeContextCurrent((GLFWwindow*)m_pHandle);
-	}//makeCurrent
+    bool GLWindow::vsync(int8_t *pThrottleFactor) const {
+        if (nullptr != pThrottleFactor) (*pThrottleFactor) = m_ThrottleFactor;
+        return m_VSync;
+    }//vsync
+
+    void GLWindow::makeCurrent(void) const {
+        if (nullptr != m_pHandle) glfwMakeContextCurrent((GLFWwindow *) m_pHandle);
+    }//makeCurrent
 
 }//name space
