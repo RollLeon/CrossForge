@@ -22,6 +22,11 @@
 #include <crossforge/MeshProcessing/PrimitiveShapeFactory.h>
 #include "ExampleSceneBase.hpp"
 #include <flecs.h>
+#include <imgui.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_glfw.h>
+#include <GLFW/glfw3.h>
+#include <iostream>
 
 namespace CForge {
     class EDT : public ExampleSceneBase {
@@ -155,6 +160,28 @@ namespace CForge {
                         }
                     });
 
+
+            IMGUI_CHECKVERSION();
+            ImGui::CreateContext();
+
+            ImGuiIO &io = ImGui::GetIO();
+            (void) io;
+
+            io.Fonts->AddFontFromFileTTF(
+                    "Assets/Fonts/NotoSerif/NotoSerif-Regular.ttf",
+                    24.0f,
+                    NULL,
+                    NULL
+            );
+
+            // setup platform/renderer bindings
+            if (!ImGui_ImplGlfw_InitForOpenGL(glfwGetCurrentContext(), true)) {
+                std::cout << "Failed to init imGUI for window" << std::endl;
+            }
+            if (!ImGui_ImplOpenGL3_Init()) {
+                std::cout << "Failed to init imGUI for OpenGL" << std::endl;
+            }
+
         }//initialize
 
         void clear(void) override {
@@ -197,6 +224,15 @@ namespace CForge {
             if (m_FPSLabelActive) m_FPSLabel.render(&m_RenderDev);
             if (m_DrawHelpTexts) drawHelpTexts();
 
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+
+            ImGui::NewFrame();
+            bool show_demo_window = true;
+            ImGui::ShowDemoWindow(&show_demo_window);
+            ImGui::EndFrame();
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             m_RenderWin.swapBuffers();
 
             updateFPS();
