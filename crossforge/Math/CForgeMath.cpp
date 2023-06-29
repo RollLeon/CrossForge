@@ -187,6 +187,15 @@ namespace CForge {
 		return Rval;
 	}//equalAreaMapping
 
+	Eigen::Vector3f CForgeMath::maxLength(Vector3f& vec, float max) {
+		if (vec.norm()>max)
+		{
+			vec.normalize();
+			vec = vec *max;
+		}
+		return vec;
+	}
+
 
 	CForgeMath::CForgeMath(void): CForgeObject("CForgeMath") {
 

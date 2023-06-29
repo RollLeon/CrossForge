@@ -88,6 +88,8 @@ namespace CForge {
 		static Eigen::Vector3f equirectangularMapping(const Eigen::Vector3f Pos);
 		static Eigen::Vector3f equalAreaMapping(const Eigen::Vector3f Pos);
 
+		static Eigen::Vector3f maxLength(Eigen::Vector3f& vec, float max);
+
 		CForgeMath(void);
 		~CForgeMath(void);
 

@@ -152,7 +152,8 @@ namespace CForge {
             transformation->init(&m_RootSGN);
             SGNGeometry *entityGeom = new SGNGeometry();
             entityGeom->init(transformation, &m_Trees[0]);
-
+            
+            
 
             move_sys = world.system<SGNTransformation, AIComponent>()
                 .iter([](flecs::iter it, SGNTransformation* p, AIComponent* ai) {
@@ -163,11 +164,18 @@ namespace CForge {
                         ai[i].targetPosition.y() = 0;
                         ai[i].targetPosition *= 20;
                     }
+                    float mass = 500.0;
+                    float max_force = 5;
+                    float max_speed = 7;
 
                     Eigen::Vector3f desired_velocity = (p[i].translation() - ai[i].targetPosition).normalized() * -0.07f;
+                    
+                    
                     Eigen::Vector3f steering_force = desired_velocity - p[i].translationDelta();
+                    
+                    Eigen::Vector3f acceleration = steering_force / mass;
 
-                    p[i].translationDelta(p[i].translationDelta() + steering_force);
+                    p[i].translationDelta(p[i].translationDelta() + acceleration);
 
                     Eigen::Quaternionf rotation = Eigen::Quaternionf::FromTwoVectors(Vector3f::UnitX(), p[i].translationDelta().normalized());
                     p[i].rotation(rotation);
