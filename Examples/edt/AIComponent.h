@@ -6,12 +6,12 @@
 #define CFORGESANDBOX_AICOMPONENT_H
 
 #include <Eigen/Core>
+#include <queue>
 
 namespace CForge {
     class AIComponent {
     public:
-        Eigen::Vector3f targetPosition;
-
+        std::queue<Eigen::Vector3f> path;
         AIComponent();
     };
 

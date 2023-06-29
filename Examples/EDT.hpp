@@ -22,6 +22,7 @@
 #include <crossforge/MeshProcessing/PrimitiveShapeFactory.h>
 #include "ExampleSceneBase.hpp"
 #include "Examples/edt/AIComponent.h"
+#include "Examples/edt/AiSystem.h"
 #include <flecs.h>
 #include <iostream>
 
@@ -96,7 +97,7 @@ namespace CForge {
             m_TreeGroupSGN.init(&m_RootSGN);
 
             float Area = 500.0f;    // square area [-Area, Area] on the xz-plane, where trees are planted
-            float TreeCount = 0;    // number of trees to create
+            float TreeCount = 1;    // number of trees to create
 
             for (uint32_t i = 0; i < TreeCount; ++i) {
                 // create the scene graph nodes
@@ -143,46 +144,12 @@ namespace CForge {
 
             roboter = world.entity();
             roboter.add<AIComponent>();
-            AIComponent *target = roboter.get_mut<AIComponent>();
-            target->targetPosition.setRandom();
-            target->targetPosition.y() = 0;
-            target->targetPosition *= 20;
             roboter.add<SGNTransformation>();
             auto transformation = roboter.get_mut<SGNTransformation>();
             transformation->init(&m_RootSGN);
             SGNGeometry *entityGeom = new SGNGeometry();
             entityGeom->init(transformation, &m_Trees[0]);
-            
-            
-
-            move_sys = world.system<SGNTransformation, AIComponent>()
-                .iter([](flecs::iter it, SGNTransformation* p, AIComponent* ai) {
-                for (int i : it) {
-                    
-                    if ((p[i].translation() - ai[i].targetPosition).norm() < 1) {
-                        ai[i].targetPosition.setRandom();
-                        ai[i].targetPosition.y() = 0;
-                        ai[i].targetPosition *= 20;
-                    }
-                    float mass = 500.0;
-                    float max_force = 5;
-                    float max_speed = 7;
-
-                    Eigen::Vector3f desired_velocity = (p[i].translation() - ai[i].targetPosition).normalized() * -0.07f;
-                    
-                    
-                    Eigen::Vector3f steering_force = desired_velocity - p[i].translationDelta();
-                    
-                    Eigen::Vector3f acceleration = steering_force / mass;
-
-                    p[i].translationDelta(p[i].translationDelta() + acceleration);
-
-                    Eigen::Quaternionf rotation = Eigen::Quaternionf::FromTwoVectors(Vector3f::UnitX(), p[i].translationDelta().normalized());
-                    p[i].rotation(rotation);
-
-                    p[i].update(it.delta_time());
-                }
-                    });
+            AiSystem::addAiSystem(world);
 
         }//initialize
 
@@ -203,6 +170,9 @@ namespace CForge {
                 CamPos.y() = 1.0f;
                 m_Cam.position(CamPos);
             }
+
+            if (!roboter.get_mut<AIComponent>()->path.empty())
+                m_TreeTransformSGNs.front()->translation(roboter.get_mut<AIComponent>()->path.front());
 
             m_SkyboxSG.update(60.0f / m_FPS);
             m_SG.update(60.0f / m_FPS);
@@ -225,7 +195,7 @@ namespace CForge {
             m_RenderWin.swapBuffers();
 
             updateFPS();
-            move_sys.run();
+            world.progress();
             // change between flying and walking mode
             if (m_RenderWin.keyboard()->keyPressed(Keyboard::KEY_F, true)) m_Fly = !m_Fly;
 

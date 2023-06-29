@@ -7,6 +7,6 @@
 namespace CForge {
 
     AIComponent::AIComponent() {
-        targetPosition = Eigen::Vector3f();
+        path = std::queue<Eigen::Vector3f>();
     }
 }
