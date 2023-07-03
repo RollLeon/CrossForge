@@ -198,7 +198,8 @@ namespace CForge {
             }
             m_RenderWin.update();
 
-            defaultCameraUpdate(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse(), 0.1f * 60.0f / m_FPS, 0.5f, 2.0f);
+            static bool activeWindow = false;
+            if(!activeWindow)defaultCameraUpdate(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse(), 0.1f * 60.0f / m_FPS, 0.5f, 2.0f);
             // make sure to always walk on the ground if not flying
             if (!m_Fly) {
                 Vector3f CamPos = m_Cam.position();
@@ -227,12 +228,23 @@ namespace CForge {
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
 
-            ImGui::NewFrame();
-            bool show_demo_window = true;
-            ImGui::ShowDemoWindow(&show_demo_window);
-            ImGui::EndFrame();
-            ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            bool test = true;
+            ImVec2 size = { 0,0 };
+
+            if (activeWindow) {
+                ImGui::NewFrame();
+                ImGui::SetNextWindowSize(size);
+                ImGui::Begin("test", &test);
+                ImGui::Text("hello world");
+                if (ImGui::Button("close")) {
+                    activeWindow = false;
+                }
+                ImGui::End();
+                ImGui::EndFrame();
+                ImGui::Render();
+                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            }
+
             m_RenderWin.swapBuffers();
 
             updateFPS();
