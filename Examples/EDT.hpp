@@ -148,10 +148,16 @@ namespace CForge {
             m_DrawHelpTexts = true;
 
             roboter = world.entity();
+            roboter.set_name("Roboter");
             roboter.add<AIComponent>();
             roboter.add<SGNTransformation>();
             auto transformation = roboter.get_mut<SGNTransformation>();
             transformation->init(&m_RootSGN);
+            auto aic = roboter.get_mut<AIComponent>();
+            for(int i=0;i<10;i++){
+                aic->path.push(Eigen::Vector3f(-10,0,1));
+                aic->path.push(Eigen::Vector3f(10,0,-1));
+            }
             SGNGeometry *entityGeom = new SGNGeometry();
             entityGeom->init(transformation, &m_Trees[0]);
             AiSystem::addAiSystem(world);

@@ -18,25 +18,42 @@ namespace CForge {
             world.system<SGNTransformation, AIComponent>("AISystem")
                     .iter([](flecs::iter it, SGNTransformation *p, AIComponent *ai) {
                         for (int i: it) {
-                            AiSystem::processEntity(it.delta_time(), ai[i], p[i]);
+                            AiSystem::processEntity(it.delta_time(), ai[i], p[i], it.world());
                         }
                     });
         }
 
     protected:
-        static void processEntity(float dt, AIComponent &ai, SGNTransformation &p) {
+        static void processEntity(float dt, AIComponent &ai, SGNTransformation &p, flecs::world world) {
 
             if (!ai.path.empty()) {
                 Vector3f target = ai.path.front();
                 if (arrivedAtWayPoint(p.translation(), target)) {
                     ai.path.pop();
                 }
-
+                obstacleAvoidance(p, world, target);
                 seekingBehavior(dt, target, p);
             } else {
             }
             if (ai.path.empty()) {
                 addRandomTarget(ai.path);
+            }
+        }
+
+        static bool obstacleIsInPath(SGNTransformation &p, flecs::world &world, Vector3f &obstaclePosition) {
+            obstaclePosition = Vector3f(0, 0, 0);
+            return p.translationDelta().dot(-p.translation()) > 0;
+        }
+
+        static void obstacleAvoidance(SGNTransformation &p, flecs::world &world, Vector3f &target) {
+            Vector3f obstacle = Vector3f();
+            if (obstacleIsInPath(p, world, obstacle)) {
+                float obstacleRadius = 1;
+                float roboterRadius = 1;
+                float securityDistance = 0.5;
+                target = obstacle + Vector3f(-(obstacle.z() - p.translation().z()), 0,
+                                             obstacle.x() - p.translation().x()).normalized() *
+                                    (obstacleRadius + roboterRadius + securityDistance);
             }
         }
 
@@ -54,7 +71,7 @@ namespace CForge {
 
         static void seekingBehavior(float dt, Eigen::Vector3f targetPosition, SGNTransformation &p) {
             float mass = 500.0;
-            float max_force = 0.3f;
+            float max_force = 0.6f;
             float max_speed = 0.05f;
             Eigen::Vector3f desired_velocity = (targetPosition - p.translation() - p.translationDelta());
             Eigen::Vector3f steering_force = CForgeMath::maxLength(desired_velocity, max_force);
