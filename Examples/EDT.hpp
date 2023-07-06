@@ -78,7 +78,7 @@ namespace CForge {
             m_Trees[0].init(&M);
             M.clear();
 
-            SAssetIO::load("Assets/ExampleScenes/Trees/LowPolyTree_02.gltf", &M);
+            SAssetIO::load("Assets/placeholder/zylinder.glb", &M);
             setMeshShader(&M, 0.8f, 0.04f);
             M.computePerVertexNormals();
             M.computeAxisAlignedBoundingBox();
@@ -96,6 +96,11 @@ namespace CForge {
             // sceen graph node that holds our forest
             m_TreeGroupSGN.init(&m_RootSGN);
 
+            SGNTransformation* obstacle_position = new SGNTransformation();
+            obstacle_position->init(&m_RootSGN);
+            SGNGeometry *obstacle_geom = new SGNGeometry();
+            obstacle_geom->init(obstacle_position, &m_Trees[1]);
+
             float Area = 500.0f;    // square area [-Area, Area] on the xz-plane, where trees are planted
             float TreeCount = 1;    // number of trees to create
 
@@ -108,7 +113,7 @@ namespace CForge {
                 pTransformSGN = new SGNTransformation();
                 pTransformSGN->init(&m_TreeGroupSGN);
 
-                float TreeScale = CForgeMath::randRange(0.1f, 3.0f);
+                float TreeScale = CForgeMath::randRange(0.1f, 1.0f);
 
                 Vector3f TreePos = Vector3f::Zero();
                 TreePos.x() = CForgeMath::randRange(-Area, Area);
@@ -121,7 +126,7 @@ namespace CForge {
                 // choose one of the trees randomly
                 pGeomSGN = new SGNGeometry();
                 uint8_t TreeType = CForgeMath::rand() % 3;
-                pGeomSGN->init(pTransformSGN, &m_Trees[TreeType]);
+                pGeomSGN->init(pTransformSGN, &m_Trees[2]);
 
                 m_TreeTransformSGNs.push_back(pTransformSGN);
                 m_TreeSGNs.push_back(pGeomSGN);
