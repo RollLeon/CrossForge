@@ -40,17 +40,39 @@ namespace CForge {
             }
         }
 
-        static bool obstacleIsInPath(SGNTransformation &p, flecs::world &world, Vector3f &obstaclePosition) {
+        /*static bool obstacleIsInPath(SGNTransformation& p, flecs::world& world, Vector3f& obstaclePosition) {
             obstaclePosition = Vector3f(0, 0, 0);
             return p.translationDelta().dot(-p.translation()) > 0;
+        }*/
+
+        static bool obstacleIsInPath(SGNTransformation& p, Vector3f& obstaclePosition, float obstacleRadius, float robotRadius) {
+            obstaclePosition = Vector3f(0, 0, 0);
+            // Projektion des Mittelpunkts des Objekts auf den Bewegungsvektor
+            Vector3f motionVector = p.translationDelta().normalized();
+            Vector3f objectToRobot =  obstaclePosition - p.translation();
+            Vector3f projectedPoint = motionVector.dot(objectToRobot);
+
+            // Berechne den Abstand zwischen dem projizierten Punkt und dem Mittelpunkt des Objekts
+            float distance = (obstaclePosition - projectedPoint).norm();
+
+
+            // Überprüfe, ob der Abstand größer ist als die Summe der Radien
+            float totalRadius = obstacleRadius + robotRadius;
+            return distance < totalRadius;
         }
 
+
+
+
+
+
         static void obstacleAvoidance(SGNTransformation &p, flecs::world &world, Vector3f &target) {
-            Vector3f obstacle = Vector3f();
-            if (obstacleIsInPath(p, world, obstacle)) {
-                float obstacleRadius = 1;
-                float roboterRadius = 1;
-                float securityDistance = 0.5;
+            Vector3f obstacle;
+            float obstacleRadius = 2;
+            float roboterRadius = 1;
+            float securityDistance = 0.5;
+            if (obstacleIsInPath(p, obstacle, obstacleRadius, roboterRadius)) {
+                
                 target = obstacle + Vector3f(-(obstacle.z() - p.translation().z()), 0,
                                              obstacle.x() - p.translation().x()).normalized() *
                                     (obstacleRadius + roboterRadius + securityDistance);
