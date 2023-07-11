@@ -22,6 +22,7 @@
 #include <crossforge/MeshProcessing/PrimitiveShapeFactory.h>
 #include "ExampleSceneBase.hpp"
 #include "Examples/edt/AIComponent.h"
+#include "Examples/edt/SteeringComponent.h"
 #include "Examples/edt/AiSystem.h"
 #include <flecs.h>
 #include <iostream>

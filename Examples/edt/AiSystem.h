@@ -28,7 +28,7 @@ namespace CForge {
         static void processEntity(float dt, AIComponent &ai, SGNTransformation &p, flecs::world world) {
 
             if (!ai.path.empty()) {
-                Vector3f target = ai.path.front();
+                Eigen::Vector3f target = ai.path.front();
                 if (arrivedAtWayPoint(p.translation(), target)) {
                     ai.path.pop();
                 }
@@ -41,22 +41,23 @@ namespace CForge {
             }
         }
 
-        static bool obstacleIsInPath(SGNTransformation& p, Vector3f& obstaclePosition, float obstacleRadius, float robotRadius) {
+
+        static bool obstacleIsInPath(SGNTransformation& p, Eigen::Vector3f& obstaclePosition, float obstacleRadius, float robotRadius) {
             return SteeringComponent::obstacleIsInPath(p, obstaclePosition, obstacleRadius, robotRadius);
         }
 
-        static void obstacleAvoidance(SGNTransformation& p, flecs::world& world, Vector3f& target) {
+        static void obstacleAvoidance(SGNTransformation& p, flecs::world& world, Eigen::Vector3f& target) {
             SteeringComponent::obstacleAvoidance(p, world, target);
         }
 
 
-        static bool arrivedAtWayPoint(Eigen::Vector3f position, Vector3f target) {
+        static bool arrivedAtWayPoint(Eigen::Vector3f position, Eigen::Vector3f target) {
             return SteeringComponent::arrivedAtWayPoint(position, target);
         }
 
 
         static void addRandomTarget(std::queue<Eigen::Vector3f> &vecQueue) {
-            Eigen::Vector3f targetPosition = Vector3f();
+            Eigen::Vector3f targetPosition = Eigen::Vector3f();
             targetPosition.setRandom();
             targetPosition.y() = 0;
             targetPosition *= 20;
