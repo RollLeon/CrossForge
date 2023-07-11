@@ -73,7 +73,7 @@ endif(USE_OPENCV)
 add_executable(CForgeSandbox 
 	SandboxMain.cpp
 
-        Examples/edt/AIComponent.cpp Examples/edt/AIComponent.h Examples/edt/AiSystem.h)
+        Examples/edt/AIComponent.cpp Examples/edt/AIComponent.h Examples/edt/AiSystem.h Examples/edt/SteeringComponent.cpp Examples/edt/SteeringComponent.h)
 
 if(EMSCRIPTEN)
 	target_link_Libraries(CForgeSandbox
