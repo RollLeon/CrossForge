@@ -183,16 +183,35 @@ namespace CForge {
                 std::cout << "Failed to init imGUI for OpenGL" << std::endl;
             }
 
-            Dialoggraph goodanswer();
-            Dialoggraph badanswer();
-            dialog.text = "Hallo, wie geht es dir?";
-            dialog.playerSpeaking = false;
-            dialog.answers.push(goodanswer);
-            dialog.answers.push(badanswer);
+            Dialoggraph finishDialog;
+            finishDialog.text="Tschüss";
+            finishDialog.playerSpeaking = true;
+
+            Dialoggraph goodanswerAnswer;
+            goodanswerAnswer.text = "Das ist schön :)";
+            goodanswerAnswer.playerSpeaking = false;
+            goodanswerAnswer.answers.push_back(finishDialog);
+
+            Dialoggraph goodanswer;
             goodanswer.text = "Mir geht es gut.";
             goodanswer.playerSpeaking = true;
+            goodanswer.answers.push_back(goodanswerAnswer);
+
+            Dialoggraph badanswerAnswer;
+            badanswerAnswer.text = "Das ist schade :(";
+            badanswerAnswer.playerSpeaking = false;
+            badanswerAnswer.answers.push_back(finishDialog);
+
+            Dialoggraph badanswer;
             badanswer.text = "Mir geht es schlecht.";
             badanswer.playerSpeaking = true;
+            badanswer.answers.push_back(badanswerAnswer);
+
+            dialog.text = "Hallo, wie geht es dir?";
+            dialog.playerSpeaking = false;
+
+            dialog.answers.push_back(goodanswer);
+            dialog.answers.push_back(badanswer);
 
         }//initialize
 
@@ -241,25 +260,26 @@ namespace CForge {
             ImGui_ImplGlfw_NewFrame();
 
             bool test = true;
-            ImVec2 size = { 0,0 };
+            ImVec2 size = {0, 0};
 
             if (gamestate == DIALOG) {
                 Dialoggraph currentDialog = dialog;
-                for (int selected : conversationProgress) {
+                for (int selected: conversationProgress) {
                     currentDialog = currentDialog.answers[selected];
+                    if (currentDialog.playerSpeaking) {
+                        currentDialog = currentDialog.answers[0];
+                    }
                 }
                 ImGui::NewFrame();
                 ImGui::SetNextWindowSize(size);
                 ImGui::Begin("test", &test, ImGuiWindowFlags_NoTitleBar);
-                ImGui::Text(currentDialog.text);
-                for (int i = 0; i < currentDialog.answers.size(); i++)
-                {
-                    if (ImGui::Button(currentDialog.answers[i].text)) {
-                        conversationProgress.push(i);
+                ImGui::Text(currentDialog.text.c_str());
+                for (int i = 0; i < currentDialog.answers.size(); i++) {
+                    if (ImGui::Button(currentDialog.answers[i].text.c_str())) {
+                        conversationProgress.push_back(i);
                     }
                 }
-                if (currentDialog.answers.size == 0)
-                {
+                if (currentDialog.answers.empty()) {
                     gamestate = GAMEPLAY;
                     conversationProgress.clear();
                 }
@@ -308,7 +328,7 @@ namespace CForge {
         bool m_Fly;
 
         Dialoggraph dialog;
-        vector <int> conversationProgress;
+        vector<int> conversationProgress;
     };//EDT
 
 }//name space
