@@ -1,0 +1,38 @@
+{
+  "text": "Hallo, Wie geht es dir?",
+  "playerSpeaking": false,
+  "answers": [
+    {
+      "text": "Mir geht es gut",
+      "playerSpeaking": true,
+      "answers": [
+        {
+          "text": "Das ist schön",
+          "playerSpeaking": false,
+          "answers": [
+            {
+              "text": "Tschüss",
+              "playerSpeaking": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "Mir geht es schlecht",
+      "playerSpeaking": true,
+      "answers": [
+        {
+          "text": "Das ist schade",
+          "playerSpeaking": false,
+          "answers": [
+            {
+              "text": "Tschüss",
+              "playerSpeaking": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
