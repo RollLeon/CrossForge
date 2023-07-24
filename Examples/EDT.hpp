@@ -27,6 +27,7 @@
 #include <imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "DialogGraph.hpp"
 
 namespace CForge {
     class EDT : public ExampleSceneBase {
@@ -182,6 +183,17 @@ namespace CForge {
                 std::cout << "Failed to init imGUI for OpenGL" << std::endl;
             }
 
+            Dialoggraph goodanswer();
+            Dialoggraph badanswer();
+            dialog.text = "Hallo, wie geht es dir?";
+            dialog.playerSpeaking = false;
+            dialog.answers.push(goodanswer);
+            dialog.answers.push(badanswer);
+            goodanswer.text = "Mir geht es gut.";
+            goodanswer.playerSpeaking = true;
+            badanswer.text = "Mir geht es schlecht.";
+            badanswer.playerSpeaking = true;
+
         }//initialize
 
         void clear(void) override {
@@ -198,8 +210,8 @@ namespace CForge {
             }
             m_RenderWin.update();
 
-            static bool activeWindow = false;
-            if(!activeWindow)defaultCameraUpdate(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse(), 0.1f * 60.0f / m_FPS, 0.5f, 2.0f);
+            toggleCursor();
+            defaultCameraUpdate(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse(), 0.1f * 60.0f / m_FPS, 0.5f, 2.0f);
             // make sure to always walk on the ground if not flying
             if (!m_Fly) {
                 Vector3f CamPos = m_Cam.position();
@@ -231,13 +243,25 @@ namespace CForge {
             bool test = true;
             ImVec2 size = { 0,0 };
 
-            if (activeWindow) {
+            if (gamestate == DIALOG) {
+                Dialoggraph currentDialog = dialog;
+                for (int selected : conversationProgress) {
+                    currentDialog = currentDialog.answers[selected];
+                }
                 ImGui::NewFrame();
                 ImGui::SetNextWindowSize(size);
-                ImGui::Begin("test", &test);
-                ImGui::Text("hello world");
-                if (ImGui::Button("close")) {
-                    activeWindow = false;
+                ImGui::Begin("test", &test, ImGuiWindowFlags_NoTitleBar);
+                ImGui::Text(currentDialog.text);
+                for (int i = 0; i < currentDialog.answers.size(); i++)
+                {
+                    if (ImGui::Button(currentDialog.answers[i].text)) {
+                        conversationProgress.push(i);
+                    }
+                }
+                if (currentDialog.answers.size == 0)
+                {
+                    gamestate = GAMEPLAY;
+                    conversationProgress.clear();
                 }
                 ImGui::End();
                 ImGui::EndFrame();
@@ -282,6 +306,9 @@ namespace CForge {
         SGNTransformation m_TreeGroupSGN;
 
         bool m_Fly;
+
+        Dialoggraph dialog;
+        vector <int> conversationProgress;
     };//EDT
 
 }//name space

@@ -283,38 +283,40 @@ namespace CForge {
             if (nullptr == pKeyboard) throw NullpointerExcept("pKeyboard");
             if (nullptr == pMouse) throw NullpointerExcept("pMouse");
 
-            float S = 1.0f;
-            if (pKeyboard->keyPressed(Keyboard::KEY_LEFT_SHIFT)) S = SpeedScale;
+            if (gamestate == GAMEPLAY) {
 
-            if (pKeyboard->keyPressed(Keyboard::KEY_W)) pCamera->forward(S * MovementSpeed);
-            if (pKeyboard->keyPressed(Keyboard::KEY_S)) pCamera->forward(S * -MovementSpeed);
-            if (pKeyboard->keyPressed(Keyboard::KEY_A)) pCamera->right(-S * MovementSpeed);
-            if (pKeyboard->keyPressed(Keyboard::KEY_D)) pCamera->right(S * MovementSpeed);
+                float S = 1.0f;
+                if (pKeyboard->keyPressed(Keyboard::KEY_LEFT_SHIFT)) S = SpeedScale;
 
-            const Eigen::Vector2f MouseDelta = pMouse->movement();
-            const float pitchLimitUp = 87.0f; // Maximaler Pitch-Winkel nach oben (in Grad)
-            const float pitchLimitDown = -87.0f; // Maximaler Pitch-Winkel nach unten (in Grad)
-            const float pitchAmount = -0.1f * RotationSpeed * MouseDelta.y();
+                if (pKeyboard->keyPressed(Keyboard::KEY_W)) pCamera->forward(S * MovementSpeed);
+                if (pKeyboard->keyPressed(Keyboard::KEY_S)) pCamera->forward(S * -MovementSpeed);
+                if (pKeyboard->keyPressed(Keyboard::KEY_A)) pCamera->right(-S * MovementSpeed);
+                if (pKeyboard->keyPressed(Keyboard::KEY_D)) pCamera->right(S * MovementSpeed);
 
-            const float currentPitch = pCamera->getPitch();
+                const Eigen::Vector2f MouseDelta = pMouse->movement();
+                const float pitchLimitUp = 87.0f; // Maximaler Pitch-Winkel nach oben (in Grad)
+                const float pitchLimitDown = -87.0f; // Maximaler Pitch-Winkel nach unten (in Grad)
+                const float pitchAmount = -0.1f * RotationSpeed * MouseDelta.y();
 
-            // Überprüfen, ob die Mausbewegung ausreichend ist, um die Kamera zu drehen
-            if (std::abs(MouseDelta.y()) > std::numeric_limits<float>::epsilon()) {
-                // Neuer Pitch-Winkel nach der Mausbewegung
-                const float newPitch = currentPitch + pitchAmount;
+                const float currentPitch = pCamera->getPitch();
 
-                // Begrenzen des Pitch-Winkels innerhalb des zulässigen Bereichs
-                const float clampedPitch = std::clamp(newPitch, pitchLimitDown, pitchLimitUp);
+                // Überprüfen, ob die Mausbewegung ausreichend ist, um die Kamera zu drehen
+                if (std::abs(MouseDelta.y()) > std::numeric_limits<float>::epsilon()) {
+                    // Neuer Pitch-Winkel nach der Mausbewegung
+                    const float newPitch = currentPitch + pitchAmount;
 
-                // Änderung des Pitch-Winkels
-                const float pitchChange = clampedPitch - currentPitch;
-                pCamera->pitch(CForgeMath::degToRad(pitchChange));
+                    // Begrenzen des Pitch-Winkels innerhalb des zulässigen Bereichs
+                    const float clampedPitch = std::clamp(newPitch, pitchLimitDown, pitchLimitUp);
+
+                    // Änderung des Pitch-Winkels
+                    const float pitchChange = clampedPitch - currentPitch;
+                    pCamera->pitch(CForgeMath::degToRad(pitchChange));
+                }
+
+                if (std::abs(MouseDelta.x()) > std::numeric_limits<float>::epsilon()) {
+                    pCamera->rotY(CForgeMath::degToRad(-0.1f * RotationSpeed * MouseDelta.x()));
+                }
             }
-
-            if (std::abs(MouseDelta.x()) > std::numeric_limits<float>::epsilon()) {
-                pCamera->rotY(CForgeMath::degToRad(-0.1f * RotationSpeed * MouseDelta.x()));
-            }
-
             pMouse->movement(Eigen::Vector2f::Zero());
         }//defaultCameraUpdate
 
@@ -336,10 +338,8 @@ namespace CForge {
             }
 
             if (m_RenderWin.keyboard()->keyPressed(Keyboard::KEY_C, true)) {
-                auto mode = glfwGetInputMode(glfwGetCurrentContext(), GLFW_CURSOR);
-                glfwSetInputMode(glfwGetCurrentContext(),GLFW_CURSOR, mode==GLFW_CURSOR_HIDDEN?GLFW_CURSOR_NORMAL:GLFW_CURSOR_HIDDEN);
+                gamestate = gamestate == GAMEPLAY ? DIALOG : GAMEPLAY;
             }
-
 
             if (pKeyboard->keyPressed(Keyboard::KEY_ESCAPE)) {
 #ifdef __EMSCRIPTEN__
@@ -349,6 +349,10 @@ namespace CForge {
 #endif
             }
         }//defaultKeyboardUpdate
+
+        void toggleCursor() {
+            glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, gamestate == DIALOG ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+        }
 
         void takeScreenshot(std::string Filepath) {
             T2DImage<uint8_t> ColorBuffer;
@@ -435,6 +439,11 @@ namespace CForge {
 
         std::vector<LineOfText *> m_HelpTexts;
         bool m_DrawHelpTexts;
+
+        enum GameState {
+            GAMEPLAY, DIALOG            // DIALOG: Maus nicht disabled, sodass mit imgui interagiert werden kann, Kamera starr, Spieler reagiert nicht auf Tasteneingaben wie WASD
+        };                              // GAMEPLAY: Cursor gefangen, Kamera beweglich, Spieler kann sich bewegen
+        GameState gamestate = GAMEPLAY;
     };//ExampleMinimumGraphicsSetup
 
 }
