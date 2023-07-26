@@ -24,6 +24,7 @@
 #include "Examples/edt/AIComponent.h"
 #include "Examples/edt/SteeringComponent.h"
 #include "Examples/edt/AiSystem.h"
+#include "Examples/edt/BodyComponent.h"
 #include <flecs.h>
 #include <iostream>
 
@@ -162,6 +163,14 @@ namespace CForge {
             roboter = world.entity();
             roboter.set_name("Roboter");
             roboter.add<AIComponent>();
+            BodyComponent bodycomponent;
+            bodycomponent.mass = 500;
+            bodycomponent.radius = 1;
+            bodycomponent.securityDistance = 1.0f;
+            bodycomponent.max_force = 0.6f;
+            bodycomponent.max_speed = 0.05f;
+
+            roboter.add<BodyComponent>(bodycomponent);
             roboter.add<SGNTransformation>();
             auto transformation = roboter.get_mut<SGNTransformation>();
             transformation->init(&m_RootSGN);

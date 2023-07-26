@@ -9,7 +9,7 @@
 #include <iostream>
 #include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
 #include "AIComponent.h"
-#include "SteeringComponent.h"
+#include "SteeringSystem.h"
 #include "Obstacle.h"
 
 namespace CForge {
@@ -54,12 +54,12 @@ namespace CForge {
 
         static bool obstacleAvoidance(SGNTransformation &p, flecs::world &world, Eigen::Vector3f &target,
                                       Eigen::Vector3f &obstaclepos) {
-           return SteeringComponent::obstacleAvoidance(p, world, target, obstaclepos);
+           return SteeringSystem::obstacleAvoidance(p, world, target, obstaclepos); 
         }
 
 
         static bool arrivedAtWayPoint(Eigen::Vector3f position, Eigen::Vector3f target) {
-            return SteeringComponent::arrivedAtWayPoint(position, target);
+            return SteeringSystem::arrivedAtWayPoint(position, target);
         }
 
 
@@ -72,7 +72,7 @@ namespace CForge {
         }
 
         static void seekingBehavior(float dt, Eigen::Vector3f targetPosition, SGNTransformation &p) {
-            SteeringComponent::seekingBehavior(dt, targetPosition, p);
+            SteeringSystem::seekingBehavior(dt, targetPosition, p);
         }
 
 

@@ -1,10 +1,11 @@
 #include <iostream>
-#include "SteeringComponent.h"
+#include "SteeringSystem.h"
 #include "crossforge/Math/CForgeMath.h"
+#include "flecs.h"
 
 namespace CForge {
 
-    bool SteeringComponent::obstacleIsInPath(SGNTransformation &p, Eigen::Vector3f &target,
+    bool SteeringSystem::obstacleIsInPath(SGNTransformation &p, Eigen::Vector3f &target,
                                              Eigen::Vector3f &obstaclePosition, float obstacleRadius,
                                              float robotRadius) {
         // Projektion des Mittelpunkts des Objekts auf den Bewegungsvektor
@@ -25,7 +26,7 @@ namespace CForge {
         // return p.translationDelta().dot(-p.translation()) > 0;
     }
 
-    bool SteeringComponent::obstacleAvoidance(SGNTransformation &p, flecs::world &world, Eigen::Vector3f &target,
+    bool SteeringSystem::obstacleAvoidance(SGNTransformation &p, flecs::world &world, Eigen::Vector3f &target,
                                               Eigen::Vector3f &obstacle) {
         float obstacleRadius = 1;
         float roboterRadius = 1;
@@ -48,11 +49,12 @@ namespace CForge {
         return false;
     }
 
-    bool SteeringComponent::arrivedAtWayPoint(Eigen::Vector3f position, Eigen::Vector3f target) {
+    bool SteeringSystem::arrivedAtWayPoint(Eigen::Vector3f position, Eigen::Vector3f target) {
         return (position - target).norm() < 2;
     }
 
-    void SteeringComponent::seekingBehavior(float dt, Eigen::Vector3f targetPosition, SGNTransformation &p) {
+    void SteeringSystem::seekingBehavior(float dt, Eigen::Vector3f targetPosition, SGNTransformation &p) {
+        
         float mass = 500.0;
         float max_force = 0.6f;
         float max_speed = 0.05f;
