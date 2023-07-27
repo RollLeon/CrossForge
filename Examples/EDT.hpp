@@ -24,8 +24,11 @@
 #include "Examples/edt/AIComponent.h"
 #include "Examples/edt/SteeringComponent.h"
 #include "Examples/edt/AiSystem.h"
+#include "Examples/levelloading/LevelLoader.h"
 #include <flecs.h>
 #include <iostream>
+#include <fstream>
+#include <json/json.h>
 
 namespace CForge {
     class EDT : public ExampleSceneBase {
@@ -37,18 +40,6 @@ namespace CForge {
         ~EDT(void) {
             clear();
         }//Destructor
-
-        void addObstacle(Vector3f pos){
-            auto obstacle = world.entity();
-            obstacle.add<SGNTransformation>();
-            obstacle.add<Obstacle>();
-
-            SGNTransformation *obstacle_position = obstacle.get_mut<SGNTransformation>();
-            obstacle_position->init(&m_RootSGN);
-            obstacle_position->translation(pos);
-            SGNGeometry *obstacle_geom = new SGNGeometry();
-            obstacle_geom->init(obstacle_position, &m_Trees[1]);
-        }
 
         void init(void) override {
             initWindowAndRenderDevice();
@@ -106,12 +97,12 @@ namespace CForge {
             m_Trees[2].init(&M);
             M.clear();
 
+            // load level
+            LevelLoader levelLoader;
+            levelLoader.loadLevel("Assets/Scene/szeneTest.json", &m_RootSGN, &world);
+
             // sceen graph node that holds our forest
             m_TreeGroupSGN.init(&m_RootSGN);
-
-            addObstacle(Vector3f(0.1,0,0));
-            addObstacle(Vector3f(5,0,2));
-            addObstacle(Vector3f(5,0,-2));
 
             float Area = 500.0f;    // square area [-Area, Area] on the xz-plane, where trees are planted
             float TreeCount = 1;    // number of trees to create
@@ -244,7 +235,7 @@ namespace CForge {
         SGNGeometry m_GroundSGN;
         SGNTransformation m_GroundTransformSGN;
 
-        StaticActor m_Trees[3];
+        StaticActor m_Trees[6];
         std::vector<SGNTransformation *> m_TreeTransformSGNs;
         std::vector<SGNGeometry *> m_TreeSGNs;
 

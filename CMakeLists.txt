@@ -57,7 +57,8 @@ else()
 # Additional packages not alreday included in the core library
 FIND_PACKAGE(tinyxml2 CONFIG REQUIRED)	# support for xml loading, storing, and processing
 FIND_PACKAGE(imgui CONFIG REQUIRED) # dear-imgui
-FIND_PACKAGE(flecs CONFIG REQUIRED) # dear-imgui
+FIND_PACKAGE(flecs CONFIG REQUIRED) # flecs
+FIND_PACKAGE(jsoncpp CONFIG REQUIRED) # json
 endif()
 
 
@@ -70,10 +71,10 @@ if(USE_OPENCV)
 	add_compile_definitions(USE_OPENCV)
 endif(USE_OPENCV)
 
-add_executable(CForgeSandbox 
+add_executable(CForgeSandbox
 	SandboxMain.cpp
 
-        Examples/edt/AIComponent.cpp Examples/edt/AIComponent.h Examples/edt/AiSystem.h Examples/edt/SteeringComponent.cpp Examples/edt/SteeringComponent.h)
+        Examples/edt/AIComponent.cpp Examples/edt/AIComponent.h Examples/edt/AiSystem.h Examples/edt/SteeringComponent.cpp Examples/edt/SteeringComponent.h Examples/levelloading/LevelLoader.h)
 
 if(EMSCRIPTEN)
 	target_link_Libraries(CForgeSandbox
@@ -91,6 +92,7 @@ elseif(WIN32)
 	PRIVATE tinyxml2::tinyxml2
 	PRIVATE imgui::imgui
 	PRIVATE flecs::flecs
+	PRIVATE JsonCpp::JsonCpp
 	${FREETYPE_LIBRARIES}
 
 	)
@@ -102,6 +104,7 @@ elseif(__arm__)
 		PRIVATE glad::glad
 		PRIVATE tinyxml2::tinyxml2
 		PRIVATE imgui::imgui
+		PRIVATE JsonCpp::JsonCpp
 #		PRIVATE assimp
 		PRIVATE gpiod
 		PRIVATE dl	
@@ -115,6 +118,7 @@ elseif(UNIX)
 		PRIVATE imgui::imgui
 #		PRIVATE assimp
 		PRIVATE flecs::flecs
+		PRIVATE JsonCpp::JsonCpp
 		PRIVATE dl	
 		)
 endif()
