@@ -2,9 +2,45 @@
 #include "SteeringSystem.h"
 #include "crossforge/Math/CForgeMath.h"
 #include "flecs.h"
+#include <iostream>
+#include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
+#include "AIComponent.h"
+#include "SteeringSystem.h"
+#include "Obstacle.h"
+
 
 namespace CForge {
 
+    void addSteeringSystem(flecs::world& world) {
+        world.system<SGNTransformation, AIComponent>("SteeringSystem")
+            .iter([&world](flecs::iter it, SGNTransformation* p, AIComponent* ai) {
+            for (int i : it) {
+                SteeringSystem::processEntity(it.delta_time(), ai[i], p[i], world);
+            }
+                });
+    }
+
+    void processEntity(float dt, AIComponent& ai, SGNTransformation& p, flecs::world& world) {
+        std::vector<Eigen::Vector3f> obstacles;
+        world.filter<SGNTransformation, Obstacle>()
+            .each([&obstacles](const SGNTransformation& t, Obstacle o) {
+            obstacles.push_back(t.translation());
+                });
+        std::sort(obstacles.begin(), obstacles.end(),
+            [&p](auto v1, auto v2) { return (p.translation() - v1).norm() < (p.translation() - v2).norm(); });
+        if (!ai.path.empty()) {
+            Eigen::Vector3f target = ai.path.front();
+            if (SteeringSystem::arrivedAtWayPoint(p.translation(), target)) {
+                ai.path.pop();
+            }
+            for (auto pos : obstacles) {
+                if (SteeringSystem::obstacleAvoidance(p, world, target, pos)) {
+                    break;
+                }
+            }
+            SteeringSystem::seekingBehavior(dt, target, p);
+        }
+    }
     bool SteeringSystem::obstacleIsInPath(SGNTransformation &p, Eigen::Vector3f &target,
                                              Eigen::Vector3f &obstaclePosition, float obstacleRadius,
                                              float robotRadius) {

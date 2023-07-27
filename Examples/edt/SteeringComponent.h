@@ -8,7 +8,9 @@ namespace CForge {
 
     class SteeringComponent {
     public:
-
+        float max_force;
+        float max_speed;
+        float mass;
     };
 
 } // CForge
