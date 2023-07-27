@@ -11,6 +11,7 @@ namespace CForge {
         float max_force;
         float max_speed;
         float mass;
+        float securityDistance;
     };
 
 } // CForge
