@@ -20,9 +20,6 @@
 namespace CForge {
     class LevelLoader {
     public:
-        //TODO: load entities
-        //TODO: dokumentation
-        //TODO: angi einweisen
         void loadLevel(std::string filePath, SGNTransformation *rootNode, flecs::world *world) {
             std::string content = SAssetIO::readTextFile(filePath);
             Json::Reader reader;
