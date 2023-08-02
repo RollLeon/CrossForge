@@ -16,7 +16,7 @@ namespace CForge {
             world.system<SGNTransformation, AIComponent, SteeringComponent, SGNGeometry>("SteeringSystem")
                 .iter([&world](flecs::iter it, SGNTransformation* p, AIComponent* ai, SteeringComponent* sc, SGNGeometry* geo) {
                 for (int i : it) {
-                    SteeringSystem::processEntity(it.delta_time(), ai[i], p[i], world);
+                    SteeringSystem::processEntity(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
                 }
                     });
         }
@@ -41,7 +41,7 @@ namespace CForge {
                     ai.path.pop();
                 }
                 for (auto pos : obstacles) {
-                    if (SteeringSystem::obstacleAvoidance(p, world, target, get<0>(pos), get<1>(pos),1,0.5f) {
+                    if (SteeringSystem::obstacleAvoidance(p, world, target, std::get<0>(pos), std::get<1>(pos),1,0.5f)) {
                         break;
                     }
                 }
