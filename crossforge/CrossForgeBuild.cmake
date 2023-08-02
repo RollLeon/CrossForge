@@ -242,7 +242,7 @@ add_library(crossforge SHARED
 	# Utility
 	crossforge/Utility/CForgeUtility.cpp
 
-  "../Examples/DialogGraph.hpp")
+)
 
 
 if(EMSCRIPTEN)
