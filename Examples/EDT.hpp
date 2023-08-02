@@ -163,6 +163,8 @@ namespace CForge {
             roboter.set_name("Roboter");
             roboter.add<AIComponent>();
             roboter.add<SGNTransformation>();
+            roboter.add<SGNGeometry>();
+            roboter.add<SteeringComponent>();
             auto transformation = roboter.get_mut<SGNTransformation>();
             transformation->init(&m_RootSGN);
             auto aic = roboter.get_mut<AIComponent>();
@@ -170,7 +172,7 @@ namespace CForge {
                 aic->path.push(Eigen::Vector3f(-10, 0, 1));
                 aic->path.push(Eigen::Vector3f(10, 0, -1));
             }
-            SGNGeometry *entityGeom = new SGNGeometry();
+            SGNGeometry *entityGeom = roboter.get_mut<SGNGeometry>();
             entityGeom->init(transformation, &m_Trees[0]);
             SteeringSystem::addSteeringSystem(world);
 

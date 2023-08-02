@@ -29,12 +29,12 @@ namespace CForge {
                 const Eigen::Matrix4f T = CForgeMath::translationMatrix(t.translation());
                 const Eigen::Matrix4f S = CForgeMath::scaleMatrix(t.scale());
                 const Eigen::Matrix4f ModelMat = T * R * S;
-                float obstalceRadius = geo.actor().getAABBradius(ModelMat);
-                obstacles.push_back({ t.translation(), obstalceRadius });
+                float obstalceRadius = geo.actor()->getAABBradius(ModelMat);
+                obstacles.emplace_back( t.translation(), obstalceRadius );
 
                     });
             std::sort(obstacles.begin(), obstacles.end(),
-                [&p](auto v1, auto v2) { return (p.translation() - v1).norm() < (p.translation() - v2).norm(); });
+                [&p](auto v1, auto v2) { return (p.translation() - std::get<0>(v1)).norm() < (p.translation() - std::get<0>(v2)).norm(); });
             if (!ai.path.empty()) {
                 Eigen::Vector3f target = ai.path.front();
                 if (SteeringSystem::arrivedAtWayPoint(p.translation(), target)) {

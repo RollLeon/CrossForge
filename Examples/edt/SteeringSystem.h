@@ -4,6 +4,8 @@
 #include <flecs.h>
 #include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
 #include "AIComponent.h"
+#include "SteeringComponent.h"
+#include "crossforge/Graphics/SceneGraph/SGNGeometry.h"
 
 namespace CForge {
 
