@@ -73,7 +73,7 @@ endif(USE_OPENCV)
 add_executable(CForgeSandbox 
 	SandboxMain.cpp
 
-	 "Examples/DialogGraph.hpp")
+	 Examples/DialogGraph.hpp)
 
 if(EMSCRIPTEN)
 	target_link_Libraries(CForgeSandbox
