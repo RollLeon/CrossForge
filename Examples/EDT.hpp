@@ -21,7 +21,11 @@
 
 #include <crossforge/MeshProcessing/PrimitiveShapeFactory.h>
 #include "ExampleSceneBase.hpp"
+#include "Examples/edt/AIComponent.h"
+#include "Examples/edt/SteeringComponent.h"
+#include "Examples/edt/AiSystem.h"
 #include <flecs.h>
+#include <iostream>
 
 namespace CForge {
     class EDT : public ExampleSceneBase {
@@ -33,6 +37,19 @@ namespace CForge {
         ~EDT(void) {
             clear();
         }//Destructor
+
+        void addObstacle(Vector3f pos) {
+            auto obstacle = world.entity();
+            obstacle.add<SGNTransformation>();
+            obstacle.add<SGNGeometry>();
+            obstacle.add<Obstacle>();
+
+            SGNTransformation *obstacle_position = obstacle.get_mut<SGNTransformation>();
+            obstacle_position->init(&m_RootSGN);
+            obstacle_position->translation(pos);
+            SGNGeometry *obstacle_geom = obstacle.get_mut<SGNGeometry>();
+            obstacle_geom->init(obstacle_position, &m_Trees[1]);
+        }
 
         void init(void) override {
             initWindowAndRenderDevice();
@@ -67,7 +84,7 @@ namespace CForge {
             m_GroundSGN.init(&m_GroundTransformSGN, &m_Ground);
 
             // load the tree models
-            SAssetIO::load("Assets/ExampleScenes/Trees/LowPolyTree_01.gltf", &M);
+            SAssetIO::load("Assets/placeholder/giesroboter.glb", &M);
             setMeshShader(&M, 0.8f, 0.04f);
             M.computePerVertexNormals();
             scaleAndOffsetModel(&M, 0.5f);
@@ -75,7 +92,7 @@ namespace CForge {
             m_Trees[0].init(&M);
             M.clear();
 
-            SAssetIO::load("Assets/ExampleScenes/Trees/LowPolyTree_02.gltf", &M);
+            SAssetIO::load("Assets/placeholder/zylinder.glb", &M);
             setMeshShader(&M, 0.8f, 0.04f);
             M.computePerVertexNormals();
             M.computeAxisAlignedBoundingBox();
@@ -93,8 +110,12 @@ namespace CForge {
             // sceen graph node that holds our forest
             m_TreeGroupSGN.init(&m_RootSGN);
 
+            addObstacle(Vector3f(0.1, 0, 0));
+            addObstacle(Vector3f(5, 0, 2));
+            addObstacle(Vector3f(5, 0, -2));
+
             float Area = 500.0f;    // square area [-Area, Area] on the xz-plane, where trees are planted
-            float TreeCount = 0;    // number of trees to create
+            float TreeCount = 1;    // number of trees to create
 
             for (uint32_t i = 0; i < TreeCount; ++i) {
                 // create the scene graph nodes
@@ -105,7 +126,7 @@ namespace CForge {
                 pTransformSGN = new SGNTransformation();
                 pTransformSGN->init(&m_TreeGroupSGN);
 
-                float TreeScale = CForgeMath::randRange(0.1f, 3.0f);
+                float TreeScale = CForgeMath::randRange(0.1f, 1.0f);
 
                 Vector3f TreePos = Vector3f::Zero();
                 TreePos.x() = CForgeMath::randRange(-Area, Area);
@@ -118,7 +139,7 @@ namespace CForge {
                 // choose one of the trees randomly
                 pGeomSGN = new SGNGeometry();
                 uint8_t TreeType = CForgeMath::rand() % 3;
-                pGeomSGN->init(pTransformSGN, &m_Trees[TreeType]);
+                pGeomSGN->init(pTransformSGN, &m_Trees[2]);
 
                 m_TreeTransformSGNs.push_back(pTransformSGN);
                 m_TreeSGNs.push_back(pGeomSGN);
@@ -139,21 +160,29 @@ namespace CForge {
             pKeybindings->color(0.0f, 0.0f, 0.0f, 1.0f);
             m_DrawHelpTexts = true;
 
-            myTreeEntity = world.entity();
-            myTreeEntity.add<SGNTransformation>();
-            auto transformation = myTreeEntity.get_mut<SGNTransformation>();
-            transformation->init(&m_RootSGN);
-            transformation->rotationDelta(
-                    (Quaternionf) AngleAxisf(CForgeMath::degToRad(-10 / 60.0f), Vector3f::UnitY()));
-            SGNGeometry *entityGeom = new SGNGeometry();
-            entityGeom->init(transformation, &m_Trees[0]);
+            roboter = world.entity();
+            roboter.set_name("Roboter");
+            roboter.add<AIComponent>();
+            roboter.add<SGNTransformation>();
+            roboter.add<SGNGeometry>();
+            roboter.add<SteeringComponent>();
 
-            move_sys = world.system<SGNTransformation>()
-                    .iter([](flecs::iter it, SGNTransformation *p) {
-                        for (int i: it) {
-                            p[i].update(it.delta_time());
-                        }
-                    });
+            auto steering = roboter.get_mut<SteeringComponent>();
+            steering->securityDistance = 1;
+            steering->mass = 500;
+            steering->max_force = 0.6;
+            steering->max_speed = 0.05;
+
+            auto transformation = roboter.get_mut<SGNTransformation>();
+            transformation->init(&m_RootSGN);
+            auto aic = roboter.get_mut<AIComponent>();
+            for (int i = 0; i < 10; i++) {
+                aic->path.push(Eigen::Vector3f(-10, 0, 1));
+                aic->path.push(Eigen::Vector3f(10, 0, -1));
+            }
+            SGNGeometry *entityGeom = roboter.get_mut<SGNGeometry>();
+            entityGeom->init(transformation, &m_Trees[0]);
+            SteeringSystem::addSteeringSystem(world);
 
         }//initialize
 
@@ -165,10 +194,6 @@ namespace CForge {
         }//clear
 
         void mainLoop(void) override {
-            countdown--;
-            if (countdown < 0 && myTreeEntity.is_alive()) {
-                myTreeEntity.destruct();
-            }
             m_RenderWin.update();
 
             defaultCameraUpdate(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse(), 0.1f * 60.0f / m_FPS, 0.5f, 2.0f);
@@ -178,6 +203,9 @@ namespace CForge {
                 CamPos.y() = 1.0f;
                 m_Cam.position(CamPos);
             }
+
+            if (!roboter.get_mut<AIComponent>()->path.empty())
+                m_TreeTransformSGNs.front()->translation(roboter.get_mut<AIComponent>()->path.front());
 
             m_SkyboxSG.update(60.0f / m_FPS);
             m_SG.update(60.0f / m_FPS);
@@ -200,7 +228,7 @@ namespace CForge {
             m_RenderWin.swapBuffers();
 
             updateFPS();
-            move_sys.run();
+            world.progress();
             // change between flying and walking mode
             if (m_RenderWin.keyboard()->keyPressed(Keyboard::KEY_F, true)) m_Fly = !m_Fly;
 
@@ -218,8 +246,7 @@ namespace CForge {
             for (uint32_t i = 0; i < pModel->vertexCount(); ++i) pModel->vertex(i) = Sc * pModel->vertex(i) - Offset;
         }//scaleModel
         flecs::world world;
-        flecs::entity myTreeEntity;
-        float countdown = 100 * 60;
+        flecs::entity roboter;
         flecs::system move_sys;
         SGNTransformation m_RootSGN;
 

@@ -72,6 +72,8 @@ namespace CForge {
 		void vsync(bool Enable, int8_t ThrottleFactor = 1);
 		bool vsync(int8_t *pThrottleFactor = nullptr)const;
 
+        void toggleCaptureMouse();
+
 		void makeCurrent(void)const;
 
 	private:
