@@ -74,7 +74,7 @@ endif(USE_OPENCV)
 add_executable(CForgeSandbox
 	SandboxMain.cpp
 
-        Examples/edt/AIComponent.cpp Examples/edt/AIComponent.h Examples/edt/AiSystem.h Examples/edt/SteeringComponent.cpp Examples/edt/SteeringComponent.h Examples/levelloading/LevelLoader.h)
+        Examples/edt/AIComponent.cpp Examples/edt/AIComponent.h Examples/edt/AiSystem.h  Examples/edt/SteeringComponent.h Examples/edt/SteeringSystem.cpp Examples/edt/SteeringSystem.h Examples/levelloading/LevelLoader.h)
 
 if(EMSCRIPTEN)
 	target_link_Libraries(CForgeSandbox
@@ -119,7 +119,7 @@ elseif(UNIX)
 #		PRIVATE assimp
 		PRIVATE flecs::flecs
 		PRIVATE JsonCpp::JsonCpp
-		PRIVATE dl	
+		PRIVATE dl
 		)
 endif()
 

@@ -41,6 +41,19 @@ namespace CForge {
             clear();
         }//Destructor
 
+        void addObstacle(Vector3f pos) {
+            auto obstacle = world.entity();
+            obstacle.add<SGNTransformation>();
+            obstacle.add<SGNGeometry>();
+            obstacle.add<Obstacle>();
+
+            SGNTransformation *obstacle_position = obstacle.get_mut<SGNTransformation>();
+            obstacle_position->init(&m_RootSGN);
+            obstacle_position->translation(pos);
+            SGNGeometry *obstacle_geom = obstacle.get_mut<SGNGeometry>();
+            obstacle_geom->init(obstacle_position, &m_Trees[1]);
+        }
+
         void init(void) override {
             initWindowAndRenderDevice();
             initCameraAndLights();
@@ -104,6 +117,10 @@ namespace CForge {
             // sceen graph node that holds our forest
             m_TreeGroupSGN.init(&m_RootSGN);
 
+            addObstacle(Vector3f(0.1, 0, 0));
+            addObstacle(Vector3f(5, 0, 2));
+            addObstacle(Vector3f(5, 0, -2));
+
             float Area = 500.0f;    // square area [-Area, Area] on the xz-plane, where trees are planted
             float TreeCount = 1;    // number of trees to create
 
@@ -154,6 +171,15 @@ namespace CForge {
             roboter.set_name("Roboter");
             roboter.add<AIComponent>();
             roboter.add<SGNTransformation>();
+            roboter.add<SGNGeometry>();
+            roboter.add<SteeringComponent>();
+
+            auto steering = roboter.get_mut<SteeringComponent>();
+            steering->securityDistance = 1;
+            steering->mass = 500;
+            steering->max_force = 0.6;
+            steering->max_speed = 0.05;
+
             auto transformation = roboter.get_mut<SGNTransformation>();
             transformation->init(&m_RootSGN);
             auto aic = roboter.get_mut<AIComponent>();
@@ -161,9 +187,9 @@ namespace CForge {
                 aic->path.push(Eigen::Vector3f(-10, 0, 1));
                 aic->path.push(Eigen::Vector3f(10, 0, -1));
             }
-            SGNGeometry *entityGeom = new SGNGeometry();
+            SGNGeometry *entityGeom = roboter.get_mut<SGNGeometry>();
             entityGeom->init(transformation, &m_Trees[0]);
-            AiSystem::addAiSystem(world);
+            SteeringSystem::addSteeringSystem(world);
 
         }//initialize
 

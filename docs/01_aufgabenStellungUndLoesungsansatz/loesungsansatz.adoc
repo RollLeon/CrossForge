@@ -73,6 +73,8 @@ image::01/jewel.jpg[]
 
 = Minimum Viable Produkt
 
+image::01/mvp.png[]
+
 * Setting
 ** zwei Terassen mit Pflanzen
 ** Rampen gehen von einer Terrase zur nächsten

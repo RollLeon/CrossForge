@@ -59,3 +59,50 @@ Siehe xref:../01_aufgabenStellungUndLoesungsansatz/loesungsansatz.adoc[Lösungsa
 - Angelique erstellt das 3D Modell für den Gießroboter und zwei Pflanzenmodelle
 - Leon beliest sich zu ECS, sucht eine Bibliothek aus und integriert diese in CrossForge
 - Linus kümmert sich um das Multiagentensystem
+
+== Meeting 12.06:
+* Welche Informationen müssen in die Abschlussarbeit?
+* Scope nochmal hinterfragen: ist das MVP ok? ->wenn ja, bleiben bei CrossForge, wenn nicht dann wechsel zu Unity
+** wenn MVP oder mit Unity mehr ->dann mit Unity mehr?
+* Unzufriedenheit mit CrossForge:
+** Fortschritt ist extrem langsam
+** im Code nachschauen, wie was funktioniert
+** vieles, was in Unity schon fertig ist, müssen wir erst noch Implementieren
+*** Einlesezeit bei CrossForge und Unity gleich ->bei CrossForge kommt Implementierungszeit noch dazu
+*** wenn wir CrossForge verwenden, dann programmieren wir die Engine und nicht die Aufgabenstellung/HybridSocieties
+** Unity ist besser dokumentiert ->Frustfaktor geringer
+
+** Unity zu lernen wäre Vorteilhaft, weil man das später noch einsetzen könnte
+
+* Linus hat vorgeschlagen sich eine Stunde für jeden pro Woche zu nehmen, um gemeinsam Probleme aus dem Weg zu räumen
+* Carlo hat angemerkt, dass die Aufgaben kleiner geschnitten werden sollten -> Kommt vielleicht noch mal darauf zurück
+
+* Unterhaltung über Konventionen
+** Formatting
+** Linter
+
+== Meeting 13.06 mit Betreuer
+
+* Wie ist die Abschlussabriet aufgebaut? Welche Informationen müssen in die Abschlussarbeit?
+** Antwort:
+** Aufbau: Motivation,
+** 10 Seiten pro Person
+** Qualtität besser als Quantität
+** Wer hat welchen Teil gemacht
+** Seperates Kapitel, verbindung von den Themen
+** Evaluation Kapitel
+** Unterschied zu Abschlussarbeit: auf Theorie muss nicht stark eingegangen werden
+** Was wollten wir machen wollten, wie hat es funktioniert
+
+* Scope nochmal hinterfragen: ist das MVP ok? ->wenn ja, bleiben bei CrossForge, wenn nicht dann wechsel zu Unity
+** Antwort:
+** das höchste Ziel ist, dass wir etwas lernen
+** MVP für Ende des SS23 Semesters
+** nächstes Semester sollte für stabilität genutzt werden
+
+* Linus springt nimmt sich Zeit für alle
+** Antwort: guter Ansatz
+
+* Muss die strikte Definition des Multi Agentenystems eingehalten werden?
+** Antwort: Nein, diese strikte Paper Definition muss nicht eingehalten werden. Man muss sich das Leben nicht schwerer machen als nötig.
+* 18. Juli 14:00 im BBB ist nächstes Treffen mit Betreuer
