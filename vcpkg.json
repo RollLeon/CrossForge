@@ -1,22 +1,12 @@
 {
-	"name": "crossforge",
-	"version":  "0.1",
-	"dependencies": [
-		"eigen3",
-		"glad",
-		"glfw3",
-		"assimp",
-		"freetype",
-		"libigl",
-		"libwebp",
-		"tinyxml2",
-		"tinygltf",
-		"flecs",
-		{
-			"name": "imgui",
-			"default-features": false,
-			"features": [ "opengl3-binding", "glfw-binding" ]
-		}
-	]
+  "name" : "crossforge",
+  "version" : "0.1",
+  "dependencies" : [ "eigen3", "glad", "glfw3", "assimp", "freetype", "libigl", "libwebp", "tinyxml2", "tinygltf", "flecs", {
+    "name" : "imgui",
+    "default-features" : false,
+    "features" : [ "opengl3-binding", "glfw-binding" ]
+  }, {
+    "name" : "jsoncpp",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(jsoncpp CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE JsonCpp::JsonCpp)\n"
+  } ]
 }
-

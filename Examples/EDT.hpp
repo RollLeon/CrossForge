@@ -24,8 +24,11 @@
 #include "Examples/edt/AIComponent.h"
 #include "Examples/edt/SteeringComponent.h"
 #include "Examples/edt/AiSystem.h"
+#include "Examples/levelloading/LevelLoader.h"
 #include <flecs.h>
 #include <iostream>
+#include <fstream>
+#include <json/json.h>
 
 namespace CForge {
     class EDT : public ExampleSceneBase {
@@ -106,6 +109,10 @@ namespace CForge {
             M.computeAxisAlignedBoundingBox();
             m_Trees[2].init(&M);
             M.clear();
+
+            // load level
+            LevelLoader levelLoader;
+            levelLoader.loadLevel("Assets/Scene/szeneTest.json", &m_RootSGN, &world);
 
             // sceen graph node that holds our forest
             m_TreeGroupSGN.init(&m_RootSGN);
@@ -254,7 +261,7 @@ namespace CForge {
         SGNGeometry m_GroundSGN;
         SGNTransformation m_GroundTransformSGN;
 
-        StaticActor m_Trees[3];
+        StaticActor m_Trees[6];
         std::vector<SGNTransformation *> m_TreeTransformSGNs;
         std::vector<SGNGeometry *> m_TreeSGNs;
 
