@@ -24,6 +24,8 @@
 #include "Examples/edt/AIComponent.h"
 #include "Examples/edt/SteeringComponent.h"
 #include "Examples/edt/AiSystem.h"
+#include "Examples/edt/PositionComponent.h"
+#include "Examples/edt/GeometryComponent.h"
 #include <flecs.h>
 #include <iostream>
 
@@ -42,7 +44,10 @@ namespace CForge {
             auto obstacle = world.entity();
             obstacle.add<SGNTransformation>();
             obstacle.add<SGNGeometry>();
+            obstacle.add<PositionComponent>();
+            obstacle.add<GeometryComponent>();
             obstacle.add<Obstacle>();
+
 
             SGNTransformation *obstacle_position = obstacle.get_mut<SGNTransformation>();
             obstacle_position->init(&m_RootSGN);
@@ -165,6 +170,8 @@ namespace CForge {
             roboter.add<AIComponent>();
             roboter.add<SGNTransformation>();
             roboter.add<SGNGeometry>();
+            roboter.add<PositionComponent>();
+            roboter.add<GeometryComponent>();
             roboter.add<SteeringComponent>();
 
             auto steering = roboter.get_mut<SteeringComponent>();
