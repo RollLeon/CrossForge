@@ -16,6 +16,10 @@
 			"name": "imgui",
 			"default-features": false,
 			"features": [ "opengl3-binding", "glfw-binding" ]
+		},
+		{
+			"name": "jsoncpp",
+			"default-features": false
 		}
 	]
 }

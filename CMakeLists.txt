@@ -58,6 +58,7 @@ else()
 FIND_PACKAGE(tinyxml2 CONFIG REQUIRED)	# support for xml loading, storing, and processing
 FIND_PACKAGE(imgui CONFIG REQUIRED) # dear-imgui
 FIND_PACKAGE(flecs CONFIG REQUIRED) # dear-imgui
+FIND_PACKAGE(jsoncpp CONFIG REQUIRED)
 endif()
 
 
@@ -72,8 +73,7 @@ endif(USE_OPENCV)
 
 add_executable(CForgeSandbox 
 	SandboxMain.cpp
-
-	 Examples/DialogGraph.hpp)
+)
 
 if(EMSCRIPTEN)
 	target_link_Libraries(CForgeSandbox
@@ -91,6 +91,8 @@ elseif(WIN32)
 	PRIVATE tinyxml2::tinyxml2
 	PRIVATE imgui::imgui
 	PRIVATE flecs::flecs
+	jsoncpp_lib jsoncpp_object JsonCpp::JsonCpp
+	#${JSONCPP_LINK_LIBRARIES}
 	${FREETYPE_LIBRARIES}
 
 	)

@@ -7,11 +7,11 @@
       "playerSpeaking": true,
       "answers": [
         {
-          "text": "Das ist schön",
+          "text": "Das ist schoen",
           "playerSpeaking": false,
           "answers": [
             {
-              "text": "Tschüss",
+              "text": "Tschuess",
               "playerSpeaking": true
             }
           ]
@@ -27,7 +27,7 @@
           "playerSpeaking": false,
           "answers": [
             {
-              "text": "Tschüss",
+              "text": "Tschuess",
               "playerSpeaking": true
             }
           ]

@@ -183,35 +183,7 @@ namespace CForge {
                 std::cout << "Failed to init imGUI for OpenGL" << std::endl;
             }
 
-            Dialoggraph finishDialog;
-            finishDialog.text="Tschüss";
-            finishDialog.playerSpeaking = true;
-
-            Dialoggraph goodanswerAnswer;
-            goodanswerAnswer.text = "Das ist schön :)";
-            goodanswerAnswer.playerSpeaking = false;
-            goodanswerAnswer.answers.push_back(finishDialog);
-
-            Dialoggraph goodanswer;
-            goodanswer.text = "Mir geht es gut.";
-            goodanswer.playerSpeaking = true;
-            goodanswer.answers.push_back(goodanswerAnswer);
-
-            Dialoggraph badanswerAnswer;
-            badanswerAnswer.text = "Das ist schade :(";
-            badanswerAnswer.playerSpeaking = false;
-            badanswerAnswer.answers.push_back(finishDialog);
-
-            Dialoggraph badanswer;
-            badanswer.text = "Mir geht es schlecht.";
-            badanswer.playerSpeaking = true;
-            badanswer.answers.push_back(badanswerAnswer);
-
-            dialog.text = "Hallo, wie geht es dir?";
-            dialog.playerSpeaking = false;
-
-            dialog.answers.push_back(goodanswer);
-            dialog.answers.push_back(badanswer);
+            dialog.init("../../../Examples/conversation.json");
 
         }//initialize
 
@@ -266,8 +238,8 @@ namespace CForge {
                 Dialoggraph currentDialog = dialog;
                 for (int selected: conversationProgress) {
                     currentDialog = currentDialog.answers[selected];
-                    if (currentDialog.playerSpeaking) {
-                        currentDialog = currentDialog.answers[0];
+                    if (currentDialog.playerSpeaking && !currentDialog.answers.empty()) {
+                         currentDialog = currentDialog.answers[0];
                     }
                 }
                 ImGui::NewFrame();
