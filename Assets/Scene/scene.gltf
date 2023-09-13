@@ -288,12 +288,12 @@
 		{
 			"bufferView":21,
 			"mimeType":"image/png",
-			"name":"zaun-modified"
+			"name":"fence"
 		},
 		{
 			"bufferView":30,
 			"mimeType":"image/png",
-			"name":"gel\u00e4nder-modified"
+			"name":"railing"
 		}
 	],
 	"accessors":[
