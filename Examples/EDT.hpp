@@ -23,6 +23,7 @@
 #include "ExampleSceneBase.hpp"
 #include "Examples/edt/AIComponent.h"
 #include "Examples/edt/SteeringComponent.h"
+#include "Examples/edt/RenderingSystem.h"
 #include "Examples/edt/AiSystem.h"
 #include "Examples/edt/PositionComponent.h"
 #include "Examples/edt/GeometryComponent.h"
@@ -44,8 +45,8 @@ namespace CForge {
             auto obstacle = world.entity();
             obstacle.add<SGNTransformation>();
             obstacle.add<SGNGeometry>();
-            obstacle.add<PositionComponent>();
-            obstacle.add<GeometryComponent>();
+            //obstacle.add<PositionComponent>();
+            //obstacle.add<GeometryComponent>();
             obstacle.add<Obstacle>();
 
 
@@ -54,6 +55,9 @@ namespace CForge {
             obstacle_position->translation(pos);
             SGNGeometry *obstacle_geom = obstacle.get_mut<SGNGeometry>();
             obstacle_geom->init(obstacle_position, &m_Trees[1]);
+
+            //auto obst_geometry = obstacle.get_mut<GeometryComponent>();
+            //obst_geometry->actor = &m_Trees[1];
         }
 
         void init(void) override {
@@ -165,13 +169,30 @@ namespace CForge {
             pKeybindings->color(0.0f, 0.0f, 0.0f, 1.0f);
             m_DrawHelpTexts = true;
 
+            test = world.entity();
+            test.set_name("test");
+            test.add<PositionComponent>();
+            test.add<GeometryComponent>();
+
+            auto geometry_test = test.get_mut<GeometryComponent>();
+            geometry_test->actor = &m_Trees[2];
+
+            auto test_pos = test.get_mut<PositionComponent>();
+            test_pos->m_Translation = Eigen::Vector3f(0.0, 0.0, 0.0);
+            test_pos->m_Scale = Eigen::Vector3f(1.0,1.0,1.0); 
+
+
+
+
+
+
             roboter = world.entity();
             roboter.set_name("Roboter");
             roboter.add<AIComponent>();
             roboter.add<SGNTransformation>();
             roboter.add<SGNGeometry>();
-            roboter.add<PositionComponent>();
-            roboter.add<GeometryComponent>();
+            //roboter.add<PositionComponent>();
+            //roboter.add<GeometryComponent>();
             roboter.add<SteeringComponent>();
 
             auto steering = roboter.get_mut<SteeringComponent>();
@@ -191,6 +212,9 @@ namespace CForge {
             entityGeom->init(transformation, &m_Trees[0]);
             SteeringSystem::addSteeringSystem(world);
 
+            
+
+            RenderingSystem::addRenderingSystem(world, &m_RenderDev);
         }//initialize
 
         void clear(void) override {
@@ -254,6 +278,7 @@ namespace CForge {
         }//scaleModel
         flecs::world world;
         flecs::entity roboter;
+        flecs::entity test;
         flecs::system move_sys;
         SGNTransformation m_RootSGN;
 
