@@ -8,6 +8,10 @@ namespace CForge {
     class GeometryComponent {
     public:
         IRenderableActor* actor;
+
+        void init(IRenderableActor *pActor) {
+            actor = pActor;
+        }
     };
 
 }

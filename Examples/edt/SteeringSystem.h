@@ -2,10 +2,11 @@
 #define STEERINGSYSTEM_H
 
 #include <flecs.h>
-#include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
 #include "AIComponent.h"
 #include "SteeringComponent.h"
 #include "crossforge/Graphics/SceneGraph/SGNGeometry.h"
+#include "PositionComponent.h"
+#include "GeometryComponent.h"
 
 namespace CForge {
 
@@ -13,15 +14,15 @@ namespace CForge {
     public:
         static void addSteeringSystem(flecs::world& world);
 
-        static void processEntity(float dt, AIComponent& ai, SGNTransformation& p, SteeringComponent& sc, SGNGeometry& geo, flecs::world& world);
+        static void processEntity(float dt, AIComponent& ai, PositionComponent& p, SteeringComponent& sc, GeometryComponent& geo, flecs::world& world);
 
-        static bool obstacleIsInPath(SGNTransformation& p,Eigen::Vector3f& target, Eigen::Vector3f& obstaclePosition, float obstacleRadius, float robotRadius, float securityDistance);
+        static bool obstacleIsInPath(PositionComponent& p,Eigen::Vector3f& target, Eigen::Vector3f& obstaclePosition, float obstacleRadius, float robotRadius, float securityDistance);
 
-        static bool obstacleAvoidance(SGNTransformation& p, flecs::world& world, Eigen::Vector3f& target, Eigen::Vector3f& obstacle, float obstacleRadius, float roboterRadius, float securityDistance);
+        static bool obstacleAvoidance(PositionComponent& p, flecs::world& world, Eigen::Vector3f& target, Eigen::Vector3f& obstacle, float obstacleRadius, float roboterRadius, float securityDistance);
 
         static bool arrivedAtWayPoint(Eigen::Vector3f position, Eigen::Vector3f target);
 
-        static void seekingBehavior(float dt, Eigen::Vector3f targetPosition, SGNTransformation& p, SteeringComponent& sc);
+        static void seekingBehavior(float dt, Eigen::Vector3f targetPosition, PositionComponent& p, SteeringComponent& sc);
     };
 
 } // CForge

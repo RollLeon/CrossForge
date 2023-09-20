@@ -23,7 +23,6 @@
 #include "ExampleSceneBase.hpp"
 #include "Examples/edt/AIComponent.h"
 #include "Examples/edt/SteeringComponent.h"
-#include "Examples/edt/RenderingSystem.h"
 #include "Examples/edt/AiSystem.h"
 #include "Examples/edt/PositionComponent.h"
 #include "Examples/edt/GeometryComponent.h"
@@ -43,18 +42,16 @@ namespace CForge {
 
         void addObstacle(Vector3f pos) {
             auto obstacle = world.entity();
-            obstacle.add<SGNTransformation>();
-            obstacle.add<SGNGeometry>();
-            //obstacle.add<PositionComponent>();
-            //obstacle.add<GeometryComponent>();
+            obstacle.add<PositionComponent>();
+            obstacle.add<GeometryComponent>();
             obstacle.add<Obstacle>();
 
 
-            SGNTransformation *obstacle_position = obstacle.get_mut<SGNTransformation>();
-            obstacle_position->init(&m_RootSGN);
-            obstacle_position->translation(pos);
-            SGNGeometry *obstacle_geom = obstacle.get_mut<SGNGeometry>();
-            obstacle_geom->init(obstacle_position, &m_Trees[1]);
+            PositionComponent *obstacle_position = obstacle.get_mut<PositionComponent>();
+            obstacle_position->init();
+            obstacle_position->m_Translation = pos;
+            GeometryComponent *obstacle_geom = obstacle.get_mut<GeometryComponent>();
+            obstacle_geom->init(&m_Trees[1]);
 
             //auto obst_geometry = obstacle.get_mut<GeometryComponent>();
             //obst_geometry->actor = &m_Trees[1];
@@ -179,20 +176,14 @@ namespace CForge {
 
             auto test_pos = test.get_mut<PositionComponent>();
             test_pos->m_Translation = Eigen::Vector3f(0.0, 0.0, 0.0);
-            test_pos->m_Scale = Eigen::Vector3f(1.0,1.0,1.0); 
-
-
-
-
+            test_pos->m_Scale = Eigen::Vector3f(1.0, 1.0, 1.0);
 
 
             roboter = world.entity();
             roboter.set_name("Roboter");
             roboter.add<AIComponent>();
-            roboter.add<SGNTransformation>();
-            roboter.add<SGNGeometry>();
-            //roboter.add<PositionComponent>();
-            //roboter.add<GeometryComponent>();
+            roboter.add<PositionComponent>();
+            roboter.add<GeometryComponent>();
             roboter.add<SteeringComponent>();
 
             auto steering = roboter.get_mut<SteeringComponent>();
@@ -201,20 +192,16 @@ namespace CForge {
             steering->max_force = 0.6;
             steering->max_speed = 0.05;
 
-            auto transformation = roboter.get_mut<SGNTransformation>();
-            transformation->init(&m_RootSGN);
+            auto transformation = roboter.get_mut<PositionComponent>();
+            transformation->init();
             auto aic = roboter.get_mut<AIComponent>();
             for (int i = 0; i < 10; i++) {
                 aic->path.push(Eigen::Vector3f(-10, 0, 1));
                 aic->path.push(Eigen::Vector3f(10, 0, -1));
             }
-            SGNGeometry *entityGeom = roboter.get_mut<SGNGeometry>();
-            entityGeom->init(transformation, &m_Trees[0]);
+            GeometryComponent *entityGeom = roboter.get_mut<GeometryComponent>();
+            entityGeom->init(&m_Trees[0]);
             SteeringSystem::addSteeringSystem(world);
-
-            
-
-            RenderingSystem::addRenderingSystem(world, &m_RenderDev);
         }//initialize
 
         void clear(void) override {
@@ -244,10 +231,12 @@ namespace CForge {
             m_RenderDev.activePass(RenderDevice::RENDERPASS_SHADOW, &m_Sun);
             m_RenderDev.activeCamera(const_cast<VirtualCamera *>(m_Sun.camera()));
             m_SG.render(&m_RenderDev);
+            renderEntities(&m_RenderDev);
 
             m_RenderDev.activePass(RenderDevice::RENDERPASS_GEOMETRY);
             m_RenderDev.activeCamera(&m_Cam);
             m_SG.render(&m_RenderDev);
+            renderEntities(&m_RenderDev);
 
             m_RenderDev.activePass(RenderDevice::RENDERPASS_LIGHTING);
 
@@ -259,7 +248,7 @@ namespace CForge {
             m_RenderWin.swapBuffers();
 
             updateFPS();
-            world.progress();
+            world.progress(60.0f / m_FPS);
             // change between flying and walking mode
             if (m_RenderWin.keyboard()->keyPressed(Keyboard::KEY_F, true)) m_Fly = !m_Fly;
 
@@ -268,6 +257,15 @@ namespace CForge {
         }//run
 
     protected:
+
+        void renderEntities(RenderDevice *pRDev) {
+            world.query<PositionComponent, GeometryComponent>()
+                    .iter([pRDev](flecs::iter it, PositionComponent *p, GeometryComponent *geo) {
+                        for (int i: it) {
+                            pRDev->requestRendering(geo[i].actor, p[i].m_Rotation, p[i].m_Translation, p[i].m_Scale);
+                        }
+                    });
+        }
 
         void scaleAndOffsetModel(T3DMesh<float> *pModel, float Factor, Vector3f Offset = Vector3f::Zero()) {
             Matrix3f Sc = Matrix3f::Identity();
