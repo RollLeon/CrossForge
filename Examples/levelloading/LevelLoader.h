@@ -41,6 +41,7 @@ namespace CForge {
                 entity.add<PositionComponent>();
                 entity.add<GeometryComponent>();
                 PositionComponent *entityPosition = entity.get_mut<PositionComponent>();
+                entityPosition->init();
                 entityPosition->rotation(rotation);
                 entityPosition->scale(scale);
                 entityPosition->translation(position);
@@ -105,8 +106,6 @@ namespace CForge {
                 steering->max_force = 0.6;
                 steering->max_speed = 0.05;
 
-                auto transformation = entity.get_mut<PositionComponent>();
-                transformation->init();
                 auto aic = entity.get_mut<AIComponent>();
                 for (int i = 0; i < 10; i++) {
                     aic->path.push(Eigen::Vector3f(-10, 0, 1));
