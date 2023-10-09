@@ -37,15 +37,17 @@ namespace CForge {
                 Eigen::Vector3f scale(entities[i]["scale"]["x"].asFloat(),
                                       entities[i]["scale"]["y"].asFloat(),
                                       entities[i]["scale"]["z"].asFloat());
+                auto entity = world->entity();
+                entity.add<PositionComponent>();
+                entity.add<GeometryComponent>();
+                PositionComponent *entityPosition = entity.get_mut<PositionComponent>();
+                entityPosition->rotation(rotation);
+                entityPosition->scale(scale);
+                entityPosition->translation(position);
+                GeometryComponent *obstacle_geom = entity.get_mut<GeometryComponent>();
+                obstacle_geom->init(getStaticActor("Assets/Models/" + entities[i]["path"].asString()));
 
-
-                SGNTransformation *obstacle_position = new SGNTransformation();
-                obstacle_position->init(rootNode);
-                obstacle_position->rotation(rotation);
-                obstacle_position->scale(scale);
-                obstacle_position->translation(position);
-                SGNGeometry *obstacle_geom = new SGNGeometry();
-                obstacle_geom->init(obstacle_position, getStaticActor("Assets/Models/" + entities[i]["path"].asString()));
+                initEntityWithType(entity, entities[i]["name"].asString());
             }
             //load static geometry
             SGNTransformation *static_geom_position = new SGNTransformation();
@@ -88,6 +90,29 @@ namespace CForge {
 
                 pMat->VertexShaderForwardPass.push_back("Shader/ForwardPassPBS.vert");
                 pMat->FragmentShaderForwardPass.push_back("Shader/ForwardPassPBS.frag");
+            }
+        }
+
+        void initEntityWithType(flecs::entity &entity, string name) {
+            std::cout << name << std::endl;
+            if (name.find("robot") != std::string::npos) {
+                entity.set_name(name.c_str());
+                entity.add<SteeringComponent>();
+                entity.add<AIComponent>();
+
+                auto steering = entity.get_mut<SteeringComponent>();
+                steering->securityDistance = 1;
+                steering->mass = 500;
+                steering->max_force = 0.6;
+                steering->max_speed = 0.05;
+
+                auto transformation = entity.get_mut<PositionComponent>();
+                transformation->init();
+                auto aic = entity.get_mut<AIComponent>();
+                for (int i = 0; i < 10; i++) {
+                    aic->path.push(Eigen::Vector3f(-10, 0, 1));
+                    aic->path.push(Eigen::Vector3f(10, 0, -1));
+                }
             }
         }
 

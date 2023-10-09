@@ -2,7 +2,7 @@
     "entities": [
         {
             "name": "monstera",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": 28.345470428466797,
                 "y": 48.90876007080078,
@@ -21,7 +21,7 @@
         },
         {
             "name": "monstera.001",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": 15.915336608886719,
                 "y": 48.90094757080078,
@@ -40,7 +40,7 @@
         },
         {
             "name": "monstera.002",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": -23.100299835205078,
                 "y": 48.90094757080078,
@@ -59,7 +59,7 @@
         },
         {
             "name": "monstera.003",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": -13.626579284667969,
                 "y": 48.90094757080078,
@@ -78,7 +78,7 @@
         },
         {
             "name": "monstera.004",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": -5.443027019500732,
                 "y": 48.90094757080078,
@@ -97,7 +97,7 @@
         },
         {
             "name": "monstera.005",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": 11.983329772949219,
                 "y": 48.90094757080078,
@@ -116,7 +116,7 @@
         },
         {
             "name": "monstera.006",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": 34.98211669921875,
                 "y": 4.016193389892578,
@@ -135,7 +135,7 @@
         },
         {
             "name": "monstera.007",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": 21.374279022216797,
                 "y": 4.008380889892578,
@@ -154,7 +154,7 @@
         },
         {
             "name": "monstera.008",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": -23.100299835205078,
                 "y": 4.008380889892578,
@@ -173,7 +173,7 @@
         },
         {
             "name": "monstera.009",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": -32.7956657409668,
                 "y": 4.008380889892578,
@@ -192,7 +192,7 @@
         },
         {
             "name": "monstera.010",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": -5.443027019500732,
                 "y": 4.008380889892578,
@@ -211,7 +211,7 @@
         },
         {
             "name": "monstera.011",
-            "path": "..\\Models\\monstera_merged.gltf",
+            "path": "../Models/monstera_merged.gltf",
             "position": {
                 "x": 11.983329772949219,
                 "y": 4.008380889892578,
@@ -230,7 +230,7 @@
         },
         {
             "name": "robot.001",
-            "path": "..\\Models\\robot_merged.gltf",
+            "path": "../Models/robot_merged.gltf",
             "position": {
                 "x": 0.1479175090789795,
                 "y": 48.905677795410156,
@@ -249,7 +249,7 @@
         },
         {
             "name": "robot.002",
-            "path": "..\\Models\\robot_merged.gltf",
+            "path": "../Models/robot_merged.gltf",
             "position": {
                 "x": 0.1479175090789795,
                 "y": 4.013111114501953,
@@ -268,7 +268,7 @@
         },
         {
             "name": "small_plant",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": 8.207703590393066,
                 "y": 48.905860900878906,
@@ -287,7 +287,7 @@
         },
         {
             "name": "small_plant.001",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": 12.868377685546875,
                 "y": 48.905860900878906,
@@ -306,7 +306,7 @@
         },
         {
             "name": "small_plant.002",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": 29.96739959716797,
                 "y": 48.905860900878906,
@@ -325,7 +325,7 @@
         },
         {
             "name": "small_plant.003",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": 1.2121448516845703,
                 "y": 48.905860900878906,
@@ -344,7 +344,7 @@
         },
         {
             "name": "small_plant.004",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": -30.581480026245117,
                 "y": 48.905860900878906,
@@ -363,7 +363,7 @@
         },
         {
             "name": "small_plant.005",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": -26.830387115478516,
                 "y": 48.905860900878906,
@@ -382,7 +382,7 @@
         },
         {
             "name": "small_plant.006",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": -7.264461517333984,
                 "y": 48.905860900878906,
@@ -401,7 +401,7 @@
         },
         {
             "name": "small_plant.007",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": -7.914376735687256,
                 "y": 48.905860900878906,
@@ -420,7 +420,7 @@
         },
         {
             "name": "small_plant.008",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": 14.262557029724121,
                 "y": 4.013294219970703,
@@ -439,7 +439,7 @@
         },
         {
             "name": "small_plant.009",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": 12.868377685546875,
                 "y": 4.013294219970703,
@@ -458,7 +458,7 @@
         },
         {
             "name": "small_plant.010",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": 29.96739959716797,
                 "y": 4.013294219970703,
@@ -477,7 +477,7 @@
         },
         {
             "name": "small_plant.011",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": 1.2121448516845703,
                 "y": 4.013294219970703,
@@ -496,7 +496,7 @@
         },
         {
             "name": "small_plant.012",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": -38.98609161376953,
                 "y": 4.013294219970703,
@@ -515,7 +515,7 @@
         },
         {
             "name": "small_plant.013",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": -26.830387115478516,
                 "y": 4.013294219970703,
@@ -534,7 +534,7 @@
         },
         {
             "name": "small_plant.014",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": -5.769082069396973,
                 "y": 4.013294219970703,
@@ -553,7 +553,7 @@
         },
         {
             "name": "small_plant.015",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": -6.767777442932129,
                 "y": 4.013294219970703,
@@ -572,7 +572,7 @@
         },
         {
             "name": "small_plant.016",
-            "path": "..\\Models\\small_plant_merged.gltf",
+            "path": "../Models/small_plant_merged.gltf",
             "position": {
                 "x": 3.988758087158203,
                 "y": 4.013294219970703,

@@ -123,7 +123,7 @@ namespace CForge {
 
             // load level
             LevelLoader levelLoader;
-            levelLoader.loadLevel("Assets/Scene/szeneTest.json", &m_RootSGN, &world);
+            levelLoader.loadLevel("Assets/Scene/scene.json", &m_RootSGN, &world);
 
             // sceen graph node that holds our forest
             m_TreeGroupSGN.init(&m_RootSGN);
@@ -190,29 +190,6 @@ namespace CForge {
             test_pos->m_Translation = Eigen::Vector3f(0.0, 0.0, 0.0);
             test_pos->m_Scale = Eigen::Vector3f(1.0, 1.0, 1.0);
 
-
-            roboter = world.entity();
-            roboter.set_name("Roboter");
-            roboter.add<AIComponent>();
-            roboter.add<PositionComponent>();
-            roboter.add<GeometryComponent>();
-            roboter.add<SteeringComponent>();
-
-            auto steering = roboter.get_mut<SteeringComponent>();
-            steering->securityDistance = 1;
-            steering->mass = 500;
-            steering->max_force = 0.6;
-            steering->max_speed = 0.05;
-
-            auto transformation = roboter.get_mut<PositionComponent>();
-            transformation->init();
-            auto aic = roboter.get_mut<AIComponent>();
-            for (int i = 0; i < 10; i++) {
-                aic->path.push(Eigen::Vector3f(-10, 0, 1));
-                aic->path.push(Eigen::Vector3f(10, 0, -1));
-            }
-            GeometryComponent *entityGeom = roboter.get_mut<GeometryComponent>();
-            entityGeom->init(&m_Trees[0]);
             SteeringSystem::addSteeringSystem(world);
 
             IMGUI_CHECKVERSION();
@@ -236,7 +213,7 @@ namespace CForge {
                 std::cout << "Failed to init imGUI for OpenGL" << std::endl;
             }
 
-            dialog.init("../../../Examples/conversation.json");
+            dialog.init("Assets/Dialogs/conversation.json");
 
         }//initialize
 
@@ -258,9 +235,6 @@ namespace CForge {
                 CamPos.y() = 1.0f;
                 m_Cam.position(CamPos);
             }
-
-            if (!roboter.get_mut<AIComponent>()->path.empty())
-                m_TreeTransformSGNs.front()->translation(roboter.get_mut<AIComponent>()->path.front());
 
             m_SkyboxSG.update(60.0f / m_FPS);
             m_SG.update(60.0f / m_FPS);
@@ -345,7 +319,6 @@ namespace CForge {
             for (uint32_t i = 0; i < pModel->vertexCount(); ++i) pModel->vertex(i) = Sc * pModel->vertex(i) - Offset;
         }//scaleModel
         flecs::world world;
-        flecs::entity roboter;
         flecs::entity test;
         flecs::system move_sys;
         SGNTransformation m_RootSGN;
