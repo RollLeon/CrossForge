@@ -57,8 +57,8 @@ else()
 # Additional packages not alreday included in the core library
 FIND_PACKAGE(tinyxml2 CONFIG REQUIRED)	# support for xml loading, storing, and processing
 FIND_PACKAGE(imgui CONFIG REQUIRED) # dear-imgui
-FIND_PACKAGE(flecs CONFIG REQUIRED) # flecs
-FIND_PACKAGE(jsoncpp CONFIG REQUIRED) # json
+FIND_PACKAGE(flecs CONFIG REQUIRED) # dear-imgui
+FIND_PACKAGE(jsoncpp CONFIG REQUIRED)
 endif()
 
 

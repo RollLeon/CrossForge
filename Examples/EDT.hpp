@@ -28,7 +28,12 @@
 #include "Examples/edt/GeometryComponent.h"
 #include "Examples/levelloading/LevelLoader.h"
 #include <flecs.h>
+#include <imgui.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_glfw.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
+#include "DialogGraph.hpp"
 #include <fstream>
 #include <json/json.h>
 
@@ -209,6 +214,30 @@ namespace CForge {
             GeometryComponent *entityGeom = roboter.get_mut<GeometryComponent>();
             entityGeom->init(&m_Trees[0]);
             SteeringSystem::addSteeringSystem(world);
+
+            IMGUI_CHECKVERSION();
+            ImGui::CreateContext();
+
+            ImGuiIO &io = ImGui::GetIO();
+            (void) io;
+
+            io.Fonts->AddFontFromFileTTF(
+                    "Assets/Fonts/NotoSerif/NotoSerif-Regular.ttf",
+                    24.0f,
+                    NULL,
+                    NULL
+            );
+
+            // setup platform/renderer bindings
+            if (!ImGui_ImplGlfw_InitForOpenGL(glfwGetCurrentContext(), true)) {
+                std::cout << "Failed to init imGUI for window" << std::endl;
+            }
+            if (!ImGui_ImplOpenGL3_Init()) {
+                std::cout << "Failed to init imGUI for OpenGL" << std::endl;
+            }
+
+            dialog.init("../../../Examples/conversation.json");
+
         }//initialize
 
         void clear(void) override {
@@ -221,6 +250,7 @@ namespace CForge {
         void mainLoop(void) override {
             m_RenderWin.update();
 
+            toggleCursor();
             defaultCameraUpdate(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse(), 0.1f * 60.0f / m_FPS, 0.5f, 2.0f);
             // make sure to always walk on the ground if not flying
             if (!m_Fly) {
@@ -251,6 +281,39 @@ namespace CForge {
             m_SkyboxSG.render(&m_RenderDev);
             if (m_FPSLabelActive) m_FPSLabel.render(&m_RenderDev);
             if (m_DrawHelpTexts) drawHelpTexts();
+
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+
+            bool test = true;
+            ImVec2 size = {0, 0};
+
+            if (gamestate == DIALOG) {
+                Dialoggraph currentDialog = dialog;
+                for (int selected: conversationProgress) {
+                    currentDialog = currentDialog.answers[selected];
+                    if (currentDialog.playerSpeaking && !currentDialog.answers.empty()) {
+                         currentDialog = currentDialog.answers[0];
+                    }
+                }
+                ImGui::NewFrame();
+                ImGui::SetNextWindowSize(size);
+                ImGui::Begin("test", &test, ImGuiWindowFlags_NoTitleBar);
+                ImGui::Text(currentDialog.text.c_str());
+                for (int i = 0; i < currentDialog.answers.size(); i++) {
+                    if (ImGui::Button(currentDialog.answers[i].text.c_str())) {
+                        conversationProgress.push_back(i);
+                    }
+                }
+                if (currentDialog.answers.empty()) {
+                    gamestate = GAMEPLAY;
+                    conversationProgress.clear();
+                }
+                ImGui::End();
+                ImGui::EndFrame();
+                ImGui::Render();
+                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            }
 
             m_RenderWin.swapBuffers();
 
@@ -298,6 +361,9 @@ namespace CForge {
         SGNTransformation m_TreeGroupSGN;
 
         bool m_Fly;
+
+        Dialoggraph dialog;
+        vector<int> conversationProgress;
     };//EDT
 
 }//name space

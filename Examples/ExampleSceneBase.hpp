@@ -47,6 +47,8 @@
 #include <glad/glad.h>
 #include <thread>
 
+#include <GLFW/glfw3.h>
+
 #endif
 
 using namespace Eigen;
@@ -283,7 +285,7 @@ namespace CForge {
             if (nullptr == pKeyboard) throw NullpointerExcept("pKeyboard");
             if (nullptr == pMouse) throw NullpointerExcept("pMouse");
 
-            float S = 1.0f;
+            if (gamestate == GAMEPLAY) {float S = 1.0f;
             if (pKeyboard->keyPressed(Keyboard::KEY_LEFT_SHIFT)) S = SpeedScale;
 
             if (pKeyboard->keyPressed(Keyboard::KEY_W)) pCamera->forward(S * MovementSpeed);
@@ -319,7 +321,7 @@ namespace CForge {
             if (std::abs(MouseDelta.x()) > std::numeric_limits<float>::epsilon()) {
                 pCamera->rotY(CForgeMath::degToRad(-0.1f * RotationSpeed * MouseDelta.x()));
             }
-
+}
             pMouse->movement(Eigen::Vector2f::Zero());
         }//defaultCameraUpdate
 
@@ -340,7 +342,9 @@ namespace CForge {
                 takeScreenshot(ScreenshotURI);
             }
 
-
+if (m_RenderWin.keyboard()->keyPressed(Keyboard::KEY_C, true)) {
+                gamestate = gamestate == GAMEPLAY ? DIALOG : GAMEPLAY;
+            }
             if (pKeyboard->keyPressed(Keyboard::KEY_ESCAPE)) {
 #ifdef __EMSCRIPTEN__
                 emscripten_cancel_main_loop();
@@ -350,7 +354,9 @@ namespace CForge {
             }
         }//defaultKeyboardUpdate
 
-        void takeScreenshot(std::string Filepath) {
+        void toggleCursor() {
+            glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, gamestate == DIALOG ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+        }void takeScreenshot(std::string Filepath) {
             T2DImage<uint8_t> ColorBuffer;
             CForgeUtility::retrieveFrameBuffer(&ColorBuffer);
             SAssetIO::store(Filepath, &ColorBuffer);
@@ -435,6 +441,10 @@ namespace CForge {
 
         std::vector<LineOfText *> m_HelpTexts;
         bool m_DrawHelpTexts;
+    enum GameState {
+            GAMEPLAY, DIALOG            // DIALOG: Maus nicht disabled, sodass mit imgui interagiert werden kann, Kamera starr, Spieler reagiert nicht auf Tasteneingaben wie WASD
+        };                              // GAMEPLAY: Cursor gefangen, Kamera beweglich, Spieler kann sich bewegen
+        GameState gamestate = GAMEPLAY;
     };//ExampleMinimumGraphicsSetup
 
 }
