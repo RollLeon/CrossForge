@@ -94,7 +94,6 @@ namespace CForge {
         }
 
         void initEntityWithType(flecs::entity &entity, string name) {
-            std::cout << name << std::endl;
             if (name.find("robot") != std::string::npos) {
                 entity.set_name(name.c_str());
                 entity.add<SteeringComponent>();

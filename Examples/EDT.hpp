@@ -48,23 +48,6 @@ namespace CForge {
             clear();
         }//Destructor
 
-        void addObstacle(Vector3f pos) {
-            auto obstacle = world.entity();
-            obstacle.add<PositionComponent>();
-            obstacle.add<GeometryComponent>();
-            obstacle.add<Obstacle>();
-
-
-            PositionComponent *obstacle_position = obstacle.get_mut<PositionComponent>();
-            obstacle_position->init();
-            obstacle_position->m_Translation = pos;
-            GeometryComponent *obstacle_geom = obstacle.get_mut<GeometryComponent>();
-            obstacle_geom->init(&m_Trees[1]);
-
-            //auto obst_geometry = obstacle.get_mut<GeometryComponent>();
-            //obst_geometry->actor = &m_Trees[1];
-        }
-
         void init(void) override {
             initWindowAndRenderDevice();
             initCameraAndLights();
@@ -97,78 +80,13 @@ namespace CForge {
             m_GroundTransformSGN.init(&m_RootSGN);
             m_GroundSGN.init(&m_GroundTransformSGN, &m_Ground);
 
-            // load the tree models
-            SAssetIO::load("Assets/placeholder/giesroboter.glb", &M);
-            setMeshShader(&M, 0.8f, 0.04f);
-            M.computePerVertexNormals();
-            scaleAndOffsetModel(&M, 0.5f);
-            M.computeAxisAlignedBoundingBox();
-            m_Trees[0].init(&M);
-            M.clear();
-
-            SAssetIO::load("Assets/placeholder/zylinder.glb", &M);
-            setMeshShader(&M, 0.8f, 0.04f);
-            M.computePerVertexNormals();
-            M.computeAxisAlignedBoundingBox();
-            m_Trees[1].init(&M);
-            M.clear();
-
-            SAssetIO::load("Assets/ExampleScenes/Trees/LowPolyTree_03.gltf", &M);
-            setMeshShader(&M, 0.8f, 0.04f);
-            M.computePerVertexNormals();
-            scaleAndOffsetModel(&M, 5.0f, Vector3f(0.0f, 0.25f, 0.0f));
-            M.computeAxisAlignedBoundingBox();
-            m_Trees[2].init(&M);
-            M.clear();
-
             // load level
             LevelLoader levelLoader;
             levelLoader.loadLevel("Assets/Scene/scene.json", &m_RootSGN, &world);
 
-            // sceen graph node that holds our forest
-            m_TreeGroupSGN.init(&m_RootSGN);
-
-            addObstacle(Vector3f(0.1, 0, 0));
-            addObstacle(Vector3f(5, 0, 2));
-            addObstacle(Vector3f(5, 0, -2));
-
-            float Area = 500.0f;    // square area [-Area, Area] on the xz-plane, where trees are planted
-            float TreeCount = 1;    // number of trees to create
-
-            for (uint32_t i = 0; i < TreeCount; ++i) {
-                // create the scene graph nodes
-                SGNGeometry *pGeomSGN = nullptr;
-                SGNTransformation *pTransformSGN = nullptr;
-
-                // initialize position and scaling of the tree
-                pTransformSGN = new SGNTransformation();
-                pTransformSGN->init(&m_TreeGroupSGN);
-
-                float TreeScale = CForgeMath::randRange(0.1f, 1.0f);
-
-                Vector3f TreePos = Vector3f::Zero();
-                TreePos.x() = CForgeMath::randRange(-Area, Area);
-                TreePos.z() = CForgeMath::randRange(-Area, Area);
-
-                pTransformSGN->translation(TreePos);
-                pTransformSGN->scale(Vector3f(TreeScale, TreeScale, TreeScale));
-
-                // initialize geometry
-                // choose one of the trees randomly
-                pGeomSGN = new SGNGeometry();
-                uint8_t TreeType = CForgeMath::rand() % 3;
-                pGeomSGN->init(pTransformSGN, &m_Trees[2]);
-
-                m_TreeTransformSGNs.push_back(pTransformSGN);
-                m_TreeSGNs.push_back(pGeomSGN);
-
-            }//for[TreeCount]
-
             // change sun settings to cover this large area
             m_Sun.position(Vector3f(100.0f, 1000.0f, 500.0f));
             m_Sun.initShadowCasting(2048 * 2, 2048 * 2, Vector2i(1000, 1000), 1.0f, 5000.0f);
-
-            m_Fly = false;
 
             // create help text
             LineOfText *pKeybindings = new LineOfText();
@@ -177,18 +95,6 @@ namespace CForge {
             m_HelpTexts.push_back(pKeybindings);
             pKeybindings->color(0.0f, 0.0f, 0.0f, 1.0f);
             m_DrawHelpTexts = true;
-
-            test = world.entity();
-            test.set_name("test");
-            test.add<PositionComponent>();
-            test.add<GeometryComponent>();
-
-            auto geometry_test = test.get_mut<GeometryComponent>();
-            geometry_test->actor = &m_Trees[2];
-
-            auto test_pos = test.get_mut<PositionComponent>();
-            test_pos->m_Translation = Eigen::Vector3f(0.0, 0.0, 0.0);
-            test_pos->m_Scale = Eigen::Vector3f(1.0, 1.0, 1.0);
 
             SteeringSystem::addSteeringSystem(world);
 
@@ -229,12 +135,6 @@ namespace CForge {
 
             toggleCursor();
             defaultCameraUpdate(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse(), 0.1f * 60.0f / m_FPS, 0.5f, 2.0f);
-            // make sure to always walk on the ground if not flying
-            if (!m_Fly) {
-                Vector3f CamPos = m_Cam.position();
-                CamPos.y() = 1.0f;
-                m_Cam.position(CamPos);
-            }
 
             m_SkyboxSG.update(60.0f / m_FPS);
             m_SG.update(60.0f / m_FPS);
@@ -294,8 +194,6 @@ namespace CForge {
             updateFPS();
             world.progress(60.0f / m_FPS);
             // change between flying and walking mode
-            if (m_RenderWin.keyboard()->keyPressed(Keyboard::KEY_F, true)) m_Fly = !m_Fly;
-
             defaultKeyboardUpdate(m_RenderWin.keyboard());
 
         }//run
@@ -311,29 +209,17 @@ namespace CForge {
                     });
         }
 
-        void scaleAndOffsetModel(T3DMesh<float> *pModel, float Factor, Vector3f Offset = Vector3f::Zero()) {
-            Matrix3f Sc = Matrix3f::Identity();
-            Sc(0, 0) = Factor;
-            Sc(1, 1) = Factor;
-            Sc(2, 2) = Factor;
-            for (uint32_t i = 0; i < pModel->vertexCount(); ++i) pModel->vertex(i) = Sc * pModel->vertex(i) - Offset;
-        }//scaleModel
         flecs::world world;
-        flecs::entity test;
-        flecs::system move_sys;
         SGNTransformation m_RootSGN;
 
         StaticActor m_Ground;
         SGNGeometry m_GroundSGN;
         SGNTransformation m_GroundTransformSGN;
 
-        StaticActor m_Trees[6];
         std::vector<SGNTransformation *> m_TreeTransformSGNs;
         std::vector<SGNGeometry *> m_TreeSGNs;
 
         SGNTransformation m_TreeGroupSGN;
-
-        bool m_Fly;
 
         Dialoggraph dialog;
         vector<int> conversationProgress;
