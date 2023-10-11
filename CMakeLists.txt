@@ -59,6 +59,7 @@ FIND_PACKAGE(tinyxml2 CONFIG REQUIRED)	# support for xml loading, storing, and p
 FIND_PACKAGE(imgui CONFIG REQUIRED) # dear-imgui
 FIND_PACKAGE(flecs CONFIG REQUIRED) # dear-imgui
 FIND_PACKAGE(jsoncpp CONFIG REQUIRED)
+FIND_PACKAGE(recastnavigation CONFIG REQUIRED)
 endif()
 
 
@@ -71,7 +72,7 @@ if(USE_OPENCV)
 	add_compile_definitions(USE_OPENCV)
 endif(USE_OPENCV)
 
-add_executable(CForgeSandbox
+add_executable(CForgeSandbox 
 	SandboxMain.cpp
 
         Examples/edt/AIComponent.cpp Examples/edt/AIComponent.h Examples/edt/AiSystem.h  Examples/edt/SteeringComponent.h Examples/edt/SteeringSystem.cpp Examples/edt/SteeringSystem.h Examples/levelloading/LevelLoader.h)
@@ -94,7 +95,7 @@ elseif(WIN32)
 	PRIVATE flecs::flecs
 	PRIVATE JsonCpp::JsonCpp
 	${FREETYPE_LIBRARIES}
-
+	RecastNavigation::Detour RecastNavigation::Recast RecastNavigation::DebugUtils RecastNavigation::DetourCrowd
 	)
 	
 elseif(__arm__)
@@ -107,7 +108,8 @@ elseif(__arm__)
 		PRIVATE JsonCpp::JsonCpp
 #		PRIVATE assimp
 		PRIVATE gpiod
-		PRIVATE dl	
+		PRIVATE dl
+		RecastNavigation::Detour RecastNavigation::Recast RecastNavigation::DebugUtils RecastNavigation::DetourCrowd
 		)
 elseif(UNIX)
 	target_link_libraries(CForgeSandbox 
@@ -120,6 +122,8 @@ elseif(UNIX)
 		PRIVATE flecs::flecs
 		PRIVATE JsonCpp::JsonCpp
 		PRIVATE dl
+		PRIVATE dl
+		RecastNavigation::Detour RecastNavigation::Recast RecastNavigation::DebugUtils RecastNavigation::DetourCrowd
 		)
 endif()
 
