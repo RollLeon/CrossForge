@@ -1,0 +1,50 @@
+== Team Retro am 12.10.2023
+
+Vorab wichtig zu sagen:
+
+* kein Fingerpointing und Schuldzuweisungen, sondern Konstruktive Kritik. Eine Retro ist dazu da, um fehlstände zu beheben.
+* alle Nummern sind von eins bis fünf, wobei eins das Schlechteste ist und fünf das Beste
+
+=== Ablauf
+
+. Check in
+. Brainstorm (Was lief gut/schlecht/ist verbesserungswürdig)
+. Groupieren der Ideen
+. Abstimmen, welche Gruppen näher diskutiert werden sollen
+. Diskussion
+. Aktionen ableiten
+. Check out
+
+=== Check In: Happiness auf einer Skala von eins bis fünf
+
+. Wie geht es dir heute?
+. Wie zufrieden bist du mit:
+.. der Teamzusammenstellung
+.. deiner Aufgabe?
+.. deinem Fortschritt?
+.. dem Projektfortschritt?
+.. den Tools, die wir einsetzen?
+.. dem Prozess?
+.. dem Produkt, was wir abliefern?
+. Wie viel Spaß hast du?
+. Wie viel lernst du?
+. Hast du eine klare Vorstellung von unserer Mission? (*1:* _Ich habe überhaupt keine Idee, wo die Reise hingeht und warum wir die Dinge tun, die wir tun._ *5:* _Ich weiß genau wo wir hinwollen und freue mich aufs Ziel_)
+. Siehst du dich eher als Spieler oder Spielfigur (*1:* Ich bin nur eine Spielfigur und habe keinen Einfluss, was wir bauen oder wie wir es bauen, *5:* Ich habe die volle Kontrolle über unser Endergebnis)
+
+
+=== Retroteil
+
+==== Was lief gut?
+
+==== Was lief schlecht?
+
+==== Was verwirrt uns?
+
+==== Was sollten wir anders machen?
+
+=== Welche Konsquenzen wollen wir daraus ziehen?
+
+=== Check Out: Return on Investment
+
+* Feedback zur Retro
+* Auf Skala von eins bis fünf wie hilfreich fandest du den Austausch?
