@@ -36,6 +36,7 @@
 #include "DialogGraph.hpp"
 #include <fstream>
 #include <json/json.h>
+#include <tinyfsm.hpp>
 
 namespace CForge {
     class EDT : public ExampleSceneBase {
