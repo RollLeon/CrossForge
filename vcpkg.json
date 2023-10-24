@@ -12,6 +12,7 @@
 		"tinyxml2",
 		"tinygltf",
 		"flecs",
+		"behaviortree-cpp",
 		"tinyfsm",
 		{
 			"name": "imgui",
