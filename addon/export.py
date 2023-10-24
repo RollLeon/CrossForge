@@ -24,27 +24,64 @@ bl_info = {
 
 import bpy
 import json
-
+from copy import copy
 
 def write_data(context, filepath, format):
     print("writing scene data...")
     f = open(filepath, 'w', encoding='utf-8')
     f.write(build_json())
     f.close()
+
+    print("saving static geometry")
+    save_static_geometry()
+
     print("FINISHED")
 
     return {'FINISHED'}
 #----- end func -----
 
+def recursive_show(collection):
+    collection.hide_viewport = False
+    for c in collection.children:
+        recursive_show(c)
+
+def save_static_geometry():
+    bpy.ops.object.select_all(action='DESELECT')
+    for c in bpy.data.collections:
+        c.hide_viewport = True
+    recursive_show(bpy.data.collections["static"])
+    bpy.ops.export_scene.gltf(filepath=bpy.data.filepath.replace(".blend",".gltf"),use_visible=True,export_format='GLTF_SEPARATE')
+    for c in bpy.data.collections:
+        c.hide_viewport = False
+
+already_exported = []
+
+
+def export_model(obj, cleaned_path):
+    if cleaned_path not in already_exported:
+        bpy.ops.object.select_all(action='DESELECT')
+        obj.select_set(True)
+        temp_location = copy(obj.location)
+        temp_rotation = copy(obj.rotation_euler)
+        temp_scale = copy(obj.scale)
+        bpy.ops.object.location_clear()
+        bpy.ops.object.scale_clear()
+        #export only selected
+        print("Saving: ", cleaned_path)
+        bpy.ops.export_scene.gltf(filepath=bpy.path.abspath("//"+cleaned_path),use_selection=True,export_format='GLTF_SEPARATE')
+        already_exported.append(cleaned_path)
+        obj.location = temp_location
+        obj.rotation_euler = temp_rotation
+        obj.scale = temp_scale
 
 def build_json():
     dict = {}
     dict["entities"] = []
-
-
+    bpy.ops.object.mode_set(mode='OBJECT')
     for obj in bpy.data.objects:
         if(not (obj.instance_collection == None)):
             cleaned_path = obj.instance_collection.library.filepath.replace(".blend",".gltf").replace("//","")
+            export_model(obj=obj, cleaned_path=cleaned_path)
             entity = {"name":obj.name, "path": cleaned_path}
             # z and y needs to be switched since in blender z is UP
             entity["position"] = {"x":obj.location.x, "y":obj.location.z, "z":obj.location.y}
