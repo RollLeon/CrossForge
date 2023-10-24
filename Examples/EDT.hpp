@@ -83,7 +83,7 @@ namespace CForge {
 
             // load level
             LevelLoader levelLoader;
-            levelLoader.loadLevel("Assets/Scene/scene.json", &m_RootSGN, &world);
+            levelLoader.loadLevel("Assets/Scene/end_mvp.json", &m_RootSGN, &world);
 
             // change sun settings to cover this large area
             m_Sun.position(Vector3f(100.0f, 1000.0f, 500.0f));
