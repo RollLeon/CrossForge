@@ -18,7 +18,7 @@ namespace CForge {
     public:
         static void addPathSystem(flecs::world &world) {
             world.system<SGNTransformation, PathComponent>("PathSystem")
-                    .iter([&world](flecs::iter it, SGNTransformation *p, AIComponent *ai) {
+                    .iter([&world](flecs::iter it, SGNTransformation *p, PathComponent*ai) {
                         for (int i: it) {
                             PathSystem::processEntity(it.delta_time(), ai[i], p[i], world);
                         }

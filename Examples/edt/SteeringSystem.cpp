@@ -3,7 +3,7 @@
 #include "crossforge/Math/CForgeMath.h"
 #include "flecs.h"
 #include <iostream>
-#include "AIComponent.h"
+#include "PathComponent.h"
 #include "SteeringSystem.h"
 #include "Obstacle.h"
 #include "SteeringComponent.h"
@@ -14,8 +14,8 @@
 
 namespace CForge {
     void SteeringSystem::addSteeringSystem(flecs::world &world) {
-        world.system<PositionComponent, AIComponent, SteeringComponent, GeometryComponent>("SteeringSystem")
-                .iter([&world](flecs::iter it, PositionComponent *p, AIComponent *ai, SteeringComponent *sc,
+        world.system<PositionComponent, PathComponent, SteeringComponent, GeometryComponent>("SteeringSystem")
+                .iter([&world](flecs::iter it, PositionComponent *p, PathComponent *ai, SteeringComponent *sc,
                                GeometryComponent *geo) {
                     for (int i: it) {
                         SteeringSystem::processEntity(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
@@ -23,7 +23,7 @@ namespace CForge {
                 });
     }
 
-    void SteeringSystem::processEntity(float dt, AIComponent &ai, PositionComponent &p, SteeringComponent &sc,
+    void SteeringSystem::processEntity(float dt, PathComponent &ai, PositionComponent &p, SteeringComponent &sc,
                                        GeometryComponent &geo, flecs::world &world) {
         float robotRadius = geo.actor->boundingVolume().boundingSphere().radius() * p.scale().x();
         std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
