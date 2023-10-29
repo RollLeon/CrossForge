@@ -21,9 +21,9 @@
 
 #include <crossforge/MeshProcessing/PrimitiveShapeFactory.h>
 #include "ExampleSceneBase.hpp"
-#include "Examples/edt/AIComponent.h"
+#include "Examples/edt/PathComponent.h"
 #include "Examples/edt/SteeringComponent.h"
-#include "Examples/edt/AiSystem.h"
+#include "Examples/edt/PathSystem.h"
 #include "Examples/edt/PositionComponent.h"
 #include "Examples/edt/GeometryComponent.h"
 #include "Examples/levelloading/LevelLoader.h"

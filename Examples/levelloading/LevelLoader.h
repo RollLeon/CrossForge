@@ -98,7 +98,7 @@ namespace CForge {
             if (name.find("robot") != std::string::npos) {
                 entity.set_name(name.c_str());
                 entity.add<SteeringComponent>();
-                entity.add<AIComponent>();
+                entity.add<PathComponent>();
 
                 auto steering = entity.get_mut<SteeringComponent>();
                 steering->securityDistance = 1;
@@ -106,11 +106,29 @@ namespace CForge {
                 steering->max_force = 0.6;
                 steering->max_speed = 0.05;
 
-                auto aic = entity.get_mut<AIComponent>();
+                auto pathComponent = entity.get_mut<PathComponent>();
                 for (int i = 0; i < 10; i++) {
-                    aic->path.push(Eigen::Vector3f(-10, 0, 1));
-                    aic->path.push(Eigen::Vector3f(10, 0, -1));
+                    pathComponent->path.push(Eigen::Vector3f(-10, 0, 1));
+                    pathComponent->path.push(Eigen::Vector3f(10, 0, -1));
                 }
+            }
+            else if (name.find("monstera") != std::string::npos) {
+                entity.set_name(name.c_str());
+                entity.add<PlantComponent>();
+                entity.add<ObstacleComponent>();
+                
+                auto plant = entity.get_mut<PlantComponent>();
+                plant->waterLevel = 5.0;
+
+            }
+            else if (name.find("small_plant") != std::string::npos) {
+                entity.set_name(name.c_str());
+                entity.add<PlantComponent>();
+                entity.add<ObstacleComponent>();
+
+                auto plant = entity.get_mut<PlantComponent>();
+                plant->waterLevel = 5.0;
+
             }
         }
 
