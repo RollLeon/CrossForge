@@ -17,6 +17,7 @@
 #include "crossforge/Graphics/SceneGraph/SGNGeometry.h"
 #include "crossforge/Graphics/Actors/StaticActor.h"
 
+
 namespace CForge {
     class LevelLoader {
     public:
@@ -112,22 +113,16 @@ namespace CForge {
                     pathComponent->path.push(Eigen::Vector3f(10, 0, -1));
                 }
             }
-            else if (name.find("monstera") != std::string::npos) {
+            else if (name.find("monstera"|| "small_plant") != std::string::npos) {
                 entity.set_name(name.c_str());
                 entity.add<PlantComponent>();
                 entity.add<ObstacleComponent>();
                 
                 auto plant = entity.get_mut<PlantComponent>();
-                plant->waterLevel = 5.0;
-
-            }
-            else if (name.find("small_plant") != std::string::npos) {
-                entity.set_name(name.c_str());
-                entity.add<PlantComponent>();
-                entity.add<ObstacleComponent>();
-
-                auto plant = entity.get_mut<PlantComponent>();
-                plant->waterLevel = 5.0;
+                float LO = 1.0;
+                float HI = 10.0;
+                float random = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
+                plant->waterLevel = random;
 
             }
         }

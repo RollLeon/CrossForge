@@ -1,7 +1,3 @@
-//
-// Created by private on 22.06.23.
-//
-
 #ifndef CFORGESANDBOX_PATHCOMPONENT_H
 #define CFORGESANDBOX_PATHCOMPONENT_H
 
