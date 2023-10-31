@@ -59,6 +59,7 @@ FIND_PACKAGE(tinyxml2 CONFIG REQUIRED)	# support for xml loading, storing, and p
 FIND_PACKAGE(imgui CONFIG REQUIRED) # dear-imgui
 FIND_PACKAGE(flecs CONFIG REQUIRED) # dear-imgui
 FIND_PACKAGE(jsoncpp CONFIG REQUIRED)
+FIND_PACKAGE(Bullet CONFIG REQUIRED)
 endif()
 
 
@@ -93,6 +94,7 @@ elseif(WIN32)
 	PRIVATE imgui::imgui
 	PRIVATE flecs::flecs
 	PRIVATE JsonCpp::JsonCpp
+	PRIVATE ${BULLET_LIBRARIES}
 	${FREETYPE_LIBRARIES}
 
 	)
@@ -107,7 +109,8 @@ elseif(__arm__)
 		PRIVATE JsonCpp::JsonCpp
 #		PRIVATE assimp
 		PRIVATE gpiod
-		PRIVATE dl	
+		PRIVATE dl
+		PRIVATE ${BULLET_LIBRARIES}
 		)
 elseif(UNIX)
 	target_link_libraries(CForgeSandbox 
@@ -120,6 +123,7 @@ elseif(UNIX)
 		PRIVATE flecs::flecs
 		PRIVATE JsonCpp::JsonCpp
 		PRIVATE dl
+		PRIVATE ${BULLET_LIBRARIES}
 		)
 endif()
 
