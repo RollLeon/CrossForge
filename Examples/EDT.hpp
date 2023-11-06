@@ -37,6 +37,8 @@
 #include <fstream>
 #include <json/json.h>
 #include <tinyfsm.hpp>
+#include "Examples/edt/PlantSystem.h"
+#include "Examples/edt/PlantComponent.h"
 
 namespace CForge {
     class EDT : public ExampleSceneBase {
@@ -122,6 +124,8 @@ namespace CForge {
 
             dialog.init("Assets/Dialogs/conversation.json");
 
+            
+
         }//initialize
 
         void clear(void) override {
@@ -144,6 +148,10 @@ namespace CForge {
             m_RenderDev.activeCamera(const_cast<VirtualCamera *>(m_Sun.camera()));
             m_SG.render(&m_RenderDev);
             renderEntities(&m_RenderDev);
+
+            
+            PlantSystem::reduceWaterLevel(world);
+
 
             m_RenderDev.activePass(RenderDevice::RENDERPASS_GEOMETRY);
             m_RenderDev.activeCamera(&m_Cam);
@@ -209,6 +217,8 @@ namespace CForge {
                         }
                     });
         }
+
+        
 
         flecs::world world;
         SGNTransformation m_RootSGN;

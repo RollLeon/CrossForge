@@ -11,6 +11,7 @@
 #include "PathComponent.h"
 #include "SteeringSystem.h"
 #include "Obstacle.h"
+#include "PathRequestComponent.h"
 
 namespace CForge {
 
@@ -43,7 +44,10 @@ namespace CForge {
             vecQueue.push(targetPosition);
         }
 
-        
+        static void addTarget(PathRequestComponent &prc, std::queue<Eigen::Vector3f>& vecQueue) {
+            Eigen::Vector3f targetPosition = prc.destination;
+            vecQueue.push(targetPosition);
+        };
 
 
     };

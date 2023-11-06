@@ -10,14 +10,19 @@ namespace CForge {
 
 
 
-    void PlantSystem::reduceWaterLevel(PlantComponent &p) {
-        // Check if the water level is greater than the decrease rate
-        if (p.waterLevel > waterDecreaseRate) {
-            p.waterLevel -= waterDecreaseRate;
-        }
-        else {
-            p.waterLevel = 0; // Ensure the water level doesn't go negative
-        }
+    void PlantSystem::reduceWaterLevel(flecs::world& world) {
+        world.query<PlantComponent>()
+            .iter([&world](flecs::iter it, PlantComponent* p) {
+                for (int i : it) {
+                    // Check if the water level is greater than the decrease rate
+                    if (p[i].waterLevel > waterDecreaseRate) {
+                        p[i].waterLevel -= waterDecreaseRate;
+                    }
+                    else {
+                        p[i].waterLevel = 0; // Ensure the water level doesn't go negative
+                    }
+                }
+            });
     }
 
     void PlantSystem::increaseWaterLevel(PlantComponent &p) {
