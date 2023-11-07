@@ -100,6 +100,7 @@ namespace CForge {
             m_DrawHelpTexts = true;
 
             SteeringSystem::addSteeringSystem(world);
+            PathSystem::addPathSystem(world);
 
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();

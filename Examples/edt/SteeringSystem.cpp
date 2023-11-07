@@ -5,7 +5,7 @@
 #include <iostream>
 #include "PathComponent.h"
 #include "SteeringSystem.h"
-#include "Obstacle.h"
+#include "ObstacleComponent.h"
 #include "SteeringComponent.h"
 #include "crossforge/Graphics/SceneGraph/SGNGeometry.h"
 #include "PositionComponent.h"
@@ -27,8 +27,8 @@ namespace CForge {
                                        GeometryComponent &geo, flecs::world &world) {
         float robotRadius = geo.actor->boundingVolume().boundingSphere().radius() * p.scale().x();
         std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
-        world.filter<PositionComponent, Obstacle, GeometryComponent>()
-                .each([&obstacles](const PositionComponent &t, Obstacle o, GeometryComponent geo) {
+        world.filter<PositionComponent, ObstacleComponent, GeometryComponent>()
+                .each([&obstacles](const PositionComponent &t, ObstacleComponent o, GeometryComponent geo) {
                     float obstalceRadius = geo.actor->boundingVolume().boundingSphere().radius() * t.scale().x();
                     obstacles.emplace_back(t.translation(), obstalceRadius);
                 });

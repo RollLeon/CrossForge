@@ -10,7 +10,7 @@
 #include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
 #include "PathComponent.h"
 #include "SteeringSystem.h"
-#include "Obstacle.h"
+#include "ObstacleComponent.h"
 #include "PathRequestComponent.h"
 
 namespace CForge {
@@ -18,37 +18,18 @@ namespace CForge {
     class PathSystem {
     public:
         static void addPathSystem(flecs::world &world) {
-            world.system<SGNTransformation, PathComponent>("PathSystem")
-                    .iter([&world](flecs::iter it, SGNTransformation *p, PathComponent*ai) {
-                        for (int i: it) {
-                            PathSystem::processEntity(it.delta_time(), ai[i], p[i], world);
+            world.system<PathRequestComponent>("PathSystem")
+                    .iter([&world](flecs::iter it, PathRequestComponent *p) {
+                        for (auto i: it) {
+                            flecs::entity e = it.entity(i);
+                            auto destination = p[i].destination;
+                            e.remove<PathRequestComponent>();
+                            e.add<PathComponent>();
+                            auto pathComponent = e.get_mut<PathComponent>();
+                            pathComponent->path.push(destination);
                         }
                     });
         }
-
-    protected:
-        static void processEntity(float dt, PathComponent &ai, SGNTransformation &p, flecs::world &world) {
-            
-            if (ai.path.empty()) {
-                addRandomTarget(ai.path);
-            }
-        }
-
-        
-
-        static void addRandomTarget(std::queue<Eigen::Vector3f> &vecQueue) {
-            Eigen::Vector3f targetPosition = Eigen::Vector3f();
-            targetPosition.setRandom();
-            targetPosition.y() = 0;
-            targetPosition *= 20;
-            vecQueue.push(targetPosition);
-        }
-
-        static void addTarget(PathRequestComponent &prc, std::queue<Eigen::Vector3f>& vecQueue) {
-            Eigen::Vector3f targetPosition = prc.destination;
-            vecQueue.push(targetPosition);
-        };
-
 
     };
 

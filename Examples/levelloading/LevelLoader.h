@@ -16,6 +16,7 @@
 #include "crossforge/AssetIO/SAssetIO.h"
 #include "crossforge/Graphics/SceneGraph/SGNGeometry.h"
 #include "crossforge/Graphics/Actors/StaticActor.h"
+#include "Examples/edt/PlantComponent.h"
 
 
 namespace CForge {
@@ -99,7 +100,6 @@ namespace CForge {
             if (name.find("robot") != std::string::npos) {
                 entity.set_name(name.c_str());
                 entity.add<SteeringComponent>();
-                entity.add<PathComponent>();
 
                 auto steering = entity.get_mut<SteeringComponent>();
                 steering->securityDistance = 1;
@@ -107,11 +107,6 @@ namespace CForge {
                 steering->max_force = 0.6;
                 steering->max_speed = 0.05;
 
-                auto pathComponent = entity.get_mut<PathComponent>();
-                for (int i = 0; i < 10; i++) {
-                    pathComponent->path.push(Eigen::Vector3f(-10, 0, 1));
-                    pathComponent->path.push(Eigen::Vector3f(10, 0, -1));
-                }
             }
             else if (name.find("monstera"|| "small_plant") != std::string::npos) {
                 entity.set_name(name.c_str());
