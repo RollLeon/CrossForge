@@ -24,26 +24,26 @@ namespace CForge {
                     }
                 });
         world.system<SteeringComponent, PathComponent>("PlantFindingSystem")
-            .iter([&world](flecs::iter it, SteeringComponent* sc, PathComponent *pa) {
-                    for (int i : it) {
-                        if (pa[i].path.empty())
-                        {
+                .iter([&world](flecs::iter it, SteeringComponent *sc, PathComponent *pa) {
+                    for (int i: it) {
+                        if (pa[i].path.empty()) {
                             std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
                             world.filter<PositionComponent, PlantComponent>()
-                                .each([&obstacles](const PositionComponent& t, PlantComponent& p) {
-
-                                obstacles.emplace_back(t.translation(), p.waterLevel);
+                                    .each([&obstacles](const PositionComponent &t, PlantComponent &p) {
+                                        obstacles.emplace_back(t.translation(), p.waterLevel);
                                     });
                             std::sort(obstacles.begin(), obstacles.end(),
-                                [](auto v1, auto v2) {
-                                    return std::get<1>(v1)) < (std::get<1>(v2));
-                            });
-        flecs::entity e = it.entity(i);
-        e.add<PathRequestComponent>();
-        auto pathComponent = e.get_mut<PathRequestComponent>();
-        pathComponent->destination = std::get<0>(obstacles.front());
+                                      [](auto v1, auto v2) {
+                                          return std::get<1>(v1) < std::get<1>(v2);
+                                      });
+                            if(!obstacles.empty()) {
+                                flecs::entity e = it.entity(i);
+                                e.add<PathRequestComponent>();
+                                auto pathComponent = e.get_mut<PathRequestComponent>();
+                                pathComponent->destination = std::get<0>(obstacles.front());
+                            }
                         }
-                        
+
                     }
                 });
     }

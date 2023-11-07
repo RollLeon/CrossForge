@@ -59,6 +59,7 @@ FIND_PACKAGE(tinyxml2 CONFIG REQUIRED)	# support for xml loading, storing, and p
 FIND_PACKAGE(imgui CONFIG REQUIRED) # dear-imgui
 FIND_PACKAGE(flecs CONFIG REQUIRED) # dear-imgui
 FIND_PACKAGE(jsoncpp CONFIG REQUIRED)
+FIND_PACKAGE(behaviortree_cpp CONFIG REQUIRED)
 endif()
 
 
@@ -75,7 +76,8 @@ add_executable(CForgeSandbox
 	SandboxMain.cpp
 
         Examples/edt/PathComponent.h Examples/edt/PathSystem.h Examples/edt/PlantComponent.h Examples/edt/SteeringComponent.h Examples/edt/SteeringSystem.cpp Examples/edt/SteeringSystem.h Examples/levelloading/LevelLoader.h
-		Examples/edt/PlantSystem.cpp)
+		Examples/edt/PlantSystem.cpp
+		Examples/edt/BehaviorTree.h)
 
 if(EMSCRIPTEN)
 	target_link_Libraries(CForgeSandbox
@@ -94,6 +96,7 @@ elseif(WIN32)
 	PRIVATE imgui::imgui
 	PRIVATE flecs::flecs
 	PRIVATE JsonCpp::JsonCpp
+	PRIVATE BT::behaviortree_cpp
 	${FREETYPE_LIBRARIES}
 
 	)
@@ -108,7 +111,8 @@ elseif(__arm__)
 		PRIVATE JsonCpp::JsonCpp
 #		PRIVATE assimp
 		PRIVATE gpiod
-		PRIVATE dl	
+		PRIVATE dl
+		PRIVATE BT::behaviortree_cpp
 		)
 elseif(UNIX)
 	target_link_libraries(CForgeSandbox 
@@ -121,6 +125,7 @@ elseif(UNIX)
 		PRIVATE flecs::flecs
 		PRIVATE JsonCpp::JsonCpp
 		PRIVATE dl
+		PRIVATE BT::behaviortree_cpp
 		)
 endif()
 

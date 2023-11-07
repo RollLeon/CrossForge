@@ -100,6 +100,7 @@ namespace CForge {
             if (name.find("robot") != std::string::npos) {
                 entity.set_name(name.c_str());
                 entity.add<SteeringComponent>();
+                entity.add<PathComponent>();
 
                 auto steering = entity.get_mut<SteeringComponent>();
                 steering->securityDistance = 1;
@@ -107,12 +108,11 @@ namespace CForge {
                 steering->max_force = 0.6;
                 steering->max_speed = 0.05;
 
-            }
-            else if (name.find("monstera"|| "small_plant") != std::string::npos) {
+            } else if (name.find("monstera")!= std::string::npos || name.find("small_plant") != std::string::npos) {
                 entity.set_name(name.c_str());
                 entity.add<PlantComponent>();
                 entity.add<ObstacleComponent>();
-                
+
                 auto plant = entity.get_mut<PlantComponent>();
                 float LO = 1.0;
                 float HI = 10.0;
