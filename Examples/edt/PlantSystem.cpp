@@ -4,7 +4,7 @@
 
 namespace CForge {
 
-    // Define the rate at which the water level decreases (e.g., 1 unit per second)
+    // Define the rate at which the water level decreases 
     float waterDecreaseRate = 0.1;
     float waterIncreaseRate = 1.0;
 
