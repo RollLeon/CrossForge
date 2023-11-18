@@ -11,6 +11,10 @@
 #include <json/value.h>
 #include <iostream>
 #include <regex>
+#include <BulletCollision/CollisionShapes/btSphereShape.h>
+#include <BulletCollision/CollisionShapes/btBoxShape.h>
+#include <LinearMath/btDefaultMotionState.h>
+#include <BulletDynamics/Dynamics/btRigidBody.h>
 #include "crossforge/AssetIO/T3DMesh.hpp"
 #include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
 #include "crossforge/AssetIO/SAssetIO.h"
@@ -104,12 +108,29 @@ namespace CForge {
                 auto steering = entity.get_mut<SteeringComponent>();
                 steering->securityDistance = 1;
                 steering->mass = 500;
-                steering->max_force = 0.6;
-                steering->max_speed = 0.05;
+                steering->max_force = 36;
+                steering->max_speed = 3;
 
-                auto physics = new PhysicsComponent();
-                physics->collisionObject = new btCollisionObject();
-                entity.set(physics);
+                btCollisionShape *groundShape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
+
+                btTransform groundTransform;
+                groundTransform.setIdentity();
+                groundTransform.setOrigin(btVector3(0, 56, 0));
+
+                btScalar mass(1.);
+
+                //rigidbody is dynamic if and only if mass is non zero, otherwise static
+                bool isDynamic = (mass != 0.f);
+
+                btVector3 localInertia(0, 0, 0);
+                if (isDynamic)
+                    groundShape->calculateLocalInertia(mass, localInertia);
+
+                //using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
+                btDefaultMotionState *myMotionState = new btDefaultMotionState(groundTransform);
+                btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
+                btRigidBody *body = new btRigidBody(rbInfo);
+                entity.emplace<PhysicsComponent>(body);
 
                 auto aic = entity.get_mut<AIComponent>();
                 for (int i = 0; i < 10; i++) {

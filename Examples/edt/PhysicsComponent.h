@@ -10,8 +10,11 @@
 namespace CForge {
     class PhysicsComponent {
     public:
-        btCollisionObject* collisionObject;
-        PhysicsComponent()= default;
+        std::unique_ptr<btRigidBody> collisionObject;
+
+        explicit PhysicsComponent(btRigidBody *co) {
+            collisionObject = std::unique_ptr<btRigidBody>(co);
+        };
     };
 }
 #endif //CFORGESANDBOX_PHYSICSCOMPONENT_H

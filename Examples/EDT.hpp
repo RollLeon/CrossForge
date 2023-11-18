@@ -202,7 +202,7 @@ namespace CForge {
             m_RenderWin.swapBuffers();
 
             updateFPS();
-            world.progress(60.0f / m_FPS);
+            world.progress(1.0f / m_FPS);
             // change between flying and walking mode
             defaultKeyboardUpdate(m_RenderWin.keyboard());
 

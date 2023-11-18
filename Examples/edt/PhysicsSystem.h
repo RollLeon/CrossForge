@@ -22,65 +22,48 @@ namespace CForge {
     class PhysicsSystem {
     public:
         static void addPhysicsSystem(flecs::world &world) {
-            btCollisionConfiguration *bt_collision_configuration;
-            btCollisionDispatcher *bt_dispatcher;
-            btBroadphaseInterface *bt_broadphase;
-            btDiscreteDynamicsWorld *dynamicsWorld;
-
-            double scene_size = 500;
-            unsigned int max_objects = 16000;
-
-            bt_collision_configuration = new btDefaultCollisionConfiguration();
-            bt_dispatcher = new btCollisionDispatcher(bt_collision_configuration);
-
-            btScalar sscene_size = (btScalar) scene_size;
-            btVector3 worldAabbMin(-sscene_size, -sscene_size, -sscene_size);
-            btVector3 worldAabbMax(sscene_size, sscene_size, sscene_size);
-//This is one type of broadphase, bullet has others that might be faster depending on the application
-            bt_broadphase = new bt32BitAxisSweep3(worldAabbMin, worldAabbMax, max_objects, 0,
-                                                  true);  // true for disabling raycast accelerator
-            ///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
+            btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
+            btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
+            btBroadphaseInterface *overlappingPairCache = new btDbvtBroadphase();
             btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver;
 
-            dynamicsWorld = new btDiscreteDynamicsWorld(bt_dispatcher, bt_broadphase, solver,
-                                                        bt_collision_configuration);
-
-            dynamicsWorld->setGravity(btVector3(0, -10, 0));
+            auto dynamicsWorld = std::make_shared<btDiscreteDynamicsWorld>(dispatcher, overlappingPairCache,
+                                                                           solver, collisionConfiguration);
+            dynamicsWorld->setGravity(btVector3(0, 0, 0));
             world.system<PhysicsComponent, PositionComponent>("PhysicsSystem")
-                    .iter([&dynamicsWorld](flecs::iter it, PhysicsComponent *ps, PositionComponent *pc) {
+                    .iter([dynamicsWorld](flecs::iter it, PhysicsComponent *ps, PositionComponent *pc) {
                         for (size_t i = 0; i < it.count(); i++) {
                             auto pos = pc[i].translation();
                             auto vel = pc[i].translationDelta();
                             Eigen::Quaternionf rot = pc[i].rotation();
+                            ps[i].collisionObject->activate();
                             ps[i].collisionObject->getWorldTransform().setOrigin(btVector3(pos.x(), pos.y(), pos.z()));
-                            ps[i].collisionObject->setInterpolationLinearVelocity(btVector3(vel.x(), vel.y(), vel.z()));
+                            ps[i].collisionObject->setLinearVelocity(btVector3(vel.x(), vel.y(), vel.z()));
                             ps[i].collisionObject->getWorldTransform().setRotation(
                                     btQuaternion(rot.x(), rot.y(), rot.z(), rot.w()));
                         }
-                        dynamicsWorld->stepSimulation(it.delta_time());
+                        dynamicsWorld->stepSimulation(it.delta_time(), 1);
                         for (size_t i = 0; i < it.count(); i++) {
 
                             auto rot = ps[i].collisionObject->getWorldTransform().getRotation();
                             auto pos = ps[i].collisionObject->getWorldTransform().getOrigin();
-                            auto vel = ps[i].collisionObject->getInterpolationLinearVelocity();
-
+                            auto vel = ps[i].collisionObject->getLinearVelocity();
                             pc[i].rotation(Eigen::Quaternionf(rot.w(), rot.x(), rot.y(), rot.z()));
                             pc[i].translation(Eigen::Vector3f(pos.x(), pos.y(), pos.z()));
                             pc[i].translationDelta(Eigen::Vector3f(vel.x(), vel.y(), vel.z()));
                         }
                     });
             world.observer<PhysicsComponent>("Physics Body Add Observer")
-                    .event(flecs::OnAdd)
-                    .each([dynamicsWorld](PhysicsComponent &pc) {
-                        std::cout << "Added physics component" << std::endl;
-                        dynamicsWorld->addCollisionObject(pc.collisionObject);
-                        std::cout << "Survived" << std::endl;
+                    .event(flecs::OnSet)
+                    .iter([dynamicsWorld](flecs::iter it, PhysicsComponent *pc) {
+                        for (auto i: it) {
+                            dynamicsWorld->addRigidBody(pc[i].collisionObject.get());
+                        }
                     });
             world.observer<PhysicsComponent>("Physics Body removed")
-                    .event(flecs::OnRemove)
+                    .event(flecs::UnSet)
                     .each([dynamicsWorld](PhysicsComponent &pc) {
-                        std::cout << "Removed physics component" << std::endl;
-                        dynamicsWorld->removeCollisionObject(pc.collisionObject);
+                        dynamicsWorld->removeCollisionObject(pc.collisionObject.get());
                     });
             world.system<PositionComponent>("Movement System")
                     .without<PhysicsComponent>()
