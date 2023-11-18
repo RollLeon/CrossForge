@@ -9,12 +9,12 @@
 
 class EntityAwareNode {
 public:
-	flecs::entity *entity;
+	flecs::id_t entity_id;
 	flecs::world *world; 
 
-	void initialize(flecs::entity *e, flecs::world *w)
+	void initialize(flecs::entity e, flecs::world *w)
 	{
-		entity = e;
+		entity_id = e.raw_id();
 		world = w;
 	}
 };
@@ -24,12 +24,13 @@ public:
 	FindPlant(const std::string& name) : BT::SyncActionNode(name, {})
 	{}
 	BT::NodeStatus tick() override {
-		auto pa = entity->get_mut<PathComponent>();
+        auto entity = world->entity(entity_id);
+		auto pa = entity.get_mut<CForge::PathComponent>();
 
 		if (pa->path.empty()) {
 			std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
-			world->filter<PositionComponent, PlantComponent>()
-				.each([&obstacles](const PositionComponent& t, PlantComponent& p) {
+			world->filter<CForge::PositionComponent, CForge::PlantComponent>()
+				.each([&obstacles](const CForge::PositionComponent& t, CForge::PlantComponent& p) {
 				obstacles.emplace_back(t.translation(), p.waterLevel);
 					});
 			std::sort(obstacles.begin(), obstacles.end(),
@@ -37,8 +38,8 @@ public:
 					return std::get<1>(v1) < std::get<1>(v2);
 				});
 			if (!obstacles.empty()) {
-				entity->add<PathRequestComponent>();
-				auto pathComponent = entity->get_mut<PathRequestComponent>();
+				entity.add<CForge::PathRequestComponent>();
+				auto pathComponent = entity.get_mut<CForge::PathRequestComponent>();
 				pathComponent->destination = std::get<0>(obstacles.front());
 			}
 		}

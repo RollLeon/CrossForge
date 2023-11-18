@@ -115,13 +115,12 @@ namespace CForge {
                 factory.registerNodeType<Watering>("Watering");
                 auto aic = entity.get_mut<AIComponent>();
                 aic->tree = factory.createTreeFromText(SAssetIO::readTextFile("Assets/Behaviors/WateringBehaviorTree.xml"));
-
-                // visitor will initialize the instances of 
-                auto visitor = [entity, world](BT::TreeNode* node) mutable 
+                // visitor will initialize the instances of
+                auto visitor = [entity, world](BT::TreeNode* node) mutable
                 {
                     if (auto action_B_node = dynamic_cast<EntityAwareNode*>(node))
                     {
-                        action_B_node->initialize(&entity, world);
+                        action_B_node->initialize(entity, world);
                     }
                 };
 
