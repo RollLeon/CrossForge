@@ -113,6 +113,5 @@ namespace CForge {
         Eigen::Quaternionf rotation = Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f::UnitX(),
                                                                          p.translationDelta().normalized());
         p.rotation(rotation);
-        p.update(dt);
     }
 } // CForge

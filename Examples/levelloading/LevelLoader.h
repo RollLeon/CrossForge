@@ -16,6 +16,7 @@
 #include "crossforge/AssetIO/SAssetIO.h"
 #include "crossforge/Graphics/SceneGraph/SGNGeometry.h"
 #include "crossforge/Graphics/Actors/StaticActor.h"
+#include "Examples/edt/PhysicsComponent.h"
 
 namespace CForge {
     class LevelLoader {
@@ -105,6 +106,10 @@ namespace CForge {
                 steering->mass = 500;
                 steering->max_force = 0.6;
                 steering->max_speed = 0.05;
+
+                auto physics = new PhysicsComponent();
+                physics->collisionObject = new btCollisionObject();
+                entity.set(physics);
 
                 auto aic = entity.get_mut<AIComponent>();
                 for (int i = 0; i < 10; i++) {
