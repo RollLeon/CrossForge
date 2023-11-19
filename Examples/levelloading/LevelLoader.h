@@ -13,8 +13,10 @@
 #include <regex>
 #include <BulletCollision/CollisionShapes/btSphereShape.h>
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
+#include <BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
 #include <LinearMath/btDefaultMotionState.h>
 #include <BulletDynamics/Dynamics/btRigidBody.h>
+#include <BulletCollision/CollisionShapes/btTriangleMesh.h>
 #include "crossforge/AssetIO/T3DMesh.hpp"
 #include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
 #include "crossforge/AssetIO/SAssetIO.h"
@@ -60,20 +62,61 @@ namespace CForge {
             static_geom_position->init(rootNode);
             SGNGeometry *static_geom = new SGNGeometry();
             std::string static_mesh_path = std::regex_replace(filePath, std::regex("json"), "gltf");
+            loadStaticCollisionMesh(world, static_mesh_path);
             static_geom->init(static_geom_position, getStaticActor(static_mesh_path));
         }
 
+        btVector3 btVec(Eigen::Vector3f vec) {
+            return btVector3(vec.x(), vec.y(), vec.z());
+        }
+
+        void copyTriangles(btTriangleMesh *btMesh, T3DMesh<float> &mesh, T3DMesh<float>::Submesh *subMesh) {
+            for (auto face: subMesh->Faces) {
+                btMesh->addTriangle(
+                        btVec(mesh.vertex(face.Vertices[0])),
+                        btVec(mesh.vertex(face.Vertices[1])),
+                        btVec(mesh.vertex(face.Vertices[2]))
+                );
+            }
+            for (auto sm: subMesh->Children) {
+                copyTriangles(btMesh, mesh, sm);
+            }
+        }
+
+        void loadStaticCollisionMesh(flecs::world *world, std::string filePath) {
+            auto striding = new btTriangleMesh();
+
+            T3DMesh<float> mesh = loadMesh(filePath);
+            for (int i = 0; i < mesh.submeshCount(); ++i) {
+                auto sm = mesh.getSubmesh(i);
+                copyTriangles(striding, mesh, sm);
+            }
+
+            btCollisionShape *map = new btBvhTriangleMeshShape(striding, true);
+
+            btTransform groundTransform;
+            groundTransform.setIdentity();
+            btRigidBody::btRigidBodyConstructionInfo rbInfo(0, new btDefaultMotionState(), map);
+            btRigidBody *body = new btRigidBody(rbInfo);
+            auto staticSzeneEntity = world->entity();
+            staticSzeneEntity.emplace<PhysicsComponent>(body);
+        }
+
+        T3DMesh<float> loadMesh(std::string filePath) {
+            T3DMesh<float> M;
+            SAssetIO::load(filePath, &M);
+            setMeshShader(&M);
+            M.computePerVertexNormals();
+            M.computeAxisAlignedBoundingBox();
+            return M;
+        }
 
         StaticActor *getStaticActor(std::string filePath) {
             if (models.find(filePath) != models.end()) {
                 return models.find(filePath)->second;
             }
-            T3DMesh<float> M;
+            auto M = loadMesh(filePath);
             StaticActor *actor = new StaticActor();
-            SAssetIO::load(filePath, &M);
-            setMeshShader(&M);
-            M.computePerVertexNormals();
-            M.computeAxisAlignedBoundingBox();
             actor->init(&M);
             M.clear();
             models.insert({filePath, actor});
@@ -111,7 +154,7 @@ namespace CForge {
                 steering->max_force = 36;
                 steering->max_speed = 3;
 
-                btCollisionShape *groundShape = new btBoxShape(btVector3(btScalar(1.), btScalar(1.), btScalar(1.)));
+                btCollisionShape *groundShape = new btBoxShape(btVector3(3, 3, 3));
 
                 btTransform groundTransform;
                 groundTransform.setIdentity();
