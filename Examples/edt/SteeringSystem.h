@@ -2,7 +2,7 @@
 #define STEERINGSYSTEM_H
 
 #include <flecs.h>
-#include "AIComponent.h"
+#include "PathComponent.h"
 #include "SteeringComponent.h"
 #include "crossforge/Graphics/SceneGraph/SGNGeometry.h"
 #include "PositionComponent.h"
@@ -14,7 +14,7 @@ namespace CForge {
     public:
         static void addSteeringSystem(flecs::world& world);
 
-        static void processEntity(float dt, AIComponent& ai, PositionComponent& p, SteeringComponent& sc, GeometryComponent& geo, flecs::world& world);
+        static void processEntity(float dt, PathComponent& ai, PositionComponent& p, SteeringComponent& sc, GeometryComponent& geo, flecs::world& world);
 
         static bool obstacleIsInPath(PositionComponent& p,Eigen::Vector3f& target, Eigen::Vector3f& obstaclePosition, float obstacleRadius, float robotRadius, float securityDistance);
 

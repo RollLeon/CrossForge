@@ -3,32 +3,43 @@
 #include "crossforge/Math/CForgeMath.h"
 #include "flecs.h"
 #include <iostream>
-#include "AIComponent.h"
+#include "PathComponent.h"
 #include "SteeringSystem.h"
-#include "Obstacle.h"
+#include "ObstacleComponent.h"
 #include "SteeringComponent.h"
 #include "crossforge/Graphics/SceneGraph/SGNGeometry.h"
 #include "PositionComponent.h"
 #include "GeometryComponent.h"
+#include "PlantComponent.h"
+#include "PathRequestComponent.h"
+#include "AIComponent.h"
 
 
 namespace CForge {
     void SteeringSystem::addSteeringSystem(flecs::world &world) {
-        world.system<PositionComponent, AIComponent, SteeringComponent, GeometryComponent>("SteeringSystem")
-                .iter([&world](flecs::iter it, PositionComponent *p, AIComponent *ai, SteeringComponent *sc,
+        world.system<PositionComponent, PathComponent, SteeringComponent, GeometryComponent>("SteeringSystem")
+                .iter([&world](flecs::iter it, PositionComponent *p, PathComponent *ai, SteeringComponent *sc,
                                GeometryComponent *geo) {
                     for (int i: it) {
                         SteeringSystem::processEntity(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
                     }
                 });
+       
+        world.system<AIComponent>("AISystem")
+            .iter([&world](flecs::iter it, AIComponent* ai) {
+            for (int i : it) {
+                ai[i].tree.tickWhileRunning();
+
+            }
+                });
     }
 
-    void SteeringSystem::processEntity(float dt, AIComponent &ai, PositionComponent &p, SteeringComponent &sc,
+    void SteeringSystem::processEntity(float dt, PathComponent &ai, PositionComponent &p, SteeringComponent &sc,
                                        GeometryComponent &geo, flecs::world &world) {
         float robotRadius = geo.actor->boundingVolume().boundingSphere().radius() * p.scale().x();
         std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
-        world.filter<PositionComponent, Obstacle, GeometryComponent>()
-                .each([&obstacles](const PositionComponent &t, Obstacle o, GeometryComponent geo) {
+        world.filter<PositionComponent, ObstacleComponent, GeometryComponent>()
+                .each([&obstacles](const PositionComponent &t, ObstacleComponent o, GeometryComponent geo) {
                     float obstalceRadius = geo.actor->boundingVolume().boundingSphere().radius() * t.scale().x();
                     obstacles.emplace_back(t.translation(), obstalceRadius);
                 });

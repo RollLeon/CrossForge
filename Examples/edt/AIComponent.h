@@ -1,19 +1,13 @@
-//
-// Created by private on 22.06.23.
-//
-
 #ifndef CFORGESANDBOX_AICOMPONENT_H
 #define CFORGESANDBOX_AICOMPONENT_H
 
 #include <Eigen/Core>
-#include <queue>
+#include "behaviortree_cpp/bt_factory.h"
 
 namespace CForge {
     class AIComponent {
     public:
-        std::queue<Eigen::Vector3f> path;
-        AIComponent();
+        BT::Tree tree;
     };
-
 }
 #endif //CFORGESANDBOX_AICOMPONENT_H

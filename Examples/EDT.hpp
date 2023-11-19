@@ -21,9 +21,9 @@
 
 #include <crossforge/MeshProcessing/PrimitiveShapeFactory.h>
 #include "ExampleSceneBase.hpp"
-#include "Examples/edt/AIComponent.h"
+#include "Examples/edt/PathComponent.h"
 #include "Examples/edt/SteeringComponent.h"
-#include "Examples/edt/AiSystem.h"
+#include "Examples/edt/PathSystem.h"
 #include "Examples/edt/PositionComponent.h"
 #include "Examples/edt/GeometryComponent.h"
 #include "Examples/levelloading/LevelLoader.h"
@@ -37,6 +37,9 @@
 #include "Examples/edt/PhysicsSystem.h"
 #include <fstream>
 #include <json/json.h>
+#include <tinyfsm.hpp>
+#include "Examples/edt/PlantSystem.h"
+#include "Examples/edt/PlantComponent.h"
 #include <BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h>
 #include <BulletCollision/CollisionDispatch/btCollisionDispatcher.h>
 #include <BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
@@ -92,6 +95,7 @@ namespace CForge {
 
             PhysicsSystem::addPhysicsSystem(world);
             SteeringSystem::addSteeringSystem(world);
+            PathSystem::addPathSystem(world);
             // load level
             LevelLoader levelLoader;
             levelLoader.loadLevel("Assets/Scene/end_mvp.json", &m_RootSGN, &world);
@@ -107,7 +111,6 @@ namespace CForge {
             m_HelpTexts.push_back(pKeybindings);
             pKeybindings->color(0.0f, 0.0f, 0.0f, 1.0f);
             m_DrawHelpTexts = true;
-
 
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();
@@ -153,6 +156,10 @@ namespace CForge {
             m_RenderDev.activeCamera(const_cast<VirtualCamera *>(m_Sun.camera()));
             m_SG.render(&m_RenderDev);
             renderEntities(&m_RenderDev);
+
+
+            PlantSystem::reduceWaterLevel(world);
+
 
             m_RenderDev.activePass(RenderDevice::RENDERPASS_GEOMETRY);
             m_RenderDev.activeCamera(&m_Cam);
@@ -218,6 +225,8 @@ namespace CForge {
                         }
                     });
         }
+
+
 
         flecs::world world;
         SGNTransformation m_RootSGN;

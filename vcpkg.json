@@ -13,6 +13,8 @@
 		"tinygltf",
 		"flecs",
 		"bullet3",
+		"behaviortree-cpp",
+		"tinyfsm",
 		{
 			"name": "imgui",
 			"default-features": false,

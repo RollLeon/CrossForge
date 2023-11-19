@@ -23,6 +23,11 @@
 #include "crossforge/Graphics/SceneGraph/SGNGeometry.h"
 #include "crossforge/Graphics/Actors/StaticActor.h"
 #include "Examples/edt/PhysicsComponent.h"
+#include "Examples/edt/PlantComponent.h"
+#include "Examples/edt/AIComponent.h"
+#include "Examples/edt/RobotActionNodes.h"
+#include "behaviortree_cpp/bt_factory.h"
+
 
 namespace CForge {
     class LevelLoader {
@@ -55,7 +60,7 @@ namespace CForge {
                 GeometryComponent *obstacle_geom = entity.get_mut<GeometryComponent>();
                 obstacle_geom->init(getStaticActor("Assets/Models/" + entities[i]["path"].asString()));
 
-                initEntityWithType(entity, entities[i]["name"].asString());
+                initEntityWithType(entity, entities[i]["name"].asString(),world);
             }
             //load static geometry
             SGNTransformation *static_geom_position = new SGNTransformation();
@@ -142,11 +147,34 @@ namespace CForge {
             }
         }
 
-        void initEntityWithType(flecs::entity &entity, string name) {
+        void initEntityWithType(flecs::entity &entity, string name, flecs::world *world) {
             if (name.find("robot") != std::string::npos) {
                 entity.set_name(name.c_str());
                 entity.add<SteeringComponent>();
+                entity.add<PathComponent>();
                 entity.add<AIComponent>();
+
+                BT::BehaviorTreeFactory factory;
+
+                // The recommended way to create a Node is through inheritance.
+                factory.registerNodeType<FindPlant>("FindPlant");
+                factory.registerNodeType<FindWay>("FindWay");
+                factory.registerNodeType<DriveToPlant>("DriveToPlant");
+                factory.registerNodeType<Watering>("Watering");
+                auto aic = entity.get_mut<AIComponent>();
+                aic->tree = factory.createTreeFromText(SAssetIO::readTextFile("Assets/Behaviors/WateringBehaviorTree.xml"));
+                // visitor will initialize the instances of
+                auto visitor = [entity, world](BT::TreeNode* node) mutable
+                {
+                    if (auto action_B_node = dynamic_cast<EntityAwareNode*>(node))
+                    {
+                        action_B_node->initialize(entity, world);
+                    }
+                };
+
+
+                // Apply the visitor to ALL the nodes of the tree
+                aic->tree.applyVisitor(visitor);
 
                 auto steering = entity.get_mut<SteeringComponent>();
                 steering->securityDistance = 1;
@@ -175,11 +203,17 @@ namespace CForge {
                 btRigidBody *body = new btRigidBody(rbInfo);
                 entity.emplace<PhysicsComponent>(body);
 
-                auto aic = entity.get_mut<AIComponent>();
-                for (int i = 0; i < 10; i++) {
-                    aic->path.push(Eigen::Vector3f(-10, 0, 1));
-                    aic->path.push(Eigen::Vector3f(10, 0, -1));
-                }
+            } else if (name.find("monstera")!= std::string::npos || name.find("small_plant") != std::string::npos) {
+                entity.set_name(name.c_str());
+                entity.add<PlantComponent>();
+                entity.add<ObstacleComponent>();
+
+                auto plant = entity.get_mut<PlantComponent>();
+                float LO = 1.0;
+                float HI = 10.0;
+                float random = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
+                plant->waterLevel = random;
+
             }
         }
 
