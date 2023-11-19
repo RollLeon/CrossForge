@@ -24,13 +24,13 @@ namespace CForge {
                         SteeringSystem::processEntity(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
                     }
                 });
-       
-        world.system<AIComponent>("AISystem")
-            .iter([&world](flecs::iter it, AIComponent* ai) {
-            for (int i : it) {
-                ai[i].tree.tickWhileRunning();
 
-            }
+        world.system<AIComponent>("AISystem")
+                .iter([&world](flecs::iter it, AIComponent *ai) {
+                    for (int i: it) {
+                        ai[i].tree.tickWhileRunning();
+
+                    }
                 });
     }
 
@@ -121,8 +121,12 @@ namespace CForge {
         Eigen::Vector3f steering_force = CForgeMath::maxLength(desired_velocity, sc.max_force);
         Eigen::Vector3f uncapped_velocity = p.translationDelta() + steering_force / sc.mass;
         p.translationDelta(CForgeMath::maxLength(uncapped_velocity, sc.max_speed));
-        Eigen::Quaternionf rotation = Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f::UnitX(),
-                                                                         p.translationDelta().normalized());
-        p.rotation(rotation);
+        if (p.translationDelta().norm() > 0.001) {
+            Eigen::Quaternionf rotation = Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f::UnitX(),
+                                                                             Eigen::Vector3f(
+                                                                                     p.translationDelta().x(), 0,
+                                                                                     p.translationDelta().z()).normalized());
+            p.rotation(rotation);
+        }
     }
 } // CForge

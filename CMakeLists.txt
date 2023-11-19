@@ -26,10 +26,10 @@ project (CForgeSandbox)
 
 if(EMSCRIPTEN)
 	include(FetchContent)
-	
+
 	### Eigen3
 	FetchContent_Declare(
-		tinyxml2 
+		tinyxml2
 		GIT_REPOSITORY https://github.com/leethomason/tinyxml2.git
 		GIT_TAG 9.0.0
 	)
@@ -37,7 +37,7 @@ if(EMSCRIPTEN)
 
 	# tinygltf
 	FetchContent_Declare(
-		tinygltf 
+		tinygltf
 		URL https://github.com/syoyo/tinygltf/archive/refs/tags/v2.8.2.zip
 	)
 	FetchContent_MakeAvailable(tinygltf)
@@ -77,10 +77,9 @@ add_executable(CForgeSandbox
 	SandboxMain.cpp
 
         Examples/edt/PathComponent.h Examples/edt/PathSystem.h Examples/edt/PlantComponent.h Examples/edt/SteeringComponent.h Examples/edt/SteeringSystem.cpp Examples/edt/SteeringSystem.h Examples/levelloading/LevelLoader.h
-		Examples/edt/PlantSystem.cpp Examples/edt/AIComponent.h
+		Examples/edt/PlantSystem.cpp
 		Examples/edt/RobotActionNodes.h
-		Examples/edt/BehaviorTreeFactory.h)
-        Examples/edt/AIComponent.cpp Examples/edt/AIComponent.h Examples/edt/AiSystem.h  Examples/edt/SteeringComponent.h Examples/edt/SteeringSystem.cpp Examples/edt/SteeringSystem.h Examples/levelloading/LevelLoader.h
+        Examples/edt/AIComponent.h
         Examples/edt/PhysicsComponent.h
 		Examples/edt/PhysicsSystem.h)
 
@@ -92,9 +91,9 @@ if(EMSCRIPTEN)
 	set_target_properties(CForgeSandbox PROPERTIES LINK_FLAGS "${LINK_FLAGS} ${Optimization_Flag} -sEXIT_RUNTIME=1 -sALLOW_MEMORY_GROWTH=1 -sWASM=1 -sUSE_WEBGL2=1 -fwasm-exceptions -sUSE_GLFW=3 -sUSE_ZLIB=1 -sUSE_LIBPNG=1 -sUSE_LIBJPEG=1 --preload-file Assets --preload-file Shader --preload-file MyAssets")
 
 elseif(WIN32)
-	target_link_libraries(CForgeSandbox 
+	target_link_libraries(CForgeSandbox
 	PRIVATE crossforge
-	PRIVATE glfw 
+	PRIVATE glfw
 	PRIVATE glad::glad
 	ws2_32
 	PRIVATE tinyxml2::tinyxml2
@@ -106,9 +105,9 @@ elseif(WIN32)
 	${FREETYPE_LIBRARIES}
 
 	)
-	
+
 elseif(__arm__)
-	target_link_libraries(CForgeSandbox 
+	target_link_libraries(CForgeSandbox
 		PRIVATE crossforge
 		PRIVATE glfw
 		PRIVATE glad::glad
@@ -122,7 +121,7 @@ elseif(__arm__)
 		PRIVATE ${BULLET_LIBRARIES}
 		)
 elseif(UNIX)
-	target_link_libraries(CForgeSandbox 
+	target_link_libraries(CForgeSandbox
 		PRIVATE crossforge
 		PRIVATE glfw
 		PRIVATE glad::glad
@@ -139,29 +138,29 @@ endif()
 
 #copy shaders
 add_custom_command(
-	TARGET CForgeSandbox PRE_BUILD 
+	TARGET CForgeSandbox PRE_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_directory
 	${CMAKE_SOURCE_DIR}/crossforge/Shader
 	${CMAKE_CURRENT_BINARY_DIR}/Shader
 )
 add_custom_command(
-	TARGET CForgeSandbox PRE_BUILD 
-	COMMAND ${CMAKE_COMMAND} -E copy_directory 
-	${CMAKE_SOURCE_DIR}/Prototypes/Shader 
+	TARGET CForgeSandbox PRE_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+	${CMAKE_SOURCE_DIR}/Prototypes/Shader
 	${CMAKE_CURRENT_BINARY_DIR}/Shader
 )
 
 #copy assets
 add_custom_command(
-	TARGET CForgeSandbox PRE_BUILD 
-	COMMAND ${CMAKE_COMMAND} -E copy_directory 
+	TARGET CForgeSandbox PRE_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
 	${CMAKE_SOURCE_DIR}/Assets
 	${CMAKE_CURRENT_BINARY_DIR}/Assets
 )
 
 add_custom_command(
-	TARGET CForgeSandbox PRE_BUILD 
-	COMMAND ${CMAKE_COMMAND} -E copy_directory 
+	TARGET CForgeSandbox PRE_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
 	${CMAKE_SOURCE_DIR}/MyAssets
 	${CMAKE_CURRENT_BINARY_DIR}/MyAssets
 )
@@ -172,7 +171,7 @@ set(APP_FILES CForgeSandbox.html CForgeSandbox.js CForgeSandbox.wasm CForgeSandb
 foreach(i ${APP_FILES})
 add_custom_command(
 	TARGET CForgeSandbox POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy 
+	COMMAND ${CMAKE_COMMAND} -E copy
 	${CMAKE_CURRENT_BINARY_DIR}/${i}
 	${CMAKE_CURRENT_BINARY_DIR}/App/${i}
 )

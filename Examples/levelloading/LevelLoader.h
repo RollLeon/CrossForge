@@ -60,7 +60,7 @@ namespace CForge {
                 GeometryComponent *obstacle_geom = entity.get_mut<GeometryComponent>();
                 obstacle_geom->init(getStaticActor("Assets/Models/" + entities[i]["path"].asString()));
 
-                initEntityWithType(entity, entities[i]["name"].asString(),world);
+                initEntityWithType(entity, entities[i]["name"].asString(), world);
             }
             //load static geometry
             SGNTransformation *static_geom_position = new SGNTransformation();
@@ -162,12 +162,11 @@ namespace CForge {
                 factory.registerNodeType<DriveToPlant>("DriveToPlant");
                 factory.registerNodeType<Watering>("Watering");
                 auto aic = entity.get_mut<AIComponent>();
-                aic->tree = factory.createTreeFromText(SAssetIO::readTextFile("Assets/Behaviors/WateringBehaviorTree.xml"));
+                aic->tree = factory.createTreeFromText(
+                        SAssetIO::readTextFile("Assets/Behaviors/WateringBehaviorTree.xml"));
                 // visitor will initialize the instances of
-                auto visitor = [entity, world](BT::TreeNode* node) mutable
-                {
-                    if (auto action_B_node = dynamic_cast<EntityAwareNode*>(node))
-                    {
+                auto visitor = [entity, world](BT::TreeNode *node) mutable {
+                    if (auto action_B_node = dynamic_cast<EntityAwareNode *>(node)) {
                         action_B_node->initialize(entity, world);
                     }
                 };
@@ -182,28 +181,17 @@ namespace CForge {
                 steering->max_force = 36;
                 steering->max_speed = 3;
 
-                btCollisionShape *groundShape = new btBoxShape(btVector3(3, 3, 3));
+                btCollisionShape *groundShape = new btBoxShape(btVector3(1, 1, 1));
 
                 btTransform groundTransform;
                 groundTransform.setIdentity();
-                groundTransform.setOrigin(btVector3(0, 56, 0));
 
-                btScalar mass(1.);
-
-                //rigidbody is dynamic if and only if mass is non zero, otherwise static
-                bool isDynamic = (mass != 0.f);
-
-                btVector3 localInertia(0, 0, 0);
-                if (isDynamic)
-                    groundShape->calculateLocalInertia(mass, localInertia);
-
-                //using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
-                btDefaultMotionState *myMotionState = new btDefaultMotionState(groundTransform);
-                btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
+                btRigidBody::btRigidBodyConstructionInfo rbInfo(steering->mass, new btDefaultMotionState(),
+                                                                groundShape);
                 btRigidBody *body = new btRigidBody(rbInfo);
                 entity.emplace<PhysicsComponent>(body);
 
-            } else if (name.find("monstera")!= std::string::npos || name.find("small_plant") != std::string::npos) {
+            } else if (name.find("monstera") != std::string::npos || name.find("small_plant") != std::string::npos) {
                 entity.set_name(name.c_str());
                 entity.add<PlantComponent>();
                 entity.add<ObstacleComponent>();
