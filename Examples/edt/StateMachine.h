@@ -1,60 +1,58 @@
 #ifndef STATEMACHINE_H
 #define STATEMACHINE_H
 
+#include <iostream>
 #include <tinyfsm.hpp>
 
-struct ConversationEvent : tinyfsm::Event
-{
-	
+// Forward declarations for state classes
+class Talking;
+class Behavior;
+
+// Event to trigger state transitions
+struct ToggleEvent : tinyfsm::Event {};
+
+// Base class for states
+class Robot : public tinyfsm::State {
+public:
+    virtual void entry() { }
 };
 
-struct Call : ConversationEvent { };
-
-
-class StateMachine 
-	: public tinyfsm::Fsm<Robot>
-	{
-	public:
-		/* default reaction for unhandled events */
-		void react(tinyfsm::Event const&) { };
-
-		void react(Call        const&);
-
-		void entry(void) { };  /* entry actions in some states */
-		void         exit(void) { };  /* no exit actions */
+// State: Talking
+class Talking : public Robot {
+public:
+    void entry() override {
+        std::cout << "Entered state: Talking\n" << std::endl;
+    }
 };
 
-	class Conversation
-		: public Robot
-	{
-		void entry() override;
-	};
+// State: Behavior
+class Behavior : public Robot {
+public:
+    void entry() override {
+        std::cout << "Entered state: Behavior\n" << std::endl;
+    }
+};
 
-	class Moving
-		: public Robot
-	{
-		void react(FloorSensor const&) override;
-	};
+// Define the finite state machine
+class MyFSM : public tinyfsm::Fsm<MyFSM> {
+public:
+    // Initial state
+    void react(Tiny::Initial const&) {
+        std::cout << "Initial state: Behavior\n"<<std::endl;
+        transit<Behavior>();
+    }
 
+    void react(ToggleEvent const&) {
+        std::cout << "Toggle event received. " << std::endl;
+        if (is<Talking>()) {
+            std::cout << "Transitioning from Talking to Behavior\n" << std::endl;
+            transit<Behavior>();
+        }
+        else if (is<Behavior>()) {
+            std::cout << "Transitioning from Behavior to Talking\n" << std::endl;
+            transit<Talking>();
+        }
+    }
+};
 
-	void Idle::entry() {
-		send_event(MotorStop());
-	}
-
-	void Idle::react(Call const& e) {
-		dest_floor = e.floor;
-
-		if (dest_floor == current_floor)
-			return;
-
-		/* lambda function used for transition action */
-		auto action = [] {
-			if (dest_floor > current_floor)
-				send_event(MotorUp());
-			else if (dest_floor < current_floor)
-				send_event(MotorDown());
-		};
-
-		transit<Moving>(action);
-	};
 #endif //STATEMACHINE_H

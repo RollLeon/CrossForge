@@ -77,8 +77,7 @@ add_executable(CForgeSandbox
 
         Examples/edt/PathComponent.h Examples/edt/PathSystem.h Examples/edt/PlantComponent.h Examples/edt/SteeringComponent.h Examples/edt/SteeringSystem.cpp Examples/edt/SteeringSystem.h Examples/levelloading/LevelLoader.h
 		Examples/edt/PlantSystem.cpp Examples/edt/AIComponent.h 
-		Examples/edt/RobotActionNodes.h
-		Examples/edt/BehaviorTreeFactory.h)
+		Examples/edt/RobotActionNodes.h)
 
 if(EMSCRIPTEN)
 	target_link_Libraries(CForgeSandbox
