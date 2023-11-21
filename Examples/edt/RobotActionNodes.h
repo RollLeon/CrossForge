@@ -64,16 +64,15 @@ public:
 	FindWay(const std::string& name) : BT::SyncActionNode(name, {})
 	{}
 	BT::NodeStatus tick() override {
+		
 		auto entity = world->entity(entity_id);
-		auto p = entity.get_mut<CForge::PathRequestComponent>();
-		auto destination = p->destination;
-		entity.remove<CForge::PathRequestComponent>();
-		entity.add<CForge::PathComponent>();
-		auto pathComponent = entity.get_mut<CForge::PathComponent>();
-		pathComponent->path.push(destination);
-
+		std::cout << "FindWay1" << std::endl;
+		if (entity.has<CForge::PathComponent>())
+		{
+			return BT::NodeStatus::SUCCESS;
+		}
 		std::cout << "FindWay" << std::endl;
-		return BT::NodeStatus::SUCCESS;
+		return BT::NodeStatus::RUNNING;
 	}
 };
 
@@ -83,20 +82,14 @@ public:
 	DriveToPlant(const std::string& name) : BT::SyncActionNode(name, {})
 	{}
 	BT::NodeStatus tick() override {
-		
 		auto entity = world->entity(entity_id);
-		auto ai = entity.get_mut < CForge::PathComponent>();
-		auto p = entity.get_mut < CForge::PositionComponent>();
-		auto sc = entity.get_mut < CForge::SteeringComponent>();
-		auto geo = entity.get_mut < CForge::GeometryComponent>();
-
-		CForge::SteeringSystem::processEntity(it.delta_time(), *ai, *p, *sc, *geo, *world);
-
-
-
-
+		auto path = entity.get<CForge::PathComponent>();
+		if (path->path.empty())
+		{
+			return BT::NodeStatus::SUCCESS;
+		}
 		std::cout << "DriveToPlant" << std::endl;
-		return BT::NodeStatus::SUCCESS;
+		return BT::NodeStatus::RUNNING;
 	}
 };
 
@@ -108,19 +101,21 @@ public:
 	BT::NodeStatus tick() override {
 		auto entity = world->entity(entity_id);
 		auto position = entity.get_mut<CForge::PositionComponent>();
-		world->system<CForge::PositionComponent, CForge::PlantComponent>("WateringSystem")
-			.iter([world, &entity, position](flecs::iter it, CForge::PositionComponent* p, CForge::PlantComponent* pl) {
+		bool wateredPlant = false;
+		world->query<CForge::PositionComponent, CForge::PlantComponent>("WateringQuery")
+			.iter([position, &wateredPlant](flecs::iter it, CForge::PositionComponent* p, CForge::PlantComponent* pl) {
 			
 			for (int i : it) {
-				if ((position->translation() - p[i].translation()).norm() < 2 && pl[i].waterLevel < pl[i].maxWaterLevel)
+				if ((position->translation() - p[i].translation()).norm() < 2.1 && pl[i].waterLevel < pl[i].maxWaterLevel)
 				{
 					CForge::PlantSystem::increaseWaterLevel(pl[i]);
+					wateredPlant = true;
 				}
 			}
 			});
 
 		std::cout << "Watering: "  << std::endl;
-		return BT::NodeStatus::SUCCESS;
+		return wateredPlant? BT::NodeStatus::RUNNING : BT::NodeStatus::SUCCESS;
 	}
 };
 
