@@ -34,11 +34,20 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "DialogGraph.hpp"
+#include "Examples/edt/PhysicsSystem.h"
 #include <fstream>
 #include <json/json.h>
 #include <tinyfsm.hpp>
 #include "Examples/edt/PlantSystem.h"
 #include "Examples/edt/PlantComponent.h"
+#include <BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h>
+#include <BulletCollision/CollisionDispatch/btCollisionDispatcher.h>
+#include <BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
+#include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
+#include <BulletCollision/BroadphaseCollision/btDbvtBroadphase.h>
+#include <BulletCollision/BroadphaseCollision/btAxisSweep3.h>
+#include <BulletCollision/CollisionShapes/btSphereShape.h>
+#include <BulletCollision/CollisionShapes/btBoxShape.h>
 
 namespace CForge {
     class EDT : public ExampleSceneBase {
@@ -57,6 +66,7 @@ namespace CForge {
 
             initSkybox();
             initFPSLabel();
+
             m_FPSLabel.color(1.0f, 1.0f, 1.0f, 1.0f);
 
             m_RootSGN.init(nullptr);
@@ -83,6 +93,9 @@ namespace CForge {
             m_GroundTransformSGN.init(&m_RootSGN);
             m_GroundSGN.init(&m_GroundTransformSGN, &m_Ground);
 
+            PhysicsSystem::addPhysicsSystem(world);
+            SteeringSystem::addSteeringSystem(world);
+            PathSystem::addPathSystem(world);
             // load level
             LevelLoader levelLoader;
             levelLoader.loadLevel("Assets/Scene/end_mvp.json", &m_RootSGN, &world);
@@ -98,9 +111,6 @@ namespace CForge {
             m_HelpTexts.push_back(pKeybindings);
             pKeybindings->color(0.0f, 0.0f, 0.0f, 1.0f);
             m_DrawHelpTexts = true;
-
-            SteeringSystem::addSteeringSystem(world);
-            PathSystem::addPathSystem(world);
 
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();
@@ -124,9 +134,6 @@ namespace CForge {
             }
 
             dialog.init("Assets/Dialogs/conversation.json");
-
-            
-
         }//initialize
 
         void clear(void) override {
@@ -150,7 +157,7 @@ namespace CForge {
             m_SG.render(&m_RenderDev);
             renderEntities(&m_RenderDev);
 
-            
+
             PlantSystem::reduceWaterLevel(world);
 
 
@@ -177,7 +184,7 @@ namespace CForge {
                 for (int selected: conversationProgress) {
                     currentDialog = currentDialog.answers[selected];
                     if (currentDialog.playerSpeaking && !currentDialog.answers.empty()) {
-                         currentDialog = currentDialog.answers[0];
+                        currentDialog = currentDialog.answers[0];
                     }
                 }
                 ImGui::NewFrame();
@@ -202,7 +209,7 @@ namespace CForge {
             m_RenderWin.swapBuffers();
 
             updateFPS();
-            world.progress(60.0f / m_FPS);
+            world.progress(1.0f / m_FPS);
             // change between flying and walking mode
             defaultKeyboardUpdate(m_RenderWin.keyboard());
 
@@ -219,7 +226,7 @@ namespace CForge {
                     });
         }
 
-        
+
 
         flecs::world world;
         SGNTransformation m_RootSGN;

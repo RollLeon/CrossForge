@@ -12,6 +12,7 @@
 		"tinyxml2",
 		"tinygltf",
 		"flecs",
+		"bullet3",
 		"behaviortree-cpp",
 		"tinyfsm",
 		{
