@@ -24,13 +24,12 @@ namespace CForge {
                         SteeringSystem::processEntity(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
                     }
                 });
-       
-        world.system<AIComponent>("AISystem")
-            .iter([&world](flecs::iter it, AIComponent* ai) {
-            for (int i : it) {
-                ai[i].tree.tickWhileRunning();
 
-            }
+        world.system<AIComponent>("AISystem")
+                .iter([&world](flecs::iter it, AIComponent *ai) {
+                    for (int i: it) {
+                        ai[i].tree.tickExactlyOnce();
+                    }
                 });
     }
 
@@ -104,7 +103,7 @@ namespace CForge {
     }
 
     bool SteeringSystem::arrivedAtWayPoint(Eigen::Vector3f position, Eigen::Vector3f target) {
-        return (position - target).norm() < 2;
+        return (position - target).norm() < 5;
     }
 
     void SteeringSystem::seekingBehavior(float dt, Eigen::Vector3f targetPosition, PositionComponent &p,

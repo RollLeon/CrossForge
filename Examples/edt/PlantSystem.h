@@ -11,7 +11,7 @@ namespace CForge {
         
         static void reduceWaterLevel(flecs::world& world);
 
-        static void increaseWaterLevel(PlantComponent& p);
+        static void increaseWaterLevel(float dt,PlantComponent& p);
     };
 
 } // CForge

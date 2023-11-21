@@ -1,3 +1,4 @@
+#include <iostream>
 #include "PlantSystem.h"
 #include "PathComponent.h"
 
@@ -22,10 +23,11 @@ namespace CForge {
                 });
     }
 
-    void PlantSystem::increaseWaterLevel(PlantComponent &p) {
+    void PlantSystem::increaseWaterLevel(float dt, PlantComponent &p) {
         // You can implement this function to increase the water level by a specific amount
-        if (p.waterLevel + waterIncreaseRate < p.maxWaterLevel) {
-            p.waterLevel += waterIncreaseRate;
+        if (p.waterLevel + waterIncreaseRate * dt < p.maxWaterLevel) {
+            p.waterLevel += waterIncreaseRate * dt;
+            std::cout << "increased by" << (waterIncreaseRate * dt) << std::endl;
         } else {
             p.waterLevel = p.maxWaterLevel;
         }
