@@ -58,6 +58,8 @@ namespace CForge {
                 }
             }
             SteeringSystem::seekingBehavior(dt, target, p, sc);
+        } else {
+            p.translationDelta(Eigen::Vector3f(0, 0, 0));
         }
     }
 
