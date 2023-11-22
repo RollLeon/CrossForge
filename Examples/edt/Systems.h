@@ -12,6 +12,17 @@ namespace CForge {
         float waterDecreaseRate = 0.1;
         float waterIncreaseRate = 1.0;
 
+        static void addSimpleSystems(flecs::world& world) {
+            world.system<AIComponent>("AISystem")
+                .iter([&world](flecs::iter it, AIComponent* ai) {
+                for (int i : it) {
+                    ai[i].tree.tickExactlyOnce();
+                }
+            });
+        }
+
+
+
         static void reduceWaterLevel(flecs::world& world) {
             world.query<PlantComponent>()
                 .iter([&world](flecs::iter it, PlantComponent* p) {

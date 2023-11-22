@@ -92,6 +92,7 @@ namespace CForge {
             PhysicsSystem::addPhysicsSystem(world);
             SteeringSystem::addSteeringSystem(world);
             PathSystem::addPathSystem(world);
+            Systems::addSimpleSystems(world);
             // load level
             LevelLoader levelLoader;
             levelLoader.loadLevel("Assets/Scene/end_mvp.json", &m_RootSGN, &world);

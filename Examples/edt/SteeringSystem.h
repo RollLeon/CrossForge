@@ -17,13 +17,6 @@ namespace CForge {
                             SteeringSystem::processEntity(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
                         }
                     });
-
-            world.system<AIComponent>("AISystem")
-                .iter([&world](flecs::iter it, AIComponent* ai) {
-                for (int i : it) {
-                    ai[i].tree.tickExactlyOnce();
-                }
-                    });
         }
 
         static void processEntity(float dt, PathComponent& ai, PositionComponent& p, SteeringComponent& sc, GeometryComponent& geo, flecs::world& world) {
