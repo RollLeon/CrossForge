@@ -1,18 +1,74 @@
-
-#ifndef POSITIONCOMPONENT_H
-#define POSITIONCOMPONENT_H
+#ifndef CFORGESANDBOX_COMPONENTS_H
+#define CFORGESANDBOX_COMPONENTS_H
 
 #include <Eigen/Core>
+#include "behaviortree_cpp/bt_factory.h"
+#include "crossforge/Graphics/Actors/IRenderableActor.h"
+#include <queue>
+#include <BulletCollision/CollisionDispatch/btCollisionObject.h>
+#include <flecs.h>
+#include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
+
+
 
 namespace CForge {
+    class AIComponent {
+    public:
+        BT::Tree tree;
+    };
+
+    class GeometryComponent {
+    public:
+        IRenderableActor* actor;
+
+        void init(IRenderableActor* pActor) {
+            actor = pActor;
+        }
+    };
+
+    class ObstacleComponent {
+
+    };
+
+    class PathComponent {
+    public:
+        std::queue<Eigen::Vector3f> path;
+        PathComponent() {
+            path = std::queue<Eigen::Vector3f>();
+        };
+    };
+
+
+    class PathRequestComponent {
+
+    public:
+        Eigen::Vector3f start;
+        Eigen::Vector3f destination;
+    };
+
+    class PhysicsComponent {
+    public:
+        std::unique_ptr<btRigidBody> collisionObject;
+
+        explicit PhysicsComponent(btRigidBody* co) {
+            collisionObject = std::unique_ptr<btRigidBody>(co);
+        };
+    };
+
+    class PlantComponent {
+    public:
+        float waterLevel;
+        float maxWaterLevel = 10.0;
+    };
+
     class PositionComponent {
     public:
-		Eigen::Vector3f m_Translation;
-		Eigen::Quaternionf m_Rotation;
-		Eigen::Vector3f m_Scale;
-		Eigen::Vector3f m_TranslationDelta;
-		Eigen::Quaternionf m_RotationDelta;
-		Eigen::Vector3f m_ScaleDelta;
+        Eigen::Vector3f m_Translation;
+        Eigen::Quaternionf m_Rotation;
+        Eigen::Vector3f m_Scale;
+        Eigen::Vector3f m_TranslationDelta;
+        Eigen::Quaternionf m_RotationDelta;
+        Eigen::Vector3f m_ScaleDelta;
 
         void init() {
             m_Translation = Eigen::Vector3f::Zero();
@@ -22,7 +78,6 @@ namespace CForge {
             m_RotationDelta = Eigen::Quaternionf::Identity();
             m_ScaleDelta = Eigen::Vector3f::Zero();
         }
-
 
         void translation(Eigen::Vector3f Translation) {
             m_Translation = Translation;
@@ -86,7 +141,6 @@ namespace CForge {
 
         }//update
 
-
         void buildTansformation(Eigen::Vector3f* pPosition, Eigen::Quaternionf* pRotation, Eigen::Vector3f* pScale) {
             Eigen::Vector3f ParentPosition = Eigen::Vector3f::Zero();
             Eigen::Quaternionf ParentRotation = Eigen::Quaternionf::Identity();
@@ -97,8 +151,16 @@ namespace CForge {
             if (nullptr != pScale) (*pScale) = ParentScale.cwiseProduct(m_Scale);
 
         }//buildTrnasformation
+    };
 
+    class SteeringComponent {
+    public:
+        float max_force;
+        float max_speed;
+        float mass;
+        float securityDistance;
     };
 
 }
-#endif //POSITIONCOMPONENT_H
+
+#endif //CFORGESANDBOX_COMPONENTS_H

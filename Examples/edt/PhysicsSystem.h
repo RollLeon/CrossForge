@@ -15,8 +15,7 @@
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
 #include <flecs.h>
 #include <eigen3/Eigen/Geometry>
-#include "PhysicsComponent.h"
-#include "PositionComponent.h"
+#include "Components.h"
 
 namespace CForge {
     class PhysicsSystem {

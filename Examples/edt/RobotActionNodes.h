@@ -6,14 +6,11 @@
 #include "behaviortree_cpp/action_node.h"
 #include "behaviortree_cpp/bt_factory.h"
 #include "flecs.h"
-#include "PathComponent.h"
-#include "PositionComponent.h"
-#include "PlantComponent.h"
-#include "PathRequestComponent.h"
+#include "Components.h"
 #include "SteeringSystem.h"
 #include "PathSystem.h"
 #include "SteeringSystem.h"
-#include "PlantSystem.h"
+#include "Systems.h"
 
 
 class EntityAwareNode {
@@ -135,7 +132,14 @@ public:
                     for (int i: it) {
                         if ((position->translation() - p[i].translation()).norm() < 6 &&
                             pl[i].waterLevel <= pl[i].maxWaterLevel * 0.95f) {
-                            CForge::PlantSystem::increaseWaterLevel(dt, pl[i]);
+                            //increaseWaterLevel
+                            if (p.waterLevel + waterIncreaseRate * dt < p.maxWaterLevel) {
+                                p.waterLevel += waterIncreaseRate * dt;
+                                std::cout << "increased by" << (waterIncreaseRate * dt) << std::endl;
+                            }
+                            else {
+                                p.waterLevel = p.maxWaterLevel;
+                            }
                             wateredPlant = true;
                             std::cout << "Watering: " << pl[i].waterLevel << std::endl;
                         }

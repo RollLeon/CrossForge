@@ -76,11 +76,10 @@ endif(USE_OPENCV)
 add_executable(CForgeSandbox
 	SandboxMain.cpp
 
-        Examples/edt/PathComponent.h Examples/edt/PathSystem.h Examples/edt/PlantComponent.h Examples/edt/SteeringComponent.h Examples/edt/SteeringSystem.cpp Examples/edt/SteeringSystem.h Examples/levelloading/LevelLoader.h
-		Examples/edt/PlantSystem.cpp
-		Examples/edt/RobotActionNodes.h
-        Examples/edt/AIComponent.h
-        Examples/edt/PhysicsComponent.h
+         Examples/edt/PathSystem.h  Examples/edt/SteeringSystem.h Examples/levelloading/LevelLoader.h
+		s.h Examples/edt/Components.h Examples/edt/Systems.h
+        
+        
 		Examples/edt/PhysicsSystem.h)
 
 if(EMSCRIPTEN)

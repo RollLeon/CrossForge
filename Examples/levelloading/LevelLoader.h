@@ -22,9 +22,7 @@
 #include "crossforge/AssetIO/SAssetIO.h"
 #include "crossforge/Graphics/SceneGraph/SGNGeometry.h"
 #include "crossforge/Graphics/Actors/StaticActor.h"
-#include "Examples/edt/PhysicsComponent.h"
-#include "Examples/edt/PlantComponent.h"
-#include "Examples/edt/AIComponent.h"
+#include "Examples/edt/Components.h"
 #include "Examples/edt/RobotActionNodes.h"
 #include "behaviortree_cpp/bt_factory.h"
 

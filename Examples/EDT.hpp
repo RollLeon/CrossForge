@@ -21,11 +21,7 @@
 
 #include <crossforge/MeshProcessing/PrimitiveShapeFactory.h>
 #include "ExampleSceneBase.hpp"
-#include "Examples/edt/PathComponent.h"
-#include "Examples/edt/SteeringComponent.h"
 #include "Examples/edt/PathSystem.h"
-#include "Examples/edt/PositionComponent.h"
-#include "Examples/edt/GeometryComponent.h"
 #include "Examples/levelloading/LevelLoader.h"
 #include <flecs.h>
 #include <imgui.h>
@@ -38,8 +34,6 @@
 #include <fstream>
 #include <json/json.h>
 #include <tinyfsm.hpp>
-#include "Examples/edt/PlantSystem.h"
-#include "Examples/edt/PlantComponent.h"
 #include <BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h>
 #include <BulletCollision/CollisionDispatch/btCollisionDispatcher.h>
 #include <BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
@@ -48,6 +42,8 @@
 #include <BulletCollision/BroadphaseCollision/btAxisSweep3.h>
 #include <BulletCollision/CollisionShapes/btSphereShape.h>
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
+#include "Examples/edt/Components.h"
+#include "Examples/edt/Systems.h"
 
 namespace CForge {
     class EDT : public ExampleSceneBase {
@@ -158,7 +154,7 @@ namespace CForge {
             renderEntities(&m_RenderDev);
 
 
-            PlantSystem::reduceWaterLevel(world);
+            Systems::reduceWaterLevel(world);
 
 
             m_RenderDev.activePass(RenderDevice::RENDERPASS_GEOMETRY);

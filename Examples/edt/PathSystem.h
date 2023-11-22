@@ -8,10 +8,8 @@
 #include <flecs.h>
 #include <iostream>
 #include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
-#include "PathComponent.h"
 #include "SteeringSystem.h"
-#include "ObstacleComponent.h"
-#include "PathRequestComponent.h"
+#include "Components.h"
 
 namespace CForge {
 
