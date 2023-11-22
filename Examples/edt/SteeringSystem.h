@@ -4,6 +4,7 @@
 #include <flecs.h>
 #include "Components.h" 
 #include "crossforge/Graphics/SceneGraph/SGNGeometry.h"
+#include "crossforge/Math/CForgeMath.h"
 
 namespace CForge {
 
@@ -33,7 +34,8 @@ namespace CForge {
                 });
             if (!ai.path.empty()) {
                 Eigen::Vector3f target = ai.path.front();
-                if (SteeringSystem::arrivedAtWayPoint(p.translation(), target, robotRadius, obstalceRadius, sc.securityDistance)) {
+                //Adding the correct Radius for a plant
+                if (SteeringSystem::arrivedAtWayPoint(p.translation(), target, robotRadius, 2.0, sc.securityDistance)) {
                     ai.path.pop();
                 }
                 for (auto pos : obstacles) {

@@ -124,21 +124,22 @@ public:
         auto entity = world->entity(entity_id);
         auto position = entity.get_mut<CForge::PositionComponent>();
         bool wateredPlant = false;
+        float waterIncreaseRate = 1.0;
         float dt = world->delta_time();
         world->filter<CForge::PositionComponent, CForge::PlantComponent>("WateringQuery")
-                .iter([position, &wateredPlant, dt](flecs::iter it, CForge::PositionComponent *p,
+                .iter([position, &wateredPlant, dt, waterIncreaseRate](flecs::iter it, CForge::PositionComponent *p,
                                                     CForge::PlantComponent *pl) {
 
                     for (int i: it) {
                         if ((position->translation() - p[i].translation()).norm() < 6 &&
                             pl[i].waterLevel <= pl[i].maxWaterLevel * 0.95f) {
                             //increaseWaterLevel
-                            if (p.waterLevel + waterIncreaseRate * dt < p.maxWaterLevel) {
-                                p.waterLevel += waterIncreaseRate * dt;
+                            if (pl[i].waterLevel + waterIncreaseRate * dt < pl[i].maxWaterLevel) {
+                                pl[i].waterLevel += waterIncreaseRate * dt;
                                 std::cout << "increased by" << (waterIncreaseRate * dt) << std::endl;
                             }
                             else {
-                                p.waterLevel = p.maxWaterLevel;
+                                pl[i].waterLevel = pl[i].maxWaterLevel;
                             }
                             wateredPlant = true;
                             std::cout << "Watering: " << pl[i].waterLevel << std::endl;

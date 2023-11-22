@@ -9,8 +9,6 @@ namespace CForge {
 
     class Systems {
     public:
-        float waterDecreaseRate = 0.1;
-        float waterIncreaseRate = 1.0;
 
         static void addSimpleSystems(flecs::world& world) {
             world.system<AIComponent>("AISystem")
@@ -21,11 +19,10 @@ namespace CForge {
             });
         }
 
-
-
         static void reduceWaterLevel(flecs::world& world) {
+            float waterDecreaseRate = 0.1;
             world.query<PlantComponent>()
-                .iter([&world](flecs::iter it, PlantComponent* p) {
+                .iter([&world, waterDecreaseRate](flecs::iter it, PlantComponent* p) {
                 for (int i : it) {
                     if (p[i].waterLevel > 0) {
                         p[i].waterLevel -= waterDecreaseRate * it.delta_time();
@@ -36,7 +33,6 @@ namespace CForge {
                 }
             });
         }
-
 
     };
 
