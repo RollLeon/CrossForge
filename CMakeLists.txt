@@ -76,7 +76,7 @@ endif(USE_OPENCV)
 add_executable(CForgeSandbox
 	SandboxMain.cpp
 
-           Examples/edt/Components.h Examples/edt/PathSystem.h Examples/edt/PhysicsSystem.h Examples/edt/SteeringSystem.h Examples/levelloading/LevelLoader.h Examples/edt/Systems.h
+           Examples/edt/Components.h Examples/edt/PathSystem.h Examples/edt/PhysicsSystem.h Examples/edt/RobotActionNodes.h Examples/edt/StateMachine.h Examples/edt/SteeringSystem.h Examples/edt/Systems.h Examples/levelloading/LevelLoader.h 
         
         
 		)
