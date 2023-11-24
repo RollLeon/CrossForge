@@ -123,22 +123,27 @@ public:
         std::cout << "Watering start: " << std::endl;
         auto entity = world->entity(entity_id);
         auto position = entity.get_mut<CForge::PositionComponent>();
+        auto robotRadius = entity.get<CForge::SteeringComponent>()->securityDistance +
+                           entity.get<CForge::GeometryComponent>()->actor->boundingVolume().boundingSphere().radius();
         bool wateredPlant = false;
         float waterIncreaseRate = 1.0;
         float dt = world->delta_time();
-        world->filter<CForge::PositionComponent, CForge::PlantComponent>("WateringQuery")
-                .iter([position, &wateredPlant, dt, waterIncreaseRate](flecs::iter it, CForge::PositionComponent *p,
-                                                    CForge::PlantComponent *pl) {
+        world->filter<CForge::PositionComponent, CForge::PlantComponent, CForge::GeometryComponent>("WateringQuery")
+                .iter([position, &wateredPlant, dt, waterIncreaseRate, robotRadius](flecs::iter it,
+                                                                                    CForge::PositionComponent *p,
+                                                                                    CForge::PlantComponent *pl,
+                                                                                    CForge::GeometryComponent *gc) {
 
                     for (int i: it) {
-                        if ((position->translation() - p[i].translation()).norm() < 6 &&
+                        float plantRadius = gc[i].actor->boundingVolume().boundingSphere().radius() * p[i].scale().x();
+                        float wateringRadius = (plantRadius + robotRadius) * 1.1f;
+                        if ((position->translation() - p[i].translation()).norm() < wateringRadius &&
                             pl[i].waterLevel <= pl[i].maxWaterLevel * 0.95f) {
                             //increaseWaterLevel
                             if (pl[i].waterLevel + waterIncreaseRate * dt < pl[i].maxWaterLevel) {
                                 pl[i].waterLevel += waterIncreaseRate * dt;
                                 std::cout << "increased by" << (waterIncreaseRate * dt) << std::endl;
-                            }
-                            else {
+                            } else {
                                 pl[i].waterLevel = pl[i].maxWaterLevel;
                             }
                             wateredPlant = true;

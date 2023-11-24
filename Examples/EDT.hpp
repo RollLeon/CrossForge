@@ -154,10 +154,6 @@ namespace CForge {
             m_SG.render(&m_RenderDev);
             renderEntities(&m_RenderDev);
 
-
-            Systems::reduceWaterLevel(world);
-
-
             m_RenderDev.activePass(RenderDevice::RENDERPASS_GEOMETRY);
             m_RenderDev.activeCamera(&m_Cam);
             m_SG.render(&m_RenderDev);

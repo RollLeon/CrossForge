@@ -7,6 +7,7 @@
 #include <queue>
 #include <BulletCollision/CollisionDispatch/btCollisionObject.h>
 #include <flecs.h>
+#include <BulletDynamics/Dynamics/btRigidBody.h>
 #include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
 
 
