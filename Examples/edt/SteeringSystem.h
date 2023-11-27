@@ -106,11 +106,19 @@ namespace CForge {
             Eigen::Vector3f uncapped_velocity = p.translationDelta() + steering_force / sc.mass;
             p.translationDelta(CForgeMath::maxLength(uncapped_velocity, sc.max_speed));
             if (p.translationDelta().norm() > 0.001) {
+                
+                float lerpFactor = 1.0 - pow(lerpFactor, dt);
+                
+                Eigen::Quaternionf currentRotation = p.rotation();
+
                 Eigen::Quaternionf rotation = Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f::UnitX(),
                     Eigen::Vector3f(
                         p.translationDelta().x(), 0,
                         p.translationDelta().z()).normalized());
-                p.rotation(rotation);
+
+                Eigen::Quaternionf interpolatedRotation = currentRotation.slerp(lerpFactor, rotation);
+
+                p.rotation(interpolatedRotation);
             }
         }
     };
