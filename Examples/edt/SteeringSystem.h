@@ -107,7 +107,7 @@ namespace CForge {
             p.translationDelta(CForgeMath::maxLength(uncapped_velocity, sc.max_speed));
             if (p.translationDelta().norm() > 0.001) {
                 
-                float lerpFactor = 1.0 - pow(lerpFactor, dt);
+                float lerpFactor = 1.0 - pow(0.05, dt);
                 
                 Eigen::Quaternionf currentRotation = p.rotation();
 

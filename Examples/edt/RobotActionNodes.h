@@ -31,12 +31,16 @@ public:
     BT::NodeStatus tick() override {
         auto entity = world->entity(entity_id);
         auto pa = entity.get_mut<CForge::PathComponent>();
+        auto pc = entity.get_mut<CForge::PositionComponent>();
 
         if (pa->path.empty()) {
             std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
             world->filter<CForge::PositionComponent, CForge::PlantComponent>()
-                    .each([&obstacles](const CForge::PositionComponent &t, CForge::PlantComponent &p) {
-                        obstacles.emplace_back(t.translation(), p.waterLevel);
+                    .each([&obstacles, pc](const CForge::PositionComponent &t, CForge::PlantComponent &p) {
+                if (abs(t.translation().y()- pc->translation().y()) < 5){
+                    obstacles.emplace_back(t.translation(), p.waterLevel);
+                }
+                        
                     });
             std::sort(obstacles.begin(), obstacles.end(),
                       [](auto v1, auto v2) {

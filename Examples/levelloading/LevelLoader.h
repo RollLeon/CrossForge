@@ -33,6 +33,7 @@ namespace CForge {
         void loadLevel(std::string filePath, SGNTransformation *rootNode, flecs::world *world) {
             std::string content = SAssetIO::readTextFile(filePath);
             Json::Reader reader;
+            srand(10);
             Json::Value level;
             reader.parse(content, level);
             const Json::Value &entities = level["entities"];
