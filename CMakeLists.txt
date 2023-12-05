@@ -118,7 +118,6 @@ elseif(__arm__)
 #		PRIVATE assimp
 		PRIVATE gpiod
 		PRIVATE BT::behaviortree_cpp
-		PRIVATE dl
 		PRIVATE ${BULLETerrainMeshT_LIBRARIES}
 		PRIVATE dl
 		RecastNavigation::Detour RecastNavigation::Recast RecastNavigation::DebugUtils RecastNavigation::DetourCrowd
@@ -136,8 +135,8 @@ elseif(UNIX)
 		PRIVATE dl
 		RecastNavigation::Detour RecastNavigation::Recast RecastNavigation::DebugUtils RecastNavigation::DetourCrowd
 		PRIVATE ${BULLET_LIBRARIES}
-		PRIVATE BT::behaviortre		PRIVATE dl
-e_cpp
+		PRIVATE BT::behaviortree_cpp
+		PRIVATE dl
 		)
 endif()
 

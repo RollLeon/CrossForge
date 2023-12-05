@@ -37,11 +37,11 @@ using namespace Eigen;
 //#define ActiveScene ExampleTextRendering
 //#define ActiveScene ExampleShapesAndMaterials
 //#define ActiveScene ExampleLighting
-#define ActiveScene ExampleRecast
+//#define ActiveScene ExampleRecast
 //#define ActiveScene ExampleSkeletalAnimation
 //#define ActiveScene ExampleMorphTargetAnimation
 //#define ActiveScene ExampleMultiViewport
-//#define ActiveScene ExampleSocket
+#define ActiveScene EDT
 
 
 ActiveScene* pScene = nullptr;

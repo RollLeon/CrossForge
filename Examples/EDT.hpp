@@ -86,6 +86,13 @@ namespace CForge {
             m_Ground.boundingVolume(BV);
             M.clear();
 
+            SAssetIO::load("Assets/ExampleScenes/Duck/Duck.gltf", &M);
+            for (uint32_t i = 0; i < M.materialCount(); ++i)
+                CForgeUtility::defaultMaterial(M.getMaterial(i), CForgeUtility::PLASTIC_YELLOW);
+            M.computePerVertexNormals();
+            m_duck.init(&M);
+            M.clear();
+
             // initialize ground transformation and geometry scene graph node
             m_GroundTransformSGN.init(&m_RootSGN);
             m_GroundSGN.init(&m_GroundTransformSGN, &m_Ground);
@@ -199,10 +206,23 @@ namespace CForge {
     protected:
 
         void renderEntities(RenderDevice *pRDev) {
+            IRenderableActor *duckCopy = &m_duck;
             world.query<PositionComponent, GeometryComponent>()
                     .iter([pRDev](flecs::iter it, PositionComponent *p, GeometryComponent *geo) {
                         for (int i: it) {
                             pRDev->requestRendering(geo[i].actor, p[i].m_Rotation, p[i].m_Translation, p[i].m_Scale);
+                        }
+                    });
+            world.query<PathComponent>()
+                    .iter([pRDev, duckCopy](flecs::iter it, PathComponent *p) {
+                        for (int i: it) {
+                            auto copy = p[i].path;
+                            while (!copy.empty()) {
+                                auto pos = copy.front();
+                                copy.pop();
+                                pRDev->requestRendering(duckCopy, Quaternionf(), pos,
+                                                        Vector3f(0.003, 0.003, 0.003));
+                            }
                         }
                     });
         }
@@ -212,6 +232,7 @@ namespace CForge {
         SGNTransformation m_RootSGN;
 
         StaticActor m_Ground;
+        StaticActor m_duck;
         SGNGeometry m_GroundSGN;
         SGNTransformation m_GroundTransformSGN;
 

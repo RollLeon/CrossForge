@@ -36,7 +36,7 @@ namespace CForge {
         void loadLevel(std::string filePath, SGNTransformation *rootNode, flecs::world *world) {
             std::string content = SAssetIO::readTextFile(filePath);
             Json::Reader reader;
-            srand(10);
+            srand(12);
             Json::Value level;
             reader.parse(content, level);
             const Json::Value &entities = level["entities"];
@@ -197,11 +197,10 @@ namespace CForge {
                 aic->tree.applyVisitor(visitor);
 
                 auto steering = entity.get_mut<SteeringComponent>();
-                steering->securityDistance = 1;
+                steering->securityDistance = 0.5f;
                 steering->mass = 500;
                 steering->max_force = 36;
                 steering->max_speed = 3;
-
 
                 btRigidBody::btRigidBodyConstructionInfo rbInfo(steering->mass, new btDefaultMotionState(),
                                                                 createCapsuleCollider(1.5f, 5.0f));
