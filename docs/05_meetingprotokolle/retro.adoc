@@ -18,33 +18,95 @@ Vorab wichtig zu sagen:
 === Check In: Happiness auf einer Skala von eins bis fünf
 
 . Wie geht es dir heute?
+** (1.5, 3, 3, 3, 4)
+** Stress (Umzug, TP Stress wegen keinem Fortschritt, Studiumsstress)
+** kein bock mehr auf Studium
+** leicht krank
+** es nicht zu warm, nicht zu kalt, aber Regen nicht schön
+** bald mit Studium fertig -> positiv
+** gute Meetings auf Arbeit, Kunde war zu besuch, wir sind essen gegangen
 . Wie zufrieden bist du mit:
-.. der Teamzusammenstellung
 .. deiner Aufgabe?
+... (3.5, 2.5, 2, 4, 3)
+... Aufgabe extrem zäh, jedes mal Frustfest, kein Vorwissen, kein Fortschritt --> geringe Motivation anzufangen
+... Kamera optimieren war cool
+... Thema Steering Behaviour war interessant
+... Management ist doof, aber Architektur ist cool
 .. deinem Fortschritt?
+... (1, 2, 2, 2, 3)
+... wenigester Fortschritt von allen, Fortschritt extrem langsam
+... erwartung, dass es schneller geht, angstrengend sich einzuarbeiten --> demotivierend
+... Manager ist Frustrierend, weil kein wissen, wie es besser geht
+... Level Importer und Architektur recht gut
 .. dem Projektfortschritt?
+... (2, 2, 2, 2, 2)
+... ist schon einiges da
+... man sieht schon was
+... aber es funktioniert halt noch nichts
 .. den Tools, die wir einsetzen?
+... (3, 2, 2, 2.5, 4)
+... Blender und anderer Tech Stack ist echt cool
+... sehr unzufrieden mit der Engine, weil noch so viel arbeit daran gemacht werden muss
+... VSCode toll, aber Electron scheiße -> 4
+... git, Blender -> 5
+... CMake mit vcpkg -> 3
+... CrossForge Doku dürftig, Cpp nicht schön, aber Engine ist nicht das schlimme
+... Recast/Detour ist extrem nervig, weil keine Dokumentation, schlechte/veraltete Coding Conventions -> 1
 .. dem Prozess?
-.. dem Produkt, was wir abliefern?
-. Wie viel Spaß hast du?
-. Wie viel lernst du?
+... Jira -> total nutzlos und wir haben vergessen, dass es existiert
+... deutliches verbessuerungspotenital, bei aufgabenerklärung, betreuung, Reviews
 . Hast du eine klare Vorstellung von unserer Mission? (*1:* _Ich habe überhaupt keine Idee, wo die Reise hingeht und warum wir die Dinge tun, die wir tun._ *5:* _Ich weiß genau wo wir hinwollen und freue mich aufs Ziel_)
+... (3, 3, 3.5, 5, 2.5)
+... Mittelmäßig, was ist MVP offen, was ist danach noch offen?
+... der Weg ist ein Fragezeichen
+... kein Überblick, was insgesammt getan werden muss, damit Projekt fertig wird
+... Mission ist klar
 . Siehst du dich eher als Spieler oder Spielfigur (*1:* Ich bin nur eine Spielfigur und habe keinen Einfluss, was wir bauen oder wie wir es bauen, *5:* Ich habe die volle Kontrolle über unser Endergebnis)
-
+... (3, 2, 2, )
+... zu wenig Ahnung, um entscheiden zu was gut wäre -> theorethisch würden Entscheidungen gut eingearbeitet werden -> ich möchte deswegen keine Entscheidungen treffen
+... kein Überblick über Projekt, weswegen einbringen schwer ist
+. Zufriedenheit auf Kontrolle des Projekts
+. (4, 4, 5, 2, 2)
 
 === Retroteil
 
 ==== Was lief gut?
 
+* Pair Codings (auch, wenn gleicher Wissensstand)
+* Meetings in Discord
+* Kreativer Part wird von Angi gut gelöst
+
 ==== Was lief schlecht?
+
+* Probleme mit Recast/Detour
+* Sehr wenig vorwissen und deswegen kein Fortschritt
+* Termine besser aufschreiben
 
 ==== Was verwirrt uns?
 
 ==== Was sollten wir anders machen?
 
+=== Lösungsvorschläge
+
+* Sprechstunde
+* Pari Coding wieder einführung
+* Quietsche Entschen
+* Aufgaben tauschen --> noch nicht, aber Option bleibt offen
+* Gewisse Personen anpingen, damit sie an Meetings erinnert werden
+
+
 === Welche Konsquenzen wollen wir daraus ziehen?
+
+* Sprechstunde
+* Quitesche Entschen
+* einen Pair Coding Termin
+* Gewisse Personen anpingen, damit sie an Meetings erinnert werden
+* 14:30 regulärer Meeting Termin
+* Noch einmal eine Retro vor Weihnachten?
 
 === Check Out: Return on Investment
 
 * Feedback zur Retro
-* Auf Skala von eins bis fünf wie hilfreich fandest du den Austausch?
+** wirklich gut
+** deutlich kürzer, zum Teil zu lang
+** zu spezielle Probleme, sodass die anderen sich gelangweilt haben

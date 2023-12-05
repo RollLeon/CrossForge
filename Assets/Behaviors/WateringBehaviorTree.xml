@@ -1,0 +1,10 @@
+<root BTCPP_format="4" >
+	<BehaviorTree ID="WateringTree">
+		<Sequence name="root_sequence">
+			<FindPlant   name="find_plant"/>
+			<FindWay    name="find_way"/>
+			<DriveToPlant name="drive_to_plant"/>
+			<Watering   name="watering"/>
+		</Sequence>
+	</BehaviorTree>
+</root>

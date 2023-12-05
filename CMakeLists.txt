@@ -26,10 +26,10 @@ project (CForgeSandbox)
 
 if(EMSCRIPTEN)
 	include(FetchContent)
-	
-	### Eigen3
+
+	### Eigen3TerrainMesh
 	FetchContent_Declare(
-		tinyxml2 
+		tinyxml2
 		GIT_REPOSITORY https://github.com/leethomason/tinyxml2.git
 		GIT_TAG 9.0.0
 	)
@@ -37,7 +37,7 @@ if(EMSCRIPTEN)
 
 	# tinygltf
 	FetchContent_Declare(
-		tinygltf 
+		tinygltf
 		URL https://github.com/syoyo/tinygltf/archive/refs/tags/v2.8.2.zip
 	)
 	FetchContent_MakeAvailable(tinygltf)
@@ -60,6 +60,8 @@ FIND_PACKAGE(imgui CONFIG REQUIRED) # dear-imgui
 FIND_PACKAGE(flecs CONFIG REQUIRED) # dear-imgui
 FIND_PACKAGE(jsoncpp CONFIG REQUIRED)
 FIND_PACKAGE(recastnavigation CONFIG REQUIRED)
+FIND_PACKAGE(Bullet CONFIG REQUIRED)
+FIND_PACKAGE(behaviortree_cpp CONFIG REQUIRED)
 endif()
 
 
@@ -72,10 +74,15 @@ if(USE_OPENCV)
 	add_compile_definitions(USE_OPENCV)
 endif(USE_OPENCV)
 
-add_executable(CForgeSandbox 
+add_executable(CForgeSandbox
 	SandboxMain.cpp
 
-        Examples/edt/AIComponent.cpp Examples/edt/AIComponent.h Examples/edt/AiSystem.h  Examples/edt/SteeringComponent.h Examples/edt/SteeringSystem.cpp Examples/edt/SteeringSystem.h Examples/levelloading/LevelLoader.h)
+           Examples/edt/Components.h Examples/edt/PathSystem.h Examples/edt/PhysicsSystem.h Examples/edt/RobotActionNodes.h Examples/edt/StateMachine.h Examples/edt/SteeringSystem.h Examples/edt/Systems.h Examples/levelloading/LevelLoader.h
+		Examples/edt/DebugDraw.h
+		Examples/edt/PlayerSystem.h
+
+
+)
 
 if(EMSCRIPTEN)
 	target_link_Libraries(CForgeSandbox
@@ -85,21 +92,23 @@ if(EMSCRIPTEN)
 	set_target_properties(CForgeSandbox PROPERTIES LINK_FLAGS "${LINK_FLAGS} ${Optimization_Flag} -sEXIT_RUNTIME=1 -sALLOW_MEMORY_GROWTH=1 -sWASM=1 -sUSE_WEBGL2=1 -fwasm-exceptions -sUSE_GLFW=3 -sUSE_ZLIB=1 -sUSE_LIBPNG=1 -sUSE_LIBJPEG=1 --preload-file Assets --preload-file Shader --preload-file MyAssets")
 
 elseif(WIN32)
-	target_link_libraries(CForgeSandbox 
+	target_link_libraries(CForgeSandbox
 	PRIVATE crossforge
-	PRIVATE glfw 
+	PRIVATE glfw
 	PRIVATE glad::glad
 	ws2_32
 	PRIVATE tinyxml2::tinyxml2
 	PRIVATE imgui::imgui
 	PRIVATE flecs::flecs
 	PRIVATE JsonCpp::JsonCpp
+	PRIVATE ${BULLET_LIBRARIES}
+	PRIVATE BT::behaviortree_cpp
 	${FREETYPE_LIBRARIES}
 	RecastNavigation::Detour RecastNavigation::Recast RecastNavigation::DebugUtils RecastNavigation::DetourCrowd
 	)
-	
+
 elseif(__arm__)
-	target_link_libraries(CForgeSandbox 
+	target_link_libraries(CForgeSandbox
 		PRIVATE crossforge
 		PRIVATE glfw
 		PRIVATE glad::glad
@@ -108,11 +117,14 @@ elseif(__arm__)
 		PRIVATE JsonCpp::JsonCpp
 #		PRIVATE assimp
 		PRIVATE gpiod
+		PRIVATE BT::behaviortree_cpp
+		PRIVATE dl
+		PRIVATE ${BULLETerrainMeshT_LIBRARIES}
 		PRIVATE dl
 		RecastNavigation::Detour RecastNavigation::Recast RecastNavigation::DebugUtils RecastNavigation::DetourCrowd
 		)
 elseif(UNIX)
-	target_link_libraries(CForgeSandbox 
+	target_link_libraries(CForgeSandbox
 		PRIVATE crossforge
 		PRIVATE glfw
 		PRIVATE glad::glad
@@ -122,36 +134,38 @@ elseif(UNIX)
 		PRIVATE flecs::flecs
 		PRIVATE JsonCpp::JsonCpp
 		PRIVATE dl
-		PRIVATE dl
 		RecastNavigation::Detour RecastNavigation::Recast RecastNavigation::DebugUtils RecastNavigation::DetourCrowd
+		PRIVATE ${BULLET_LIBRARIES}
+		PRIVATE BT::behaviortre		PRIVATE dl
+e_cpp
 		)
 endif()
 
 #copy shaders
 add_custom_command(
-	TARGET CForgeSandbox PRE_BUILD 
+	TARGET CForgeSandbox PRE_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_directory
 	${CMAKE_SOURCE_DIR}/crossforge/Shader
 	${CMAKE_CURRENT_BINARY_DIR}/Shader
 )
 add_custom_command(
-	TARGET CForgeSandbox PRE_BUILD 
-	COMMAND ${CMAKE_COMMAND} -E copy_directory 
-	${CMAKE_SOURCE_DIR}/Prototypes/Shader 
+	TARGET CForgeSandbox PRE_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+	${CMAKE_SOURCE_DIR}/Prototypes/Shader
 	${CMAKE_CURRENT_BINARY_DIR}/Shader
 )
 
 #copy assets
 add_custom_command(
-	TARGET CForgeSandbox PRE_BUILD 
-	COMMAND ${CMAKE_COMMAND} -E copy_directory 
+	TARGET CForgeSandbox PRE_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
 	${CMAKE_SOURCE_DIR}/Assets
 	${CMAKE_CURRENT_BINARY_DIR}/Assets
 )
 
 add_custom_command(
-	TARGET CForgeSandbox PRE_BUILD 
-	COMMAND ${CMAKE_COMMAND} -E copy_directory 
+	TARGET CForgeSandbox PRE_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
 	${CMAKE_SOURCE_DIR}/MyAssets
 	${CMAKE_CURRENT_BINARY_DIR}/MyAssets
 )
@@ -162,7 +176,7 @@ set(APP_FILES CForgeSandbox.html CForgeSandbox.js CForgeSandbox.wasm CForgeSandb
 foreach(i ${APP_FILES})
 add_custom_command(
 	TARGET CForgeSandbox POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy 
+	COMMAND ${CMAKE_COMMAND} -E copy
 	${CMAKE_CURRENT_BINARY_DIR}/${i}
 	${CMAKE_CURRENT_BINARY_DIR}/App/${i}
 )
