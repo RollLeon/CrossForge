@@ -38,14 +38,22 @@ namespace CForge {
                 float S = 1.0f;
                 if (pKeyboard->keyPressed(Keyboard::KEY_LEFT_SHIFT)) S = SpeedScale;
 
-                if (pKeyboard->keyPressed(Keyboard::KEY_W)) pc.translationDelta(pCamera->dir() * S * MovementSpeed);
+                auto forward = pCamera->dir();
+                forward.y() = 0;
+                auto right = pCamera->right();
+                right.y() = 0;
+                if (pKeyboard->keyPressed(Keyboard::KEY_W))
+                    pc.translationDelta(forward * S * MovementSpeed);
                 else if (pKeyboard->keyPressed(Keyboard::KEY_S))
-                    pc.translationDelta(pCamera->dir() * S * -MovementSpeed);
+                    pc.translationDelta(forward * S * -MovementSpeed);
                 else if (pKeyboard->keyPressed(Keyboard::KEY_A))
-                    pc.translationDelta(pCamera->right() * -S * MovementSpeed);
+                    pc.translationDelta(right * -S * MovementSpeed);
                 else if (pKeyboard->keyPressed(Keyboard::KEY_D))
-                    pc.translationDelta(pCamera->right() * S * MovementSpeed);
-                else pc.translationDelta(Eigen::Vector3f(0, 0, 0));
+                    pc.translationDelta(right * S * MovementSpeed);
+                else {
+                    float ySpeed = pc.translationDelta().y() > 0 ? 0 : pc.translationDelta().y();
+                    pc.translationDelta(Eigen::Vector3f(0, ySpeed, 0));
+                }
                 pCamera->position(pc.translation() + Eigen::Vector3f(0, PlayerComponent::HEIGHT, 0));
 
                 const Eigen::Vector2f MouseDelta = pMouse->movement();
