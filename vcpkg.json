@@ -12,6 +12,9 @@
 		"tinyxml2",
 		"tinygltf",
 		"flecs",
+		"bullet3",
+		"behaviortree-cpp",
+		"tinyfsm",
 		{
 			"name": "imgui",
 			"default-features": false,
@@ -20,6 +23,7 @@
 		{
 			"name": "jsoncpp",
 			"default-features": false
-		}
+		},
+		"recastnavigation"
 	]
 }
