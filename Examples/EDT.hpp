@@ -49,6 +49,9 @@
 namespace CForge {
     class EDT : public ExampleSceneBase {
     public:
+        static const bool VISUALIZE_PATH = false;
+        static const bool BULLET_DEBUG_DRAW = false;
+
         EDT(void) {
 
         }//Constructor
@@ -191,11 +194,11 @@ namespace CForge {
 
             bool test = true;
             ImVec2 size = {0, 0};
-
-            debugDraw->updateUniform(m_Cam.projectionMatrix(), m_Cam.cameraMatrix());
-            dynamicsWorld->debugDrawWorld();
-            m_RenderWin.swapBuffers();
-
+            if (BULLET_DEBUG_DRAW) {
+                debugDraw->updateUniform(m_Cam.projectionMatrix(), m_Cam.cameraMatrix());
+                dynamicsWorld->debugDrawWorld();
+                m_RenderWin.swapBuffers();
+            }
             updateFPS();
             world.progress(1.0f / m_FPS);
             // change between flying and walking mode
@@ -213,18 +216,20 @@ namespace CForge {
                             pRDev->requestRendering(geo[i].actor, p[i].m_Rotation, p[i].m_Translation, p[i].m_Scale);
                         }
                     });
-            world.query<PathComponent>()
-                    .iter([pRDev, duckCopy](flecs::iter it, PathComponent *p) {
-                        for (int i: it) {
-                            auto copy = p[i].path;
-                            while (!copy.empty()) {
-                                auto pos = copy.front();
-                                copy.pop();
-                                pRDev->requestRendering(duckCopy, Quaternionf(), pos,
-                                                        Vector3f(0.003, 0.003, 0.003));
+            if (VISUALIZE_PATH) {
+                world.query<PathComponent>()
+                        .iter([pRDev, duckCopy](flecs::iter it, PathComponent *p) {
+                            for (int i: it) {
+                                auto copy = p[i].path;
+                                while (!copy.empty()) {
+                                    auto pos = copy.front();
+                                    copy.pop();
+                                    pRDev->requestRendering(duckCopy, Quaternionf(), pos,
+                                                            Vector3f(0.003, 0.003, 0.003));
+                                }
                             }
-                        }
-                    });
+                        });
+            }
         }
 
 
