@@ -23,12 +23,17 @@ namespace CForge {
         static void
         processEntity(float dt, PathComponent &ai, PositionComponent &p, SteeringComponent &sc, GeometryComponent &geo,
                       flecs::world &world) {
-            float robotRadius = geo.actor->boundingVolume().boundingSphere().radius() * p.scale().x();
+            float robotRadius = 0;
+                // geo.actor->boundingVolume().boundingSphere().radius() * p.scale().x();
             std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
             world.filter<PositionComponent, ObstacleComponent, GeometryComponent>()
-                    .each([&obstacles](const PositionComponent &t, ObstacleComponent o, GeometryComponent geo) {
+                    .each([&obstacles, p](const PositionComponent &t, ObstacleComponent o, GeometryComponent geo) {
                         float obstalceRadius = geo.actor->boundingVolume().boundingSphere().radius() * t.scale().x();
-                        obstacles.emplace_back(t.translation(), obstalceRadius);
+                        if ((p.translation()-t.translation()).norm() > 0.1)
+                {
+                    obstacles.emplace_back(t.translation(), obstalceRadius);
+                }
+
                     });
             std::sort(obstacles.begin(), obstacles.end(),
                       [&p](auto v1, auto v2) {
