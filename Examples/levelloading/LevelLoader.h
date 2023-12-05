@@ -128,7 +128,15 @@ namespace CForge {
             models.insert({filePath, actor});
             return actor;
         }
-
+        static btCollisionShape *createCylinderCollider(float radius, float height) {
+            btCompoundShape *pCompoundShape = new btCompoundShape();
+            btCollisionShape *cylinderShape = new btCylinderShape(btVector3(radius, height/2, radius));
+            auto transform = btTransform();
+            transform.setIdentity();
+            transform.setOrigin(btVector3(0,  height / 2.0f, 0));
+            pCompoundShape->addChildShape(transform, cylinderShape);
+            return pCompoundShape;
+        }
 
     protected:
         std::map<std::string, StaticActor *> models;
@@ -205,15 +213,6 @@ namespace CForge {
             }
         }
 
-        static btCollisionShape *createCylinderCollider(float radius, float height) {
-            btCompoundShape *pCompoundShape = new btCompoundShape();
-            btCollisionShape *cylinderShape = new btCylinderShape(btVector3(radius, height/2, radius));
-            auto transform = btTransform();
-            transform.setIdentity();
-            transform.setOrigin(btVector3(0,  height / 2.0f, 0));
-            pCompoundShape->addChildShape(transform, cylinderShape);
-            return pCompoundShape;
-        }
     };
 }
 #endif //CFORGESANDBOX_LEVELLOADER_H

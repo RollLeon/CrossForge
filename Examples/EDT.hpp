@@ -44,6 +44,7 @@
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
 #include "Examples/edt/Components.h"
 #include "Examples/edt/Systems.h"
+#include "Examples/edt/PlayerSystem.h"
 
 namespace CForge {
     class EDT : public ExampleSceneBase {
@@ -93,10 +94,24 @@ namespace CForge {
             dynamicsWorld->setDebugDrawer(debugDraw);
             SteeringSystem::addSteeringSystem(world);
             PathSystem::addPathSystem(world);
+            PlayerSystem::addPlayerSystem(world);
             Systems::addSimpleSystems(world);
             // load level
             LevelLoader levelLoader;
             levelLoader.loadLevel("Assets/Scene/end_mvp.json", &m_RootSGN, &world);
+
+            flecs::entity player = world.entity();
+            player.emplace<PlayerComponent>(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse());
+
+            btRigidBody::btRigidBodyConstructionInfo rbInfo(10, new btDefaultMotionState(),
+                                                            LevelLoader::createCylinderCollider(0.5f,
+                                                                                                PlayerComponent::HEIGHT));
+            btRigidBody *body = new btRigidBody(rbInfo);
+            player.emplace<PhysicsComponent>(body);
+            player.add<PositionComponent>();
+            auto pos = player.get_mut<PositionComponent>();
+            pos->init();
+            pos->translation(Vector3f(15, 4, 0));
 
             // change sun settings to cover this large area
             m_Sun.position(Vector3f(100.0f, 1000.0f, 500.0f));
@@ -144,9 +159,6 @@ namespace CForge {
         void mainLoop(void) override {
             m_RenderWin.update();
 
-            toggleCursor();
-            defaultCameraUpdate(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse(), 0.1f * 60.0f / m_FPS, 0.5f, 2.0f);
-
             m_SkyboxSG.update(60.0f / m_FPS);
             m_SG.update(60.0f / m_FPS);
 
@@ -173,32 +185,6 @@ namespace CForge {
             bool test = true;
             ImVec2 size = {0, 0};
 
-            if (gamestate == DIALOG) {
-                Dialoggraph currentDialog = dialog;
-                for (int selected: conversationProgress) {
-                    currentDialog = currentDialog.answers[selected];
-                    if (currentDialog.playerSpeaking && !currentDialog.answers.empty()) {
-                        currentDialog = currentDialog.answers[0];
-                    }
-                }
-                ImGui::NewFrame();
-                ImGui::SetNextWindowSize(size);
-                ImGui::Begin("test", &test, ImGuiWindowFlags_NoTitleBar);
-                ImGui::Text(currentDialog.text.c_str());
-                for (int i = 0; i < currentDialog.answers.size(); i++) {
-                    if (ImGui::Button(currentDialog.answers[i].text.c_str())) {
-                        conversationProgress.push_back(i);
-                    }
-                }
-                if (currentDialog.answers.empty()) {
-                    gamestate = GAMEPLAY;
-                    conversationProgress.clear();
-                }
-                ImGui::End();
-                ImGui::EndFrame();
-                ImGui::Render();
-                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-            }
             debugDraw->updateUniform(m_Cam.projectionMatrix(), m_Cam.cameraMatrix());
             dynamicsWorld->debugDrawWorld();
             m_RenderWin.swapBuffers();
