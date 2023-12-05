@@ -104,8 +104,8 @@ namespace CForge {
             player.emplace<PlayerComponent>(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse());
 
             btRigidBody::btRigidBodyConstructionInfo rbInfo(10, new btDefaultMotionState(),
-                                                            LevelLoader::createCylinderCollider(0.5f,
-                                                                                                PlayerComponent::HEIGHT));
+                                                            LevelLoader::createCapsuleCollider(0.5f,
+                                                                                               PlayerComponent::HEIGHT));
             btRigidBody *body = new btRigidBody(rbInfo);
             player.emplace<PhysicsComponent>(body);
             player.add<PositionComponent>();

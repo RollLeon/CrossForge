@@ -13,12 +13,13 @@
 #include <regex>
 #include <BulletCollision/CollisionShapes/btSphereShape.h>
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
-#include <BulletCollision/CollisionShapes/btCylinderShape.h>
+#include <BulletCollision/CollisionShapes/btCapsuleShape.h>
 #include <BulletCollision/CollisionShapes/btCompoundShape.h>
 #include <BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
 #include <LinearMath/btDefaultMotionState.h>
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <BulletCollision/CollisionShapes/btTriangleMesh.h>
+#include <BulletCollision/CollisionShapes/btCylinderShape.h>
 #include "crossforge/AssetIO/T3DMesh.hpp"
 #include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
 #include "crossforge/AssetIO/SAssetIO.h"
@@ -128,12 +129,23 @@ namespace CForge {
             models.insert({filePath, actor});
             return actor;
         }
-        static btCollisionShape *createCylinderCollider(float radius, float height) {
+
+        static btCollisionShape *createCapsuleCollider(float radius, float height) {
             btCompoundShape *pCompoundShape = new btCompoundShape();
-            btCollisionShape *cylinderShape = new btCylinderShape(btVector3(radius, height/2, radius));
+            btCollisionShape *cylinderShape = new btCapsuleShape(radius, height - 2 * radius);
             auto transform = btTransform();
             transform.setIdentity();
-            transform.setOrigin(btVector3(0,  height / 2.0f, 0));
+            transform.setOrigin(btVector3(0, height / 2.0f, 0));
+            pCompoundShape->addChildShape(transform, cylinderShape);
+            return pCompoundShape;
+        }
+
+        static btCollisionShape *createCylinderCollider(float radius, float height) {
+            btCompoundShape *pCompoundShape = new btCompoundShape();
+            btCollisionShape *cylinderShape = new btCylinderShape(btVector3(radius, height / 2.0f, radius));
+            auto transform = btTransform();
+            transform.setIdentity();
+            transform.setOrigin(btVector3(0, height / 2.0f, 0));
             pCompoundShape->addChildShape(transform, cylinderShape);
             return pCompoundShape;
         }
@@ -192,7 +204,7 @@ namespace CForge {
 
 
                 btRigidBody::btRigidBodyConstructionInfo rbInfo(steering->mass, new btDefaultMotionState(),
-                                                                createCylinderCollider(1.5f, 4.0f));
+                                                                createCapsuleCollider(1.5f, 5.0f));
                 btRigidBody *body = new btRigidBody(rbInfo);
                 entity.emplace<PhysicsComponent>(body);
 
