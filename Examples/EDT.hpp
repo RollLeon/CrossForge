@@ -88,8 +88,9 @@ namespace CForge {
             // initialize ground transformation and geometry scene graph node
             m_GroundTransformSGN.init(&m_RootSGN);
             m_GroundSGN.init(&m_GroundTransformSGN, &m_Ground);
-
-            PhysicsSystem::addPhysicsSystem(world);
+            debugDraw = new DebugDraw();
+            dynamicsWorld = PhysicsSystem::addPhysicsSystem(world);
+            dynamicsWorld->setDebugDrawer(debugDraw);
             SteeringSystem::addSteeringSystem(world);
             PathSystem::addPathSystem(world);
             Systems::addSimpleSystems(world);
@@ -198,7 +199,8 @@ namespace CForge {
                 ImGui::Render();
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             }
-
+            debugDraw->updateUniform(m_Cam.projectionMatrix(), m_Cam.cameraMatrix());
+            dynamicsWorld->debugDrawWorld();
             m_RenderWin.swapBuffers();
 
             updateFPS();
@@ -220,7 +222,6 @@ namespace CForge {
         }
 
 
-
         flecs::world world;
         SGNTransformation m_RootSGN;
 
@@ -235,6 +236,8 @@ namespace CForge {
 
         Dialoggraph dialog;
         vector<int> conversationProgress;
+        DebugDraw *debugDraw;
+        std::shared_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
     };//EDT
 
 }//name space

@@ -16,11 +16,12 @@
 #include <flecs.h>
 #include <eigen3/Eigen/Geometry>
 #include "Components.h"
+#include "DebugDraw.h"
 
 namespace CForge {
     class PhysicsSystem {
     public:
-        static void addPhysicsSystem(flecs::world &world) {
+        static std::shared_ptr<btDiscreteDynamicsWorld> addPhysicsSystem(flecs::world &world) {
             btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
             btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
             btBroadphaseInterface *overlappingPairCache = new btDbvtBroadphase();
@@ -71,6 +72,7 @@ namespace CForge {
                             pc[i].update(it.delta_time());
                         }
                     });
+            return dynamicsWorld;
         }
     };
 }
