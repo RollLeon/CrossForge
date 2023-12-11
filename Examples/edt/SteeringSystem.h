@@ -15,14 +15,16 @@ namespace CForge {
                 .iter([&world](flecs::iter it, PositionComponent* p, PathComponent* ai, SteeringComponent* sc,
                     GeometryComponent* geo) {
                         for (int i : it) {
-                            SteeringSystem::processEntity(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
+                            if (sc->PathFollowing){
+                                SteeringSystem::processEntity(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
+                            }
                         }
                     });
         }
 
         static void processEntity(float dt, PathComponent& ai, PositionComponent& p, SteeringComponent& sc, GeometryComponent& geo, flecs::world& world) {
-            float robotRadius = 0;
-                // geo.actor->boundingVolume().boundingSphere().radius() * p.scale().x();
+            float robotRadius = geo.actor->boundingVolume().aabb().min().norm()/2;
+
             std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
             world.filter<PositionComponent, ObstacleComponent, GeometryComponent>()
                 .each([&obstacles, p](const PositionComponent& t, ObstacleComponent o, GeometryComponent geo) {
@@ -40,7 +42,7 @@ namespace CForge {
             if (!ai.path.empty()) {
                 Eigen::Vector3f target = ai.path.front();
                 //Adding the correct Radius for a plant
-                if (SteeringSystem::arrivedAtWayPoint(p.translation(), target, robotRadius, 0.0, sc.securityDistance)) {
+                if (SteeringSystem::arrivedAtWayPoint(p.translation(), target, robotRadius, sc.securityDistance)) {
                     ai.path.pop();
                 }
                 for (auto pos : obstacles) {
@@ -94,9 +96,10 @@ namespace CForge {
             return false;
         }
 
-        static bool arrivedAtWayPoint(Eigen::Vector3f position, Eigen::Vector3f target, float RobotRadius, float ObstacleRadius, float securityDistance) {
-            return (position - target).norm() < (RobotRadius + ObstacleRadius + securityDistance + 0.1);
+        static bool arrivedAtWayPoint(Eigen::Vector3f position, Eigen::Vector3f target, float RobotRadius, float securityDistance) {
+            return (position - target).norm() < (RobotRadius + securityDistance + 0.1);
         }
+
         static void seekingBehavior(float dt, Eigen::Vector3f targetPosition, PositionComponent& p, SteeringComponent& sc) {
             Eigen::Vector3f toTarget = targetPosition - p.translation();
             if (p.translationDelta().dot(toTarget) < 0) {
@@ -126,6 +129,27 @@ namespace CForge {
                 p.rotation(interpolatedRotation);
             }
         }
+
+
+        static void turnTo(float dt, const Eigen::Vector3f& targetPosition, PositionComponent& p, SteeringComponent& sc) {
+            Eigen::Vector3f toTarget = targetPosition - p.translation();
+
+            // Calculate rotation quaternion to face the target direction
+            Eigen::Quaternionf rotation = Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f::UnitX(),
+                Eigen::Vector3f(toTarget.x(), 0, toTarget.z()).normalized());
+
+
+            float lerpFactor = 1.0 - pow(0.05, dt);
+
+            Eigen::Quaternionf currentRotation = p.rotation();
+
+            Eigen::Quaternionf interpolatedRotation = currentRotation.slerp(lerpFactor, rotation);
+
+            p.rotation(interpolatedRotation);
+        }
+
+
+
     };
 
 } // CForge

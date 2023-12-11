@@ -160,6 +160,11 @@ namespace CForge {
         float max_speed;
         float mass;
         float securityDistance;
+        enum drivingMode {
+            PathFollowing,
+            Seeking,
+            TurnTo
+        };
     };
 
 }
