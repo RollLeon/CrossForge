@@ -27,6 +27,8 @@ in mat3 TBN;
 in vec3 Color;
 #endif
 
+uniform vec2 plant;
+
 in vec3 Pos;
 in vec3 N;
 in vec2 UV;
@@ -43,6 +45,13 @@ void main(){
 	#else
 	gAlbedoSpec.rgb = TexColor.a * (Material.Color.rgb * TexColor.rgb);
 	#endif
+
+	if(plant.x > 0.5 && normalize(gAlbedoSpec.rgb).g > 0.5){
+	    vec3 naturalColor = gAlbedoSpec.rgb;
+	    vec3 yellow = vec3(1,1,0);
+	    float alpha = sqrt(plant.y);
+	    gAlbedoSpec.rgb = mix(yellow, naturalColor, alpha);
+	}
 
 	// store the framgent position vector in the first gBuffer texture 
 	gPosition = vec4(Pos, Material.AO);

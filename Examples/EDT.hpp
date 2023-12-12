@@ -49,7 +49,7 @@
 namespace CForge {
     class EDT : public ExampleSceneBase {
     public:
-        static const bool VISUALIZE_PATH = true;
+        static const bool VISUALIZE_PATH = false;
         static const bool BULLET_DEBUG_DRAW = false;
 
         EDT(void) {
@@ -124,8 +124,8 @@ namespace CForge {
             pos->translation(Vector3f(15, 4, 0));
 
             // change sun settings to cover this large area
-            m_Sun.position(Vector3f(100.0f, 1000.0f, 500.0f));
-            m_Sun.initShadowCasting(2048 * 2, 2048 * 2, Vector2i(1000, 1000), 1.0f, 5000.0f);
+            m_Sun.position(Vector3f(100.0f, 100.0f, 100.0f));
+            m_Sun.initShadowCasting(2048*2, 2048*2, Vector2i(100, 100), 90.0f, 5000.0f);
 
             // create help text
             LineOfText *pKeybindings = new LineOfText();
@@ -167,6 +167,7 @@ namespace CForge {
         }//clear
 
         void mainLoop(void) override {
+            glDisable(GL_CULL_FACE);
             m_RenderWin.update();
 
             m_SkyboxSG.update(60.0f / m_FPS);
@@ -213,6 +214,11 @@ namespace CForge {
             world.query<PositionComponent, GeometryComponent>()
                     .iter([pRDev](flecs::iter it, PositionComponent *p, GeometryComponent *geo) {
                         for (int i: it) {
+                            if(it.entity(i).has<PlantComponent>()){
+                                auto plant = it.entity(i).get<PlantComponent>();
+                                geo[i].actor->isPlant = true;
+                                geo[i].actor->waterLevel = plant->waterLevel / plant->maxWaterLevel;
+                            }
                             pRDev->requestRendering(geo[i].actor, p[i].m_Rotation, p[i].m_Translation, p[i].m_Scale);
                         }
                     });

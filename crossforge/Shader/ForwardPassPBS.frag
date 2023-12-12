@@ -78,6 +78,8 @@ uniform MaterialData{
 	float Padding;
 }Material;
 
+uniform vec2 plant;
+
 #ifdef NORMAL_MAPPING 
 uniform sampler2D TexNormal;
 in mat3 TBN;
@@ -253,6 +255,14 @@ void main(){
 	#else
 	vec3 Albedo = TexColor.a * (Material.Color.rgb * TexColor.rgb);
 	#endif
+
+		if(plant.x > 0.5 && normalize(Albedo.rgb).g > 0.5){
+    	    vec3 naturalColor = Albedo.rgb;
+    	    vec3 yellow = vec3(1,1,0);
+    	    float alpha = sqrt(plant.y);
+    	    Albedo.rgb = mix(yellow, naturalColor, alpha);
+    	}
+
 	Albedo = pow(Albedo, vec3(Gamma));
 
 	// store the framgent position vector in the first gBuffer texture 

@@ -213,9 +213,8 @@ namespace CForge {
                 entity.add<ObstacleComponent>();
 
                 auto plant = entity.get_mut<PlantComponent>();
-                float LO = 1.0;
-                float HI = 10.0;
-                float random = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
+                float random = (float) rand() / (float) RAND_MAX;
+                random = random * (plant->maxWaterLevel);
                 plant->waterLevel = random;
                 btRigidBody::btRigidBodyConstructionInfo rbInfo(10, new btDefaultMotionState(),
                                                                 createCylinderCollider(0.5f, 1.0f));

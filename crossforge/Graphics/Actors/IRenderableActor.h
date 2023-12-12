@@ -71,6 +71,8 @@ namespace CForge {
 		virtual void clearMatRef();
 
 		float getAABBradius(const Eigen::Matrix4f& mat);
+        bool isPlant = false;
+        float waterLevel = 0;
 		//
 		
 	protected:

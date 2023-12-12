@@ -122,11 +122,23 @@ namespace CForge {
 				if (nullptr == i->pShaderGeometryPass) continue;
 				pRDev->activeShader(i->pShaderGeometryPass);
 				pRDev->activeMaterial(&i->Material);
+                auto plantLocation = i->pShaderGeometryPass->uniformLocation("plant");
+                if (isPlant) {
+                    glUniform2f(plantLocation, 1, waterLevel);
+                } else {
+                    glUniform2f(plantLocation, 0, 0);
+                }
 			}break;
 			case RenderDevice::RENDERPASS_FORWARD: {
 				if (nullptr == i->pShaderForwardPass) continue;
 				pRDev->activeShader(i->pShaderForwardPass);
 				pRDev->activeMaterial(&i->Material);
+                auto plantLocation = i->pShaderGeometryPass->uniformLocation("plant");
+                if (isPlant) {
+                    glUniform2f(plantLocation, 1, waterLevel);
+                } else {
+                    glUniform2f(plantLocation, 0, 0);
+                }
 			}break;
 			default: {
 				// nothing to do

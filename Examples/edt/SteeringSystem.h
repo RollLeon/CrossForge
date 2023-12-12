@@ -27,12 +27,10 @@ namespace CForge {
             std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
             world.filter<PositionComponent, ObstacleComponent, GeometryComponent>()
                     .each([&obstacles, p](const PositionComponent &t, ObstacleComponent o, GeometryComponent geo) {
-                        float obstalceRadius = geo.actor->boundingVolume().boundingSphere().radius() * t.scale().x();
-                        if ((p.translation()-t.translation()).norm() > 0.1)
-                {
-                    obstacles.emplace_back(t.translation(), obstalceRadius);
-                }
-
+                        float obstacleRadius = geo.actor->boundingVolume().boundingSphere().radius() * t.scale().x();
+                        if ((p.translation() - t.translation()).norm() > obstacleRadius) {
+                            obstacles.emplace_back(t.translation(), obstacleRadius);
+                        }
                     });
             std::sort(obstacles.begin(), obstacles.end(),
                       [&p](auto v1, auto v2) {
