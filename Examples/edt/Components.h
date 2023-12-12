@@ -165,6 +165,7 @@ namespace CForge {
             Seeking,
             TurnTo
         };
+        Eigen::Vector3f turnTarget;
     };
 
 }

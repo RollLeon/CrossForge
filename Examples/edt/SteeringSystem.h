@@ -16,13 +16,17 @@ namespace CForge {
                     GeometryComponent* geo) {
                         for (int i : it) {
                             if (sc->PathFollowing){
-                                SteeringSystem::processEntity(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
+                                SteeringSystem::pathFollowing(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
+                            }
+                            else if (sc->TurnTo)
+                            {
+                                SteeringSystem::turnTo(it.delta_time(), sc[i].turnTarget, p[i]);
                             }
                         }
                     });
         }
 
-        static void processEntity(float dt, PathComponent& ai, PositionComponent& p, SteeringComponent& sc, GeometryComponent& geo, flecs::world& world) {
+        static void pathFollowing(float dt, PathComponent& ai, PositionComponent& p, SteeringComponent& sc, GeometryComponent& geo, flecs::world& world) {
             float robotRadius = geo.actor->boundingVolume().aabb().min().norm()/2;
 
             std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
@@ -131,7 +135,7 @@ namespace CForge {
         }
 
 
-        static void turnTo(float dt, const Eigen::Vector3f& targetPosition, PositionComponent& p, SteeringComponent& sc) {
+        static void turnTo(float dt, const Eigen::Vector3f& targetPosition, PositionComponent& p) {
             Eigen::Vector3f toTarget = targetPosition - p.translation();
 
             // Calculate rotation quaternion to face the target direction

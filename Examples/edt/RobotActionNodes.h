@@ -13,6 +13,7 @@
 #include "Systems.h"
 
 
+
 class EntityAwareNode {
 public:
     flecs::id_t entity_id;
@@ -54,6 +55,10 @@ public:
         }
         std::cout << "FindPlant" << std::endl;
         return BT::NodeStatus::SUCCESS;
+    }
+
+    static PortList providedPorts() {
+        return{ OutputPort<flecs::id_t>("targetPlant") };
     }
 };
 
@@ -108,6 +113,32 @@ public:
     }
 };
 
+class TurnToPlant : public BT::StatefulActionNode, public EntityAwareNode {
+public:
+    TurnToPlant(const std::string& name) : BT::StatefulActionNode(name, {}) {}
+
+
+    BT::NodeStatus onStart() override {
+        std::cout << "Start Turn to plant " << std::endl;
+        return calculateState();
+    }
+
+    BT::NodeStatus onRunning() override {
+        return calculateState();
+    }
+
+    void onHalted() override {}
+
+    BT::NodeStatus calculateState() {
+        auto entity = world->entity(entity_id);
+        if (entity.has<CForge::PathComponent>() && entity.get<CForge::PathComponent>()->path.empty()) {
+            std::cout << "Successful drive to plant " << std::endl;
+            return BT::NodeStatus::SUCCESS;
+        }
+        std::cout << "DriveToPlant" << std::endl;
+        return BT::NodeStatus::RUNNING;
+    }
+};
 
 class Watering : public BT::StatefulActionNode, public EntityAwareNode {
 public:
