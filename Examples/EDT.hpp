@@ -49,7 +49,7 @@
 namespace CForge {
     class EDT : public ExampleSceneBase {
     public:
-        static const bool VISUALIZE_PATH = false;
+        static const bool VISUALIZE_PATH = true;
         static const bool BULLET_DEBUG_DRAW = false;
 
         EDT(void) {
@@ -197,8 +197,8 @@ namespace CForge {
             if (BULLET_DEBUG_DRAW) {
                 debugDraw->updateUniform(m_Cam.projectionMatrix(), m_Cam.cameraMatrix());
                 dynamicsWorld->debugDrawWorld();
-                m_RenderWin.swapBuffers();
             }
+            m_RenderWin.swapBuffers();
             updateFPS();
             world.progress(1.0f / m_FPS);
             // change between flying and walking mode
