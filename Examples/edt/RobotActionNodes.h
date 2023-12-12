@@ -13,6 +13,7 @@
 #include "Systems.h"
 
 
+static const char *const targetPlant = "targetPlant";
 
 class EntityAwareNode {
 public:
@@ -27,7 +28,7 @@ public:
 
 class FindPlant : public BT::SyncActionNode, public EntityAwareNode {
 public:
-    FindPlant(const std::string &name) : BT::SyncActionNode(name, {}) {}
+    FindPlant(const std::string &name, const BT::NodeConfig &config) : BT::SyncActionNode(name, config) {}
 
     BT::NodeStatus tick() override {
         auto entity = world->entity(entity_id);
@@ -38,10 +39,10 @@ public:
             std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
             world->filter<CForge::PositionComponent, CForge::PlantComponent>()
                     .each([&obstacles, pc](const CForge::PositionComponent &t, CForge::PlantComponent &p) {
-                if (abs(t.translation().y()- pc->translation().y()) < 5){
-                    obstacles.emplace_back(t.translation(), p.waterLevel);
-                }
-                        
+                        if (abs(t.translation().y() - pc->translation().y()) < 5) {
+                            obstacles.emplace_back(t.translation(), p.waterLevel);
+                        }
+
                     });
             std::sort(obstacles.begin(), obstacles.end(),
                       [](auto v1, auto v2) {
@@ -51,7 +52,7 @@ public:
                 entity.add<CForge::PathRequestComponent>();
                 auto pathComponent = entity.get_mut<CForge::PathRequestComponent>();
                 pathComponent->destination = std::get<0>(obstacles.front());
-                setOutput("targetPlant", pathComponent->destination);
+                setOutput(targetPlant, Eigen::Vector3f(pathComponent->destination));
             }
         }
         std::cout << "FindPlant" << std::endl;
@@ -59,7 +60,7 @@ public:
     }
 
     static BT::PortsList providedPorts() {
-        return{ BT::OutputPort<Eigen::Vector3f>("targetPlant") };
+        return {BT::OutputPort<Eigen::Vector3f>(targetPlant)};
     }
 };
 
@@ -105,6 +106,7 @@ public:
 
     BT::NodeStatus calculateState() {
         auto entity = world->entity(entity_id);
+        entity.get_mut<CForge::SteeringComponent>()->mode = CForge::SteeringComponent::drivingMode::PathFollowing;
         if (entity.has<CForge::PathComponent>() && entity.get<CForge::PathComponent>()->path.empty()) {
             std::cout << "Successful drive to plant " << std::endl;
             return BT::NodeStatus::SUCCESS;
@@ -116,7 +118,7 @@ public:
 
 class TurnToPlant : public BT::StatefulActionNode, public EntityAwareNode {
 public:
-    TurnToPlant(const std::string& name) : BT::StatefulActionNode(name, {}) {}
+    TurnToPlant(const std::string &name, const BT::NodeConfig &config) : BT::StatefulActionNode(name, config) {}
 
 
     BT::NodeStatus onStart() override {
@@ -132,11 +134,10 @@ public:
 
     BT::NodeStatus calculateState() {
         auto entity = world->entity(entity_id);
-        BT::Expected<Eigen::Vector3f> msg = getInput<Eigen::Vector3f>("targetPlant");
+        BT::Expected<Eigen::Vector3f> msg = getInput<Eigen::Vector3f>(targetPlant);
         // Check if expected is valid. If not, throw its error
-        if (!msg)
-        {
-            std::cout << "targetPlant not found on blackboard" << std::endl;
+        if (!msg) {
+            std::cout << "targetPlant not found on blackboard: "<<msg.error() << std::endl;
             return BT::NodeStatus::FAILURE;
 
         }
@@ -144,11 +145,12 @@ public:
         auto sc = entity.get_mut<CForge::SteeringComponent>();
 
         Eigen::Vector3f toPlant = msg.value() - pc->m_Translation;
-        Eigen::Vector3f rotationTarget = Eigen::AngleAxisf(3.1415 / 2, Eigen::Vector3f::UnitY())*toPlant + pc->m_Translation;
+        Eigen::Vector3f rotationTarget =
+                Eigen::AngleAxisf(3.1415 / 2, Eigen::Vector3f::UnitY()) * toPlant + pc->m_Translation;
         Eigen::Vector3f robotForward = pc->rotation() * Eigen::Vector3f::UnitX();
-        sc->mode = sc->TurnTo;
-        
-        if (std::abs(toPlant.normalized().dot(robotForward))<0.1) {
+        sc->mode = CForge::SteeringComponent::drivingMode::TurnTo;
+
+        if (std::abs(toPlant.normalized().dot(robotForward)) < 0.1) {
             std::cout << "Successful turned to plant " << std::endl;
             return BT::NodeStatus::SUCCESS;
         }
@@ -157,7 +159,7 @@ public:
     }
 
     static BT::PortsList providedPorts() {
-        return{ BT::InputPort<Eigen::Vector3f>("targetPlant") };
+        return {BT::InputPort<Eigen::Vector3f>(targetPlant)};
     }
 };
 
