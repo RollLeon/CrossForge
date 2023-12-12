@@ -48,7 +48,7 @@ namespace CForge {
             if (!ai.path.empty()) {
                 Eigen::Vector3f target = ai.path.front();
                 //Adding the correct Radius for a plant
-                if (SteeringSystem::arrivedAtWayPoint(p.translation(), target, robotRadius, 0, sc.securityDistance)) {
+                if (SteeringSystem::arrivedAtWayPoint(p.translation(), target, robotRadius, sc.securityDistance)) {
                     ai.path.pop();
                 }
                 for (auto pos: obstacles) {
