@@ -166,6 +166,7 @@ namespace CForge {
             TurnTo
         };
         Eigen::Vector3f turnTarget;
+        drivingMode mode;
     };
 
 }

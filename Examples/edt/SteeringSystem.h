@@ -15,10 +15,10 @@ namespace CForge {
                 .iter([&world](flecs::iter it, PositionComponent* p, PathComponent* ai, SteeringComponent* sc,
                     GeometryComponent* geo) {
                         for (int i : it) {
-                            if (sc->PathFollowing){
+                            if (sc->PathFollowing == sc->mode){
                                 SteeringSystem::pathFollowing(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
                             }
-                            else if (sc->TurnTo)
+                            else if (sc->TurnTo == sc->mode)
                             {
                                 SteeringSystem::turnTo(it.delta_time(), sc[i].turnTarget, p[i]);
                             }

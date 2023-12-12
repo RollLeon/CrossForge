@@ -51,14 +51,15 @@ public:
                 entity.add<CForge::PathRequestComponent>();
                 auto pathComponent = entity.get_mut<CForge::PathRequestComponent>();
                 pathComponent->destination = std::get<0>(obstacles.front());
+                setOutput("targetPlant", pathComponent->destination);
             }
         }
         std::cout << "FindPlant" << std::endl;
         return BT::NodeStatus::SUCCESS;
     }
 
-    static PortList providedPorts() {
-        return{ OutputPort<flecs::id_t>("targetPlant") };
+    static BT::PortsList providedPorts() {
+        return{ BT::OutputPort<Eigen::Vector3f>("targetPlant") };
     }
 };
 
@@ -131,12 +132,32 @@ public:
 
     BT::NodeStatus calculateState() {
         auto entity = world->entity(entity_id);
-        if (entity.has<CForge::PathComponent>() && entity.get<CForge::PathComponent>()->path.empty()) {
-            std::cout << "Successful drive to plant " << std::endl;
+        BT::Expected<Eigen::Vector3f> msg = getInput<Eigen::Vector3f>("targetPlant");
+        // Check if expected is valid. If not, throw its error
+        if (!msg)
+        {
+            std::cout << "targetPlant not found on blackboard" << std::endl;
+            return BT::NodeStatus::FAILURE;
+
+        }
+        auto pc = entity.get_mut<CForge::PositionComponent>();
+        auto sc = entity.get_mut<CForge::SteeringComponent>();
+
+        Eigen::Vector3f toPlant = msg.value() - pc->m_Translation;
+        Eigen::Vector3f rotationTarget = Eigen::AngleAxisf(3.1415 / 2, Eigen::Vector3f::UnitY())*toPlant + pc->m_Translation;
+        Eigen::Vector3f robotForward = pc->rotation() * Eigen::Vector3f::UnitX();
+        sc->mode = sc->TurnTo;
+        
+        if (std::abs(toPlant.normalized().dot(robotForward))<0.1) {
+            std::cout << "Successful turned to plant " << std::endl;
             return BT::NodeStatus::SUCCESS;
         }
         std::cout << "DriveToPlant" << std::endl;
         return BT::NodeStatus::RUNNING;
+    }
+
+    static BT::PortsList providedPorts() {
+        return{ BT::InputPort<Eigen::Vector3f>("targetPlant") };
     }
 };
 
