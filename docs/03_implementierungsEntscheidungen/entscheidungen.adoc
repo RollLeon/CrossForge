@@ -15,3 +15,5 @@ include::ai/ueberblick.adoc[leveloffset=2]
 include::ecs/ecs.adoc[leveloffset=2]
 
 include::levelEditor.adoc[leveloffset=2]
+
+include::dialog.adoc[leveloffset=2]

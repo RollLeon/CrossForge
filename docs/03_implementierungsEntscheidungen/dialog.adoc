@@ -1,0 +1,95 @@
+= Dialogsystem
+
+Das Dialogsystem besteht aus mehreren Teilen:
+
+* einem Blackboard / Key-Value-Store in der Dialogkomponente, um Informationen und Kontext zu speichern
+* benamte Funktionen, die im Dialogsystem gespeichert werden:
+** stringProvider:
+*** DialogSystem sucht im Dialogtext nach bestimmter Zeichenkette (Vorschlag: _<FUNKTIONS_NAME>_)
+*** schaut in einer Map nach diesem Key, ruft Funktion auf und ersetzt Platzhalter durch das Aufrufergebnis
+*** stringProvider müssen alle diesen Methodenkopf haben: (entity e, Vector player, Quarternion playerOrientation, Map<string,void*> context, world* world) und müssen einen string zurück geben
+** conditionals:
+*** für conditionals wird ein neuer Knotentyp/zusätzliche attribute benötigt, bei dem die unterhaltung dann abzweigen kann
+*** conditionName, trueBranch, falseBranch
+*** conditionName ist der Name der Funktion, die in der Map nachgeschaut wird
+*** conditionals müssen alle diesen Methodenkopf haben: (entity e, Vector player, Quarternion playerOrientation, Map<string,void*> context, world* world) und müssen ein Boolean zurück geben
+*** trueBranch und falseBranch sind DialogGraph Nodes, die ausgeführt werden, je nachdem ob die Funktion wahr oder falsch zurück liefert
+** eventTrigger
+*** DialogSystem sucht im Dialogtext nach bestimmter Zeichenkette
+*** Vorschlag ist |EVENT_NAME|
+*** auch hier passiert ein LookUp in einer Map
+*** eventTrigger müssen alle diesen Methodenkopf haben: (entity e, Vector player, Quarternion playerOrientation, Map<string,void*> context, world* world) und gibt nichts zurück, weil Entity verändert wird
+*** DialogSystem entfernt eventTrigger aus dem Dialog
+
+== Beispiel Dialoge und ihre potentielle Umsetzung
+
+=== Was ist das für eine Blume?
+
+==== Dialog:
+
+* Spieler: Was ist das für eine Blume hinter mir?
+* Roboter: Das ist eine <BLUME_HINTER_SPIELER>
+
+==== Umsetzung:
+
+* DialogSystem erkennt stringProvider _<PFLANZE_HINTER_SPIELER>_ und ruft dazugehörige Funktion auf
+* Funktion nimmt Spielerposition und -blickrichtung und sucht alle Pflanzen, die hinter dem Spieler stehen. Danach werden die Pflanzen nach dem Abstand sortiert und der Name der nächsten Pflanze wird zurück gegeben
+* DialogSystem ersetzt den platzhalter durch den zurückgegebenen Namen
+
+=== Geh mir aus dem Weg
+
+==== Dialog:
+
+* Spieler: Geh mir aus dem Weg
+* Roboter: Ok. |MOVE_AWAY|
+
+==== Umsetzung:
+
+* Dialogsystem erkennt eventTrigger _|MOVE_AWAY|_ und ruft dazugehörige Funktion auf
+* Funktion nimmt Spielerposition und -blickrichtung und ändert dann den State und Pfad des Roboters, sodass der Roboter dem Spieler ausweicht
+
+=== Komm mit
+
+==== Dialog
+
+* Spieler: Komm mit
+* Roboter: Ok. |FOLLOW|
+
+==== Umsetzung
+
+* Dialogsystem erkennt eventTrigger _|FOLLOW|_ und ruft dazugehörige Funktion auf
+* Funktion nimmt Spielerposition und -blickrichtung und ändert dann den State und Pfad des Roboters, sodass der Roboter dem Spieler folgt
+* zusätzlich wird ein _following_player_ Flag auf dem Blackboard gesetzt
+
+=== Hör auf mir zu folgen
+
+==== Dialog
+
+* conditional: _following_player_
+* if true Dialogoption:
+** Spieler: Hör auf mir zu folgen
+** Roboter: Ok. |STOP_FOLLOW|
+* if false: normale Dialogoptionen anzeigen
+
+=== Umsetzung
+
+* DialogSystem erkennt ConditionalNode und ruft die hinterlegte Funktion auf
+* je nach Ergebnis wird der Entsprechende Graph ausgewählt
+
+[Note]
+====
+In Zukunft ist es wahrscheinlich praktisch noch eine Import Node zu haben, die einen SubTree importiert, um dann alle Dialogoptionen zu anzuzeigen
+====
+
+=== Du nutzloser Blechkasten
+
+==== Dialog
+
+* Spieler: Du nutzloser Blechkasten
+* Roboter: Das ist nicht sehr freundlich. |STOP_TALKING|
+* Dialog ist zu Ende zu wenn Spieler nochmal versucht mit Roboter zu reden, antwortet dieser in den nächsten 30 Sekunden immer mit:
+* Roboter: Du bist unfreundlich. Mit dir rede ich nicht.
+
+==== Umsetzung
+
+* mit conditional, was auf Blackboard schaut und timer checkt, ob wie lange die unfreundliche Interaktion stattgefunden hat

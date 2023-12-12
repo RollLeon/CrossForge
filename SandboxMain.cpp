@@ -24,6 +24,8 @@
 #include <Examples/ExampleTextRendering.hpp>
 #include <Examples/ExampleLighting.hpp>
 #include <Examples/EDT.hpp>
+#include <Examples/ExampleRecast.hpp>
+
 
 using namespace CForge;
 using namespace Eigen;
@@ -35,11 +37,11 @@ using namespace Eigen;
 //#define ActiveScene ExampleTextRendering
 //#define ActiveScene ExampleShapesAndMaterials
 //#define ActiveScene ExampleLighting
-#define ActiveScene EDT
+//#define ActiveScene ExampleRecast
 //#define ActiveScene ExampleSkeletalAnimation
 //#define ActiveScene ExampleMorphTargetAnimation
 //#define ActiveScene ExampleMultiViewport
-//#define ActiveScene ExampleSocket
+#define ActiveScene EDT
 
 
 ActiveScene* pScene = nullptr;

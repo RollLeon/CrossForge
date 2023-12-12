@@ -51,11 +51,12 @@ public:
             if (!obstacles.empty()) {
                 entity.add<CForge::PathRequestComponent>();
                 auto pathComponent = entity.get_mut<CForge::PathRequestComponent>();
+                pathComponent->start = pc->translation();
                 pathComponent->destination = std::get<0>(obstacles.front());
                 setOutput(targetPlant, Eigen::Vector3f(pathComponent->destination));
             }
         }
-        std::cout << "FindPlant" << std::endl;
+        //std::cout << "FindPlant" << std::endl;
         return BT::NodeStatus::SUCCESS;
     }
 
@@ -94,7 +95,7 @@ public:
 
 
     BT::NodeStatus onStart() override {
-        std::cout << "Start drive to plant " << std::endl;
+        //std::cout << "Start drive to plant " << std::endl;
         return calculateState();
     }
 
@@ -108,10 +109,10 @@ public:
         auto entity = world->entity(entity_id);
         entity.get_mut<CForge::SteeringComponent>()->mode = CForge::SteeringComponent::drivingMode::PathFollowing;
         if (entity.has<CForge::PathComponent>() && entity.get<CForge::PathComponent>()->path.empty()) {
-            std::cout << "Successful drive to plant " << std::endl;
+            //std::cout << "Successful drive to plant " << std::endl;
             return BT::NodeStatus::SUCCESS;
         }
-        std::cout << "DriveToPlant" << std::endl;
+        //std::cout << "DriveToPlant" << std::endl;
         return BT::NodeStatus::RUNNING;
     }
 };
@@ -178,7 +179,7 @@ public:
     void onHalted() override {}
 
     BT::NodeStatus calculateState() {
-        std::cout << "Watering start: " << std::endl;
+        //std::cout << "Watering start: " << std::endl;
         auto entity = world->entity(entity_id);
         auto position = entity.get_mut<CForge::PositionComponent>();
         auto robotRadius = entity.get<CForge::SteeringComponent>()->securityDistance +
@@ -200,16 +201,16 @@ public:
                             //increaseWaterLevel
                             if (pl[i].waterLevel + waterIncreaseRate * dt < pl[i].maxWaterLevel) {
                                 pl[i].waterLevel += waterIncreaseRate * dt;
-                                std::cout << "increased by" << (waterIncreaseRate * dt) << std::endl;
+                                //std::cout << "increased by" << (waterIncreaseRate * dt) << std::endl;
                             } else {
                                 pl[i].waterLevel = pl[i].maxWaterLevel;
                             }
                             wateredPlant = true;
-                            std::cout << "Watering: " << pl[i].waterLevel << std::endl;
+                            //std::cout << "Watering: " << pl[i].waterLevel << std::endl;
                         }
                     }
                 });
-        std::cout << "returning: " << wateredPlant << std::endl;
+        //std::cout << "returning: " << wateredPlant << std::endl;
         return wateredPlant ? BT::NodeStatus::RUNNING : BT::NodeStatus::SUCCESS;
     }
 };

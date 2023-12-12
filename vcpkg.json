@@ -23,6 +23,7 @@
 		{
 			"name": "jsoncpp",
 			"default-features": false
-		}
+		},
+		"recastnavigation"
 	]
 }

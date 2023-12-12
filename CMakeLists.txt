@@ -27,7 +27,7 @@ project (CForgeSandbox)
 if(EMSCRIPTEN)
 	include(FetchContent)
 
-	### Eigen3
+	### Eigen3TerrainMesh
 	FetchContent_Declare(
 		tinyxml2
 		GIT_REPOSITORY https://github.com/leethomason/tinyxml2.git
@@ -59,6 +59,7 @@ FIND_PACKAGE(tinyxml2 CONFIG REQUIRED)	# support for xml loading, storing, and p
 FIND_PACKAGE(imgui CONFIG REQUIRED) # dear-imgui
 FIND_PACKAGE(flecs CONFIG REQUIRED) # dear-imgui
 FIND_PACKAGE(jsoncpp CONFIG REQUIRED)
+FIND_PACKAGE(recastnavigation CONFIG REQUIRED)
 FIND_PACKAGE(Bullet CONFIG REQUIRED)
 FIND_PACKAGE(behaviortree_cpp CONFIG REQUIRED)
 endif()
@@ -76,10 +77,12 @@ endif(USE_OPENCV)
 add_executable(CForgeSandbox
 	SandboxMain.cpp
 
-           Examples/edt/Components.h Examples/edt/PathSystem.h Examples/edt/PhysicsSystem.h Examples/edt/RobotActionNodes.h Examples/edt/StateMachine.h Examples/edt/SteeringSystem.h Examples/edt/Systems.h Examples/levelloading/LevelLoader.h 
-        
-        
-		)
+           Examples/edt/Components.h Examples/edt/PathSystem.h Examples/edt/PhysicsSystem.h Examples/edt/RobotActionNodes.h Examples/edt/StateMachine.h Examples/edt/SteeringSystem.h Examples/edt/Systems.h Examples/levelloading/LevelLoader.h
+		Examples/edt/DebugDraw.h
+		Examples/edt/PlayerSystem.h
+
+
+)
 
 if(EMSCRIPTEN)
 	target_link_Libraries(CForgeSandbox
@@ -101,7 +104,7 @@ elseif(WIN32)
 	PRIVATE ${BULLET_LIBRARIES}
 	PRIVATE BT::behaviortree_cpp
 	${FREETYPE_LIBRARIES}
-
+	RecastNavigation::Detour RecastNavigation::Recast RecastNavigation::DebugUtils RecastNavigation::DetourCrowd
 	)
 
 elseif(__arm__)
@@ -115,8 +118,9 @@ elseif(__arm__)
 #		PRIVATE assimp
 		PRIVATE gpiod
 		PRIVATE BT::behaviortree_cpp
+		PRIVATE ${BULLETerrainMeshT_LIBRARIES}
 		PRIVATE dl
-		PRIVATE ${BULLET_LIBRARIES}
+		RecastNavigation::Detour RecastNavigation::Recast RecastNavigation::DebugUtils RecastNavigation::DetourCrowd
 		)
 elseif(UNIX)
 	target_link_libraries(CForgeSandbox
@@ -129,8 +133,10 @@ elseif(UNIX)
 		PRIVATE flecs::flecs
 		PRIVATE JsonCpp::JsonCpp
 		PRIVATE dl
+		RecastNavigation::Detour RecastNavigation::Recast RecastNavigation::DebugUtils RecastNavigation::DetourCrowd
 		PRIVATE ${BULLET_LIBRARIES}
 		PRIVATE BT::behaviortree_cpp
+		PRIVATE dl
 		)
 endif()
 

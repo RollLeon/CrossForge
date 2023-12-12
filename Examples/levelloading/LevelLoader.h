@@ -13,10 +13,13 @@
 #include <regex>
 #include <BulletCollision/CollisionShapes/btSphereShape.h>
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
+#include <BulletCollision/CollisionShapes/btCapsuleShape.h>
+#include <BulletCollision/CollisionShapes/btCompoundShape.h>
 #include <BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
 #include <LinearMath/btDefaultMotionState.h>
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <BulletCollision/CollisionShapes/btTriangleMesh.h>
+#include <BulletCollision/CollisionShapes/btCylinderShape.h>
 #include "crossforge/AssetIO/T3DMesh.hpp"
 #include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
 #include "crossforge/AssetIO/SAssetIO.h"
@@ -33,7 +36,7 @@ namespace CForge {
         void loadLevel(std::string filePath, SGNTransformation *rootNode, flecs::world *world) {
             std::string content = SAssetIO::readTextFile(filePath);
             Json::Reader reader;
-            srand(10);
+            srand(12);
             Json::Value level;
             reader.parse(content, level);
             const Json::Value &entities = level["entities"];
@@ -127,6 +130,25 @@ namespace CForge {
             return actor;
         }
 
+        static btCollisionShape *createCapsuleCollider(float radius, float height) {
+            btCompoundShape *pCompoundShape = new btCompoundShape();
+            btCollisionShape *cylinderShape = new btCapsuleShape(radius, height - 2 * radius);
+            auto transform = btTransform();
+            transform.setIdentity();
+            transform.setOrigin(btVector3(0, height / 2.0f, 0));
+            pCompoundShape->addChildShape(transform, cylinderShape);
+            return pCompoundShape;
+        }
+
+        static btCollisionShape *createCylinderCollider(float radius, float height) {
+            btCompoundShape *pCompoundShape = new btCompoundShape();
+            btCollisionShape *cylinderShape = new btCylinderShape(btVector3(radius, height / 2.0f, radius));
+            auto transform = btTransform();
+            transform.setIdentity();
+            transform.setOrigin(btVector3(0, height / 2.0f, 0));
+            pCompoundShape->addChildShape(transform, cylinderShape);
+            return pCompoundShape;
+        }
 
     protected:
         std::map<std::string, StaticActor *> models;
@@ -146,7 +168,7 @@ namespace CForge {
             }
         }
 
-        void initEntityWithType(flecs::entity &entity, string name, flecs::world *world) {
+        static void initEntityWithType(flecs::entity &entity, string name, flecs::world *world) {
             if (name.find("robot") != std::string::npos) {
                 entity.set_name(name.c_str());
                 entity.add<SteeringComponent>();
@@ -176,18 +198,13 @@ namespace CForge {
                 aic->tree.applyVisitor(visitor);
 
                 auto steering = entity.get_mut<SteeringComponent>();
-                steering->securityDistance = 1;
+                steering->securityDistance = 0.5f;
                 steering->mass = 500;
                 steering->max_force = 36;
                 steering->max_speed = 3;
 
-                btCollisionShape *groundShape = new btBoxShape(btVector3(1, 1, 1));
-
-                btTransform groundTransform;
-                groundTransform.setIdentity();
-
                 btRigidBody::btRigidBodyConstructionInfo rbInfo(steering->mass, new btDefaultMotionState(),
-                                                                groundShape);
+                                                                createCapsuleCollider(1.5f, 5.0f));
                 btRigidBody *body = new btRigidBody(rbInfo);
                 entity.emplace<PhysicsComponent>(body);
 
@@ -201,7 +218,10 @@ namespace CForge {
                 float HI = 10.0;
                 float random = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
                 plant->waterLevel = random;
-
+                btRigidBody::btRigidBodyConstructionInfo rbInfo(10, new btDefaultMotionState(),
+                                                                createCylinderCollider(0.5f, 1.0f));
+                btRigidBody *body = new btRigidBody(rbInfo);
+                entity.emplace<PhysicsComponent>(body);
             }
         }
 

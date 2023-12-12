@@ -11,7 +11,6 @@
 #include "crossforge/Graphics/SceneGraph/SGNTransformation.h"
 
 
-
 namespace CForge {
     class AIComponent {
     public:
@@ -20,9 +19,9 @@ namespace CForge {
 
     class GeometryComponent {
     public:
-        IRenderableActor* actor;
+        IRenderableActor *actor;
 
-        void init(IRenderableActor* pActor) {
+        void init(IRenderableActor *pActor) {
             actor = pActor;
         }
     };
@@ -31,9 +30,30 @@ namespace CForge {
 
     };
 
+    enum GameState {
+        GAMEPLAY,
+        DIALOG            // DIALOG: Maus nicht disabled, sodass mit imgui interagiert werden kann, Kamera starr, Spieler reagiert nicht auf Tasteneingaben wie WASD
+    };                              // GAMEPLAY: Cursor gefangen, Kamera beweglich, Spieler kann sich bewegen
+    class PlayerComponent {
+    public:
+        constexpr static const float HEIGHT = 2;
+        GameState gameState;
+        VirtualCamera *pCamera;
+        Keyboard *pKeyboard;
+        Mouse *pMouse;
+
+        explicit PlayerComponent(VirtualCamera *camera, Keyboard *keyboard, Mouse *mouse) {
+            gameState = GAMEPLAY;
+            pCamera = camera;
+            pKeyboard = keyboard;
+            pMouse = mouse;
+        }
+    };
+
     class PathComponent {
     public:
         std::queue<Eigen::Vector3f> path;
+
         PathComponent() {
             path = std::queue<Eigen::Vector3f>();
         };
@@ -104,27 +124,27 @@ namespace CForge {
             m_ScaleDelta = ScaleDelta;
         }//scaleDelta
 
-        Eigen::Vector3f translation(void)const {
+        Eigen::Vector3f translation(void) const {
             return m_Translation;
         }//translation
 
-        Eigen::Quaternionf rotation(void)const {
+        Eigen::Quaternionf rotation(void) const {
             return m_Rotation;
         }//rotation
 
-        Eigen::Vector3f scale(void)const {
+        Eigen::Vector3f scale(void) const {
             return m_Scale;
         }//scale
 
-        Eigen::Vector3f translationDelta(void)const {
+        Eigen::Vector3f translationDelta(void) const {
             return m_TranslationDelta;
         }//translationDelta
 
-        Eigen::Quaternionf rotationDelta(void)const {
+        Eigen::Quaternionf rotationDelta(void) const {
             return m_RotationDelta;
         }//rotationDelta
 
-        Eigen::Vector3f scaleDelta(void)const {
+        Eigen::Vector3f scaleDelta(void) const {
             return m_ScaleDelta;
         }//scaleDelta
 
@@ -142,7 +162,7 @@ namespace CForge {
 
         }//update
 
-        void buildTansformation(Eigen::Vector3f* pPosition, Eigen::Quaternionf* pRotation, Eigen::Vector3f* pScale) {
+        void buildTansformation(Eigen::Vector3f *pPosition, Eigen::Quaternionf *pRotation, Eigen::Vector3f *pScale) {
             Eigen::Vector3f ParentPosition = Eigen::Vector3f::Zero();
             Eigen::Quaternionf ParentRotation = Eigen::Quaternionf::Identity();
             Eigen::Vector3f ParentScale = Eigen::Vector3f::Ones();
