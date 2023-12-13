@@ -185,7 +185,8 @@ namespace CForge {
             Seeking,
             TurnTo
         };
-        Eigen::Vector3f turnTarget;
+        Eigen::Vector3f originalTarget; // workaround for blackboard in behaviour tree
+        Eigen::Vector3f targetRotation;
         drivingMode mode;
     };
 
