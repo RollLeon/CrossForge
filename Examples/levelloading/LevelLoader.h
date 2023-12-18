@@ -181,6 +181,7 @@ namespace CForge {
                 factory.registerNodeType<FindPlant>("FindPlant");
                 factory.registerNodeType<FindWay>("FindWay");
                 factory.registerNodeType<DriveToPlant>("DriveToPlant");
+                factory.registerNodeType<TurnToPlant>("TurnToPlant");
                 factory.registerNodeType<Watering>("Watering");
                 auto aic = entity.get_mut<AIComponent>();
                 aic->tree = factory.createTreeFromText(

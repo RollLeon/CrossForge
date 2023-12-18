@@ -13,6 +13,8 @@
 #include "Systems.h"
 
 
+static const char *const targetPlant = "targetPlant";
+
 class EntityAwareNode {
 public:
     flecs::id_t entity_id;
@@ -26,7 +28,7 @@ public:
 
 class FindPlant : public BT::SyncActionNode, public EntityAwareNode {
 public:
-    FindPlant(const std::string &name) : BT::SyncActionNode(name, {}) {}
+    FindPlant(const std::string &name, const BT::NodeConfig &config) : BT::SyncActionNode(name, config) {}
 
     BT::NodeStatus tick() override {
         auto entity = world->entity(entity_id);
@@ -51,10 +53,15 @@ public:
                 auto pathComponent = entity.get_mut<CForge::PathRequestComponent>();
                 pathComponent->start = pc->translation();
                 pathComponent->destination = std::get<0>(obstacles.front());
+                entity.get_mut<CForge::SteeringComponent>()->originalTarget = Eigen::Vector3f(
+                        pathComponent->destination);
             }
         }
-        //std::cout << "FindPlant" << std::endl;
         return BT::NodeStatus::SUCCESS;
+    }
+
+    static BT::PortsList providedPorts() {
+        return {BT::OutputPort<Eigen::Vector3f>(targetPlant)};
     }
 };
 
@@ -100,6 +107,7 @@ public:
 
     BT::NodeStatus calculateState() {
         auto entity = world->entity(entity_id);
+        entity.get_mut<CForge::SteeringComponent>()->mode = CForge::SteeringComponent::PathFollowing;
         if (entity.has<CForge::PathComponent>() && entity.get<CForge::PathComponent>()->path.empty()) {
             //std::cout << "Successful drive to plant " << std::endl;
             return BT::NodeStatus::SUCCESS;
@@ -109,6 +117,45 @@ public:
     }
 };
 
+class TurnToPlant : public BT::StatefulActionNode, public EntityAwareNode {
+public:
+    TurnToPlant(const std::string &name, const BT::NodeConfig &config) : BT::StatefulActionNode(name, config) {}
+
+
+    BT::NodeStatus onStart() override {
+       // std::cout << "Start Turn to plant " << std::endl;
+        return calculateState();
+    }
+
+    BT::NodeStatus onRunning() override {
+        return calculateState();
+    }
+
+    void onHalted() override {}
+
+    BT::NodeStatus calculateState() {
+        auto entity = world->entity(entity_id);
+        auto pc = entity.get_mut<CForge::PositionComponent>();
+        pc->translationDelta(Eigen::Vector3f(0, 0, 0));
+        auto sc = entity.get_mut<CForge::SteeringComponent>();
+
+        Eigen::Vector3f toPlant = sc->originalTarget - pc->m_Translation;
+        Eigen::Vector3f rotationTarget = Eigen::AngleAxisf(-3.1415 / 2, Eigen::Vector3f::UnitY()) * toPlant;
+        Eigen::Vector3f robotForward = pc->rotation() * Eigen::Vector3f::UnitX();
+        sc->mode = CForge::SteeringComponent::drivingMode::TurnTo;
+        sc->targetRotation = rotationTarget;
+
+        if (std::abs(rotationTarget.normalized().dot(robotForward)) > 0.9) {
+           // std::cout << "Successful turned to plant " << std::endl;
+            return BT::NodeStatus::SUCCESS;
+        }
+        return BT::NodeStatus::RUNNING;
+    }
+
+    static BT::PortsList providedPorts() {
+        return {BT::InputPort<Eigen::Vector3f>(targetPlant)};
+    }
+};
 
 class Watering : public BT::StatefulActionNode, public EntityAwareNode {
 public:

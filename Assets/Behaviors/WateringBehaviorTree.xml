@@ -4,6 +4,7 @@
 			<FindPlant   name="find_plant"/>
 			<FindWay    name="find_way"/>
 			<DriveToPlant name="drive_to_plant"/>
+			<TurnToPlant name="turn_to_plant"/>
 			<Watering   name="watering"/>
 		</Sequence>
 	</BehaviorTree>
