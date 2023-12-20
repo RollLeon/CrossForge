@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v3.6.6",
+		"generator":"Khronos glTF Blender I/O v4.0.44",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -8,7 +8,7 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				1
 			]
 		}
 	],
@@ -26,6 +26,12 @@
 				0.0764881819486618,
 				0.23972144722938538
 			]
+		},
+		{
+			"children":[
+				0
+			],
+			"name":"small_plant"
 		}
 	],
 	"materials":[
@@ -50,8 +56,8 @@
 				{
 					"attributes":{
 						"POSITION":0,
-						"TEXCOORD_0":1,
-						"NORMAL":2
+						"NORMAL":1,
+						"TEXCOORD_0":2
 					},
 					"indices":3,
 					"material":0
@@ -93,13 +99,13 @@
 			"bufferView":1,
 			"componentType":5126,
 			"count":2944,
-			"type":"VEC2"
+			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
 			"count":2944,
-			"type":"VEC3"
+			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
@@ -117,14 +123,14 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":23552,
+			"byteLength":35328,
 			"byteOffset":35328,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":35328,
-			"byteOffset":58880,
+			"byteLength":23552,
+			"byteOffset":70656,
 			"target":34962
 		},
 		{

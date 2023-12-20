@@ -1,21 +1,22 @@
 Lisa und Sophie:
+- Dialogkonzept
 - Dialogimplementierung
 
 Leon:
-ECS
-Steering
-Behaviour Tree implementierung
-Steuerung/Cleanup
+- ECS
+- Multiagentensystem konzept
+- Steering
+- Behaviour Tree implementierung
+- Steuerung/Cleanup
+- Partikelsystem
 
 Linus:
 - Architektur
-- Multiagentensystem konzept
-- Dialogkonzept
 - Levelloader
 - Pathfinding
 - Physik
 - Partikelsystem
 - Management
 
-Angi:
+Angi und Carlo:
 - Modelle + Texturen

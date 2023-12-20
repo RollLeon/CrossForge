@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v3.6.6",
+		"generator":"Khronos glTF Blender I/O v4.0.44",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -8,7 +8,7 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				1
 			]
 		}
 	],
@@ -21,6 +21,12 @@
 				1.7352306842803955,
 				1.7352306842803955
 			]
+		},
+		{
+			"children":[
+				0
+			],
+			"name":"monstera"
 		}
 	],
 	"materials":[
@@ -45,8 +51,8 @@
 				{
 					"attributes":{
 						"POSITION":0,
-						"TEXCOORD_0":1,
-						"NORMAL":2
+						"NORMAL":1,
+						"TEXCOORD_0":2
 					},
 					"indices":3,
 					"material":0
@@ -88,13 +94,13 @@
 			"bufferView":1,
 			"componentType":5126,
 			"count":15994,
-			"type":"VEC2"
+			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
 			"count":15994,
-			"type":"VEC3"
+			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
@@ -112,14 +118,14 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":127952,
+			"byteLength":191928,
 			"byteOffset":191928,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":191928,
-			"byteOffset":319880,
+			"byteLength":127952,
+			"byteOffset":383856,
 			"target":34962
 		},
 		{
