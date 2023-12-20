@@ -123,6 +123,9 @@ namespace CForge {
             pos->init();
             pos->translation(Vector3f(15, 4, 0));
 
+            player.add<ObstacleComponent>();
+            auto obst = player.get_mut<ObstacleComponent>();
+            obst->obstacleRadius = 2.0;
             // change sun settings to cover this large area
             m_Sun.position(Vector3f(100.0f, 1000.0f, 500.0f));
             m_Sun.initShadowCasting(2048 * 2, 2048 * 2, Vector2i(1000, 1000), 1.0f, 5000.0f);

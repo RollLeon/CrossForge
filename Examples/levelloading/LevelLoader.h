@@ -174,6 +174,11 @@ namespace CForge {
                 entity.add<SteeringComponent>();
                 entity.add<PathComponent>();
                 entity.add<AIComponent>();
+                entity.add<EmitterComponent>();
+
+                auto ec = entity.get_mut<EmitterComponent>();
+                ec->relativePosition = Eigen::Vector3f(1.0f, 2.0f, 1.0f);
+                ec->numParticles = 5;
 
                 BT::BehaviorTreeFactory factory;
 
@@ -212,6 +217,13 @@ namespace CForge {
                 entity.set_name(name.c_str());
                 entity.add<PlantComponent>();
                 entity.add<ObstacleComponent>();
+
+                GeometryComponent* geo = entity.get_mut<GeometryComponent>();
+                PositionComponent* t = entity.get_mut<PositionComponent>();
+                float obstalceRadius = geo->actor->boundingVolume().boundingSphere().radius() * t->scale().x();
+
+                auto obstacle = entity.get_mut<ObstacleComponent>();
+                obstacle->obstacleRadius = obstalceRadius;
 
                 auto plant = entity.get_mut<PlantComponent>();
                 float LO = 1.0;

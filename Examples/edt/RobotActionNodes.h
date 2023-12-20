@@ -203,6 +203,9 @@ public:
                         }
                     }
                 });
+
+        
+
         //std::cout << "returning: " << wateredPlant << std::endl;
         return wateredPlant ? BT::NodeStatus::RUNNING : BT::NodeStatus::SUCCESS;
     }
