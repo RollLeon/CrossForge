@@ -1,3 +1,18 @@
+- 10 Seiten pro Person
+- Qualtität besser als Quantität
+- Es sollte klar werden, wer welchen Teil gemacht hat
+
+Aufbau Abschlussarbeit
+
+Motivation:
+- was wollten wir erreichen
+Implementierung:
+- welches Problem
+- welche Lösung haben wir uns überlegt
+- wie hat das funktioniert
+Zusammenspiel der Komponenten
+Evaluation
+
 Lisa und Sophie:
 - Dialogkonzept
 - Dialogimplementierung
@@ -5,7 +20,7 @@ Lisa und Sophie:
 Leon:
 - ECS
 - Multiagentensystem konzept
-- Steering
+- Steering System
 - Behaviour Tree implementierung
 - Steuerung/Cleanup
 - Partikelsystem
