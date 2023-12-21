@@ -44,7 +44,7 @@ namespace CForge {
             std::cout << "end: " << endPos.x() << " " << endPos.y() << " " << endPos.z() << std::endl;
 
             Eigen::Quaternionf rotate180;
-            rotate180 = AngleAxisf(3.141592f, Eigen::Vector3f::UnitY());
+            rotate180 = AngleAxisf(0/*3.141592f*/, Eigen::Vector3f::UnitY());
             startPos = rotate180 * startPos;
             endPos = rotate180 * endPos;
 
