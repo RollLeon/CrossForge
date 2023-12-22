@@ -96,6 +96,11 @@ namespace CForge {
             m_duck.init(&M);
             M.clear();
 
+            SAssetIO::load("Assets/Models/drop.gltf", &M);
+            M.computePerVertexNormals();
+            m_waterDrop.init(&M);
+            M.clear();
+
             // initialize ground transformation and geometry scene graph node
             m_GroundTransformSGN.init(&m_RootSGN);
             m_GroundSGN.init(&m_GroundTransformSGN, &m_Ground);
@@ -105,7 +110,7 @@ namespace CForge {
             SteeringSystem::addSteeringSystem(world);
             PathSystem::addPathSystem(world);
             PlayerSystem::addPlayerSystem(world);
-            Systems::addSimpleSystems(world);
+            Systems::addSimpleSystems(world, &m_waterDrop);
             // load level
             LevelLoader levelLoader;
             levelLoader.loadLevel("Assets/Scene/end_mvp.json", &m_RootSGN, &world);
@@ -123,6 +128,9 @@ namespace CForge {
             pos->init();
             pos->translation(Vector3f(15, 4, 0));
 
+            player.add<ObstacleComponent>();
+            auto obst = player.get_mut<ObstacleComponent>();
+            obst->obstacleRadius = 4.0;
             // change sun settings to cover this large area
             m_Sun.position(Vector3f(100.0f, 100.0f, 100.0f));
             m_Sun.initShadowCasting(2048*2, 2048*2, Vector2i(100, 100), 90.0f, 5000.0f);
@@ -244,6 +252,7 @@ namespace CForge {
 
         StaticActor m_Ground;
         StaticActor m_duck;
+        StaticActor m_waterDrop;
         SGNGeometry m_GroundSGN;
         SGNTransformation m_GroundTransformSGN;
 

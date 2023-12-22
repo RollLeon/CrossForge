@@ -213,6 +213,13 @@ namespace CForge {
                 entity.add<PlantComponent>();
                 entity.add<ObstacleComponent>();
 
+                GeometryComponent* geo = entity.get_mut<GeometryComponent>();
+                PositionComponent* t = entity.get_mut<PositionComponent>();
+                float obstalceRadius = geo->actor->boundingVolume().boundingSphere().radius() * t->scale().x();
+
+                auto obstacle = entity.get_mut<ObstacleComponent>();
+                obstacle->obstacleRadius = obstalceRadius;
+
                 auto plant = entity.get_mut<PlantComponent>();
                 float random = (float) rand() / (float) RAND_MAX;
                 random = random * (plant->maxWaterLevel);

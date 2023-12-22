@@ -180,6 +180,13 @@ public:
         bool wateredPlant = false;
         float waterIncreaseRate = 1.0;
         float dt = world->delta_time();
+        if(!entity.has<CForge::EmitterComponent>()){
+            entity.add<CForge::EmitterComponent>();
+
+            auto ec = entity.get_mut<CForge::EmitterComponent>();
+            ec->relativePosition = Eigen::Vector3f(0.0f, 4.0f, -3.5f);
+            ec->numParticles = 5;
+        }
         world->filter<CForge::PositionComponent, CForge::PlantComponent, CForge::GeometryComponent>("WateringQuery")
                 .iter([position, &wateredPlant, dt, waterIncreaseRate, robotRadius](flecs::iter it,
                                                                                     CForge::PositionComponent *p,
@@ -203,6 +210,10 @@ public:
                         }
                     }
                 });
+
+        if(!wateredPlant){
+            entity.remove<CForge::EmitterComponent>();
+        }
         //std::cout << "returning: " << wateredPlant << std::endl;
         return wateredPlant ? BT::NodeStatus::RUNNING : BT::NodeStatus::SUCCESS;
     }

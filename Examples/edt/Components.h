@@ -27,7 +27,8 @@ namespace CForge {
     };
 
     class ObstacleComponent {
-
+    public:
+        float obstacleRadius;
     };
 
     enum GameState {
@@ -190,6 +191,17 @@ namespace CForge {
         drivingMode mode;
     };
 
+    class  EmitterComponent {
+    public:
+        Eigen::Vector3f relativePosition;
+        //Eigen::Vector3f direction;
+        int numParticles;
+    };
+
+    class ParticleComponent {
+    public:
+        float lifeTime;
+    };
 }
 
 #endif //CFORGESANDBOX_COMPONENTS_H
