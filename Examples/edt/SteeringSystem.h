@@ -16,10 +16,10 @@ namespace CForge {
                                    GeometryComponent *geo) {
                         for (int i: it) {
                             if (CForge::SteeringComponent::PathFollowing == sc[i].mode) {
-                                std::cout << "PathFollowing" << std::endl;
+                               // std::cout << "PathFollowing" << std::endl;
                                 SteeringSystem::pathFollowing(it.delta_time(), ai[i], p[i], sc[i], geo[i], world);
                             } else if (CForge::SteeringComponent::TurnTo == sc[i].mode) {
-                                std::cout << "TurnTo" << std::endl;
+                               // std::cout << "TurnTo" << std::endl;
                                 SteeringSystem::turnTo(it.delta_time(), sc[i].targetRotation, p[i]);
                             }
                         }
@@ -32,15 +32,15 @@ namespace CForge {
             Eigen::Vector3f firstCorner = geo.actor->boundingVolume().aabb().min();
             Eigen::Vector3f secondCorner = geo.actor->boundingVolume().aabb().max();
 
-            float robotRadius = (firstCorner - secondCorner).norm() / 4;
+            float robotRadius = (Eigen::Vector3f(firstCorner.x(), 0, firstCorner.z()) -
+                                 Eigen::Vector3f(secondCorner.x(), 0, secondCorner.z())).norm() / 2;
 
             std::vector<std::tuple<Eigen::Vector3f, float>> obstacles;
-            world.filter<PositionComponent, ObstacleComponent, GeometryComponent>()
-                    .each([&obstacles, p](const PositionComponent &t, ObstacleComponent o, GeometryComponent geo) {
-                        //float obstalceRadius = geo.actor->boundingVolume().boundingSphere().radius() * t.scale().x();
-                        if ((p.translation() - t.translation()).norm() > 0.1) {
+            world.filter<PositionComponent, ObstacleComponent>()
+                    .each([&obstacles, p](const PositionComponent &t, ObstacleComponent o) {
+                       // if ((p.translation() - t.translation()).norm() > 0.1) {
                             obstacles.emplace_back(t.translation(), o.obstacleRadius);
-                        }
+                      //  }
 
                     });
             std::sort(obstacles.begin(), obstacles.end(),
