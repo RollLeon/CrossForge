@@ -66,8 +66,10 @@ namespace CForge {
             }
             //load static geometry
             SGNTransformation *static_geom_position = new SGNTransformation();
+            transformations.push_back(static_geom_position);
             static_geom_position->init(rootNode);
             SGNGeometry *static_geom = new SGNGeometry();
+            geometries.push_back(static_geom);
             std::string static_mesh_path = std::regex_replace(filePath, std::regex("json"), "gltf");
             loadStaticCollisionMesh(world, static_mesh_path);
             static_geom->init(static_geom_position, getStaticActor(static_mesh_path));
@@ -100,10 +102,12 @@ namespace CForge {
             }
 
             btCollisionShape *map = new btBvhTriangleMeshShape(striding, true);
+            triangleMesh = striding;
+            collisionShapes.push_back(map);
 
             btTransform groundTransform;
             groundTransform.setIdentity();
-            btRigidBody::btRigidBodyConstructionInfo rbInfo(0, new btDefaultMotionState(), map);
+            btRigidBody::btRigidBodyConstructionInfo rbInfo(0, motionState, map);
             btRigidBody *body = new btRigidBody(rbInfo);
             auto staticSzeneEntity = world->entity();
             staticSzeneEntity.emplace<PhysicsComponent>(body);
@@ -130,28 +134,57 @@ namespace CForge {
             return actor;
         }
 
-        static btCollisionShape *createCapsuleCollider(float radius, float height) {
+        btCollisionShape *createCapsuleCollider(float radius, float height) {
             btCompoundShape *pCompoundShape = new btCompoundShape();
             btCollisionShape *cylinderShape = new btCapsuleShape(radius, height - 2 * radius);
+            collisionShapes.push_back(cylinderShape);
             auto transform = btTransform();
             transform.setIdentity();
             transform.setOrigin(btVector3(0, height / 2.0f, 0));
             pCompoundShape->addChildShape(transform, cylinderShape);
+            collisionShapes.push_back(pCompoundShape);
             return pCompoundShape;
         }
 
-        static btCollisionShape *createCylinderCollider(float radius, float height) {
+        btCollisionShape *createCylinderCollider(float radius, float height) {
             btCompoundShape *pCompoundShape = new btCompoundShape();
             btCollisionShape *cylinderShape = new btCylinderShape(btVector3(radius, height / 2.0f, radius));
             auto transform = btTransform();
             transform.setIdentity();
             transform.setOrigin(btVector3(0, height / 2.0f, 0));
             pCompoundShape->addChildShape(transform, cylinderShape);
+            collisionShapes.push_back(pCompoundShape);
             return pCompoundShape;
+        }
+
+        ~LevelLoader() {
+            for (auto it = models.begin(); it != models.end(); ++it) {
+                delete it->second;
+            }
+            for (auto cs: collisionShapes) {
+                delete cs;
+            }
+            for (auto t: transformations) {
+                delete t;
+            }
+            for (auto g: geometries) {
+                delete g;
+            }
+            delete motionState;
+            delete triangleMesh;
+        }
+
+        LevelLoader(){
+            motionState=new btDefaultMotionState();
         }
 
     protected:
         std::map<std::string, StaticActor *> models;
+        std::vector<btCollisionShape *> collisionShapes;
+        std::vector<SGNTransformation *> transformations;
+        std::vector<SGNGeometry *> geometries;
+        btDefaultMotionState* motionState;
+        btTriangleMesh* triangleMesh;
 
         static void setMeshShader(T3DMesh<float> *pM) {
             for (uint32_t i = 0; i < pM->materialCount(); ++i) {
@@ -168,7 +201,7 @@ namespace CForge {
             }
         }
 
-        static void initEntityWithType(flecs::entity &entity, string name, flecs::world *world) {
+        void initEntityWithType(flecs::entity &entity, string name, flecs::world *world) {
             if (name.find("robot") != std::string::npos) {
                 entity.set_name(name.c_str());
                 entity.add<SteeringComponent>();
@@ -203,7 +236,7 @@ namespace CForge {
                 steering->max_force = 36;
                 steering->max_speed = 3;
 
-                btRigidBody::btRigidBodyConstructionInfo rbInfo(steering->mass, new btDefaultMotionState(),
+                btRigidBody::btRigidBodyConstructionInfo rbInfo(steering->mass, motionState,
                                                                 createCapsuleCollider(1.5f, 5.0f));
                 btRigidBody *body = new btRigidBody(rbInfo);
                 entity.emplace<PhysicsComponent>(body);
@@ -213,8 +246,8 @@ namespace CForge {
                 entity.add<PlantComponent>();
                 entity.add<ObstacleComponent>();
 
-                GeometryComponent* geo = entity.get_mut<GeometryComponent>();
-                PositionComponent* t = entity.get_mut<PositionComponent>();
+                GeometryComponent *geo = entity.get_mut<GeometryComponent>();
+                PositionComponent *t = entity.get_mut<PositionComponent>();
                 float obstalceRadius = geo->actor->boundingVolume().boundingSphere().radius() * t->scale().x();
 
                 auto obstacle = entity.get_mut<ObstacleComponent>();
@@ -224,7 +257,7 @@ namespace CForge {
                 float random = (float) rand() / (float) RAND_MAX;
                 random = random * (plant->maxWaterLevel);
                 plant->waterLevel = random;
-                btRigidBody::btRigidBodyConstructionInfo rbInfo(10, new btDefaultMotionState(),
+                btRigidBody::btRigidBodyConstructionInfo rbInfo(10, motionState,
                                                                 createCylinderCollider(0.5f, 1.0f));
                 btRigidBody *body = new btRigidBody(rbInfo);
                 entity.emplace<PhysicsComponent>(body);

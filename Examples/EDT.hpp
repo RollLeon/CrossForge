@@ -105,21 +105,20 @@ namespace CForge {
             m_GroundTransformSGN.init(&m_RootSGN);
             m_GroundSGN.init(&m_GroundTransformSGN, &m_Ground);
             debugDraw = new DebugDraw();
-            dynamicsWorld = PhysicsSystem::addPhysicsSystem(world);
+            dynamicsWorld = physicsSystem.addPhysicsSystem(world);
             dynamicsWorld->setDebugDrawer(debugDraw);
             SteeringSystem::addSteeringSystem(world);
-            PathSystem::addPathSystem(world);
+            pathSystem.addPathSystem(world);
             PlayerSystem::addPlayerSystem(world);
             Systems::addSimpleSystems(world, &m_waterDrop);
             // load level
-            LevelLoader levelLoader;
             levelLoader.loadLevel("Assets/Scene/end_mvp.json", &m_RootSGN, &world);
 
             flecs::entity player = world.entity();
             player.emplace<PlayerComponent>(&m_Cam, m_RenderWin.keyboard(), m_RenderWin.mouse());
 
             btRigidBody::btRigidBodyConstructionInfo rbInfo(10, new btDefaultMotionState(),
-                                                            LevelLoader::createCapsuleCollider(0.5f,
+                                                            levelLoader.createCapsuleCollider(0.5f,
                                                                                                PlayerComponent::HEIGHT));
             btRigidBody *body = new btRigidBody(rbInfo);
             player.emplace<PhysicsComponent>(body);
@@ -134,14 +133,6 @@ namespace CForge {
             // change sun settings to cover this large area
             m_Sun.position(Vector3f(100.0f, 100.0f, 100.0f));
             m_Sun.initShadowCasting(2048*2, 2048*2, Vector2i(100, 100), 90.0f, 5000.0f);
-
-            // create help text
-            LineOfText *pKeybindings = new LineOfText();
-            pKeybindings->init(CForgeUtility::defaultFont(CForgeUtility::FONTTYPE_SANSERIF, 18),
-                               "Movement:(Shift) + W,A,S,D  | Rotation: LMB/RMB + Mouse | F1: Toggle help text");
-            m_HelpTexts.push_back(pKeybindings);
-            pKeybindings->color(0.0f, 0.0f, 0.0f, 1.0f);
-            m_DrawHelpTexts = true;
 
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();
@@ -170,7 +161,7 @@ namespace CForge {
         void clear(void) override {
             for (auto &i: m_TreeSGNs) if (nullptr != i) delete i;
             for (auto &i: m_TreeTransformSGNs) if (nullptr != i) delete i;
-
+            delete debugDraw;
             ExampleSceneBase::clear();
         }//clear
 
@@ -196,7 +187,6 @@ namespace CForge {
             m_RenderDev.activePass(RenderDevice::RENDERPASS_FORWARD, nullptr, false);
             m_SkyboxSG.render(&m_RenderDev);
             if (m_FPSLabelActive) m_FPSLabel.render(&m_RenderDev);
-            if (m_DrawHelpTexts) drawHelpTexts();
 
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
@@ -260,11 +250,13 @@ namespace CForge {
         std::vector<SGNGeometry *> m_TreeSGNs;
 
         SGNTransformation m_TreeGroupSGN;
-
+        PhysicsSystem physicsSystem;
+        PathSystem pathSystem;
         Dialoggraph dialog;
         vector<int> conversationProgress;
         DebugDraw *debugDraw;
-        std::shared_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
+        LevelLoader levelLoader;
+        btDiscreteDynamicsWorld* dynamicsWorld;
     };//EDT
 
 }//name space

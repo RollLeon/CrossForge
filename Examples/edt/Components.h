@@ -72,7 +72,7 @@ namespace CForge {
     public:
         std::unique_ptr<btRigidBody> collisionObject;
 
-        explicit PhysicsComponent(btRigidBody* co) {
+        explicit PhysicsComponent(btRigidBody *co) {
             collisionObject = std::unique_ptr<btRigidBody>(co);
         };
     };
@@ -188,10 +188,10 @@ namespace CForge {
         };
         Eigen::Vector3f originalTarget; // workaround for blackboard in behaviour tree
         Eigen::Vector3f targetRotation;
-        drivingMode mode;
+        drivingMode mode = PathFollowing;
     };
 
-    class  EmitterComponent {
+    class EmitterComponent {
     public:
         Eigen::Vector3f relativePosition;
         //Eigen::Vector3f direction;

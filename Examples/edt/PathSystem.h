@@ -17,10 +17,10 @@ namespace CForge {
 
     class PathSystem {
     public:
-        static void addPathSystem(flecs::world &world) {
+        void addPathSystem(flecs::world &world) {
 
-            dtNavMesh *navMesh = loadNavMesh("Assets/Navmesh/solo_navmesh.bin");
-            dtQueryFilter *filter = new dtQueryFilter();
+            auto navMesh = loadNavMesh("Assets/Navmesh/solo_navmesh.bin");
+            auto filter = new dtQueryFilter();
 
             world.system<PathRequestComponent>("PathSystem")
                     .iter([navMesh, filter](flecs::iter it, PathRequestComponent *p) {
@@ -34,9 +34,16 @@ namespace CForge {
                             findPath(navMesh, filter, startPos, destination, pathComponent->path);
                         }
                     });
+            this->filter=filter;
+            this->navMesh=navMesh;
         }
-
+        ~PathSystem(){
+            delete filter;
+            dtFreeNavMesh(navMesh);
+        }
     private:
+        dtNavMesh *navMesh;
+        dtQueryFilter *filter;
         static void
         findPath(dtNavMesh *navMesh, dtQueryFilter *filter, Eigen::Vector3f startPos, Eigen::Vector3f endPos,
                  std::queue<Eigen::Vector3f> &target) {

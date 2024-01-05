@@ -21,13 +21,13 @@
 namespace CForge {
     class PhysicsSystem {
     public:
-        static std::shared_ptr<btDiscreteDynamicsWorld> addPhysicsSystem(flecs::world &world) {
+        btDiscreteDynamicsWorld* addPhysicsSystem(flecs::world &world) {
             btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
             btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
             btBroadphaseInterface *overlappingPairCache = new btDbvtBroadphase();
             btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver;
 
-            auto dynamicsWorld = std::make_shared<btDiscreteDynamicsWorld>(dispatcher, overlappingPairCache,
+            auto dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache,
                                                                            solver, collisionConfiguration);
             dynamicsWorld->setGravity(btVector3(0, -1, 0));
             world.system<PhysicsComponent, PositionComponent>("PhysicsSystem")
@@ -72,8 +72,29 @@ namespace CForge {
                             pc[i].update(it.delta_time());
                         }
                     });
+
+            this->collisionConfiguration=collisionConfiguration;
+            this->dispatcher=dispatcher;
+            this->overlappingPairCache=overlappingPairCache;
+            this->solver=solver;
+            this->dynamicsWorld=dynamicsWorld;
+
             return dynamicsWorld;
         }
+
+        ~PhysicsSystem(){
+            delete dynamicsWorld;
+            delete collisionConfiguration;
+            delete dispatcher;
+            delete overlappingPairCache;
+            delete solver;
+        }
+    private:
+        btDefaultCollisionConfiguration *collisionConfiguration;
+        btCollisionDispatcher *dispatcher;
+        btBroadphaseInterface *overlappingPairCache;
+        btSequentialImpulseConstraintSolver *solver;
+        btDiscreteDynamicsWorld* dynamicsWorld;
     };
 }
 
