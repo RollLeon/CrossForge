@@ -1,0 +1,39 @@
+% vim: set ts=4 sw=4 smartindent expandtab textwidth=100:
+
+\section{Architektur und Benötigte Systeme}
+
+Wir haben uns für die CrossForge-Engine entschieden, um das Projekt umzusetzten.
+
+Aus dem MVP-Szenario und der Engine Wahl ergeben sich mehrere Anforderungen, die über verschiedene Systeme gelöst werden können. Die Roboter sind selbständige Agenten, die entscheidungen treffen sollen und diese auch ausführen sollen. Dafür ist das Multiagentensystem da. Die Roboter müssen ihren Weg zur nächsten durstigen Pflanze finden, dafür ist das Navigationssystem zuständig. Die Roboter müssen die Pflanze gießen, was durch ein Partikelsystem visualisiert werden soll. Der Spieler und die Roboter sollen sich auf verschieden Platformen bewegen und von einer zur nächsten laufen können. Zusätzlich sollen die Pflanzen verschiebbar sein. Um diese beiden Sachen zu realisieren, wird ein Physiksystem/Kollisionssystem benötigt.
+Der Spieler soll sich mit den Robotern unterhalten können, was durch das Dialogsystem abgedeckt wird.
+Da CrossForge keinen eigenen Szenen Editor hat und die MVP Szene schon zu komplex ist, um diese mit Text zu beschreiben, ist ein Level Editor nötig.
+
+Um alle Systeme möglichst flexibel und unabhängig voneinander zu gestalten, haben wir uns für das Entity Component Pattern entschieden.
+
+\section{Entity Component System}
+
+\section{Multiagentensystem}
+
+mehrere Schichten, um flexibel zu sein. Schichten bauen aufeinander auf und ergänzen eventuelle schwächen
+
+\subsection{Sensors}
+
+\subsection{Decision Making}
+\subsection{Decision Execution}
+\subsection{Actuation}
+
+\section{Navigationssystem}
+
+\section{Partikelsystem}
+
+\section{Physiksystem}
+
+\section{Dialogsystem}
+
+\section{Szenen Editor}
+
+Die generelle Idee ist Blender als Szenen Editor zu benutzen, da Blender als 3D Editor schon die Möglichkeit bietet 3D-Modelle zu platzieren.
+
+\subsection{GLTF als Szenenbeschreibung}
+
+\subsection{Eigenes Format zur Szenenbeschreibung}

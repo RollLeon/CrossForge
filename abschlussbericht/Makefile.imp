@@ -1,0 +1,169 @@
+# vim: filetype=make
+#########################################################################################
+# Copyright (c) 2006-2007, Alexander Adam						#
+# All rights reserved.									#
+#											#
+# Redistribution and use in source and binary forms, with or without modification,	#
+# are permitted provided that the following conditions are met:				#
+#	- Redistributions of source code must retain the above copyright notice,	#
+#	  this list of conditions and the following disclaimer.				#
+#	- Redistributions in binary form must reproduce the above copyright notice,	#
+#	  this list of conditions and the following disclaimer in the documentation	#
+#	  and/or other materials provided with the distribution.			#
+#	- Neither the name of the Chemnitz University of Technology nor the names	#
+#	  of its contributors may be used to endorse or promote products derived	#
+#	  from this software without specific prior written permission.			#
+#											#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND	#
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED		#
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.	#
+# IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,	#
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,	#
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,		#
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF	#
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE	#
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED	#
+# OF THE POSSIBILITY OF SUCH DAMAGE.							#
+#########################################################################################
+
+#Suffixliste leeren, entspricht Option --no-builtin-rules, aus Sicherheitsgruenden, es
+#konnte sonst ein Builtin etwas kaputtschlagen
+.SUFFIXES:
+
+#Nutzerdefinierte globale Variablen einbinden
+include ../Makefile.vars
+#Formattransformationen einbinden
+include ../Makefile.formats
+
+.PHONY: all
+all: $(foreach file, $(OUT), $(foreach end, $(ENDING), $(file).$(strip $(end)))) $(OUTPUT_DIR)
+	-if echo $(OUTPUT_DIR) | grep -E "[^[:space:]]" $(SHORTOUT) ;	\
+	then								\
+		$(HBLAU) $(PRNTCMD) "[MV]"; $(GRAU) echo $(addprefix $(strip $(OUTPUT_DIR)),$(foreach file, $(OUT), $(foreach end, $(ENDING), $(file).$(strip $(end)))));	\
+		mv -f -u -t $(OUTPUT_DIR) $^ $(SHORTOUT) 2>&1;		\
+	fi
+ifeq ($(strip $(FLOW)), latex)
+define TEX_template
+$(1).dvi: 	$(1).tex					\
+		$(addprefix $(AUXPICS_TARGET_DIR), $(AUXPICS))	\
+		$(addprefix $(AUXTEX_TARGET_DIR), $(AUXTEX))	\
+		$$($(1)_TEX)					\
+		$$($(1)_PICS)					\
+		$$($(1)_UNIQ)
+	$(PRNTCMD) "[LATEX]"; echo $(TMP)$(1).aux $(TMP)$(1).idx
+	{ latex --draftmode --interaction nonstopmode --shell-escape --jobname=$(TMP)$(1) $(1).tex > $(1).std 2> $(1).err || { cat $(1).std ; false ; } }
+	[ -e $(TMP)$(1).aux ] || { cat $(1).std; false; }
+		-if grep -E "^[^%]*\\\\(no|print)?bibliography" $(1).tex $(SHORTOUT) ;				\
+		then												\
+			$(PRNTCMD) "[BIBER]"; echo $(TMP)$(1).bbl;						\
+			ERROR_TEMP=$$$$( biber $(TMP)$(1).bcf ) ;						\
+			echo $$$${ERROR_TEMP} | grep error $(SHORTOUT) &&					\
+				echo $$$${ERROR_TEMP};								\
+			$(PRNTCMD) "[LATEX]"; echo $(TMP)$(1).aux $(TMP)$(1).idx;				\
+			latex --draftmode --interaction nonstopmode --shell-escape --jobname=$(TMP)$(1) $(1).tex > $(1).std 2> $(1).err;	\
+		fi
+		-[ -e $(TMP)$(1).nlo ]  && { $(PRNTCMD) "[MAKEIDX]"; echo $(TMP)$(1).nls; } && makeindex $(TMP)$(1).nlo -s nomencl.ist -o $(TMP)$(1).nls $(SHORTOUT) 2>&1
+		-[ -e $(TMP)$(1).glo ]  && { $(PRNTCMD) "[MAKEIDX]"; echo $(TMP)$(1).gls; } && makeindex $(TMP)$(1).glo -s nomencl.ist -o $(TMP)$(1).gls $(SHORTOUT) 2>&1
+		-[ -e $(TMP)$(1).idx ]	&& { $(PRNTCMD) "[MAKEIDX]"; echo $(TMP)$(1).ind; } && makeindex $(TMP)$(1).idx $(SHORTOUT) 2>&1
+	$(PRNTCMD) "[LATEX]"; echo $(TMP)$(1).dvi
+	latex --interaction nonstopmode --shell-escape --jobname=$(TMP)$(1) $(1).tex > $(1).std 2> $(1).err
+		-if grep -E cross-references $(1).std $(SHORTOUT) ;					\
+		then											\
+			latex --interaction nonstopmode --shell-escape --jobname=$(TMP)$(1) $(1).tex > $(1).std 2> $(1).err;	\
+		fi
+	$(HBLAU) $(PRNTCMD) "[MV]"; $(GRAU) echo $$@
+	mv $(TMP)$(1).dvi $$@
+	$(HBLAU) $(PRNTCMD) "[RM]"; $(GRAU) echo $$$$(ls $(TMP)$(1)*)
+	-rm -f $(TMP)$(1)*
+endef
+else
+ifeq ($(FLOW), lualatex)
+define TEX_template
+$(1).pdf: 	$(1).tex					\
+		$(addprefix $(AUXPICS_TARGET_DIR), $(AUXPICS))	\
+		$(addprefix $(AUXTEX_TARGET_DIR), $(AUXTEX))	\
+		$$($(1)_TEX)					\
+		$$($(1)_PICS)					\
+		$$($(1)_UNIQ)
+	$(PRNTCMD) "[LUALATEX]"; echo $(TMP)$(1).aux $(TMP)$(1).idx
+	{ $(LUALATEX) --draftmode --interaction nonstopmode --shell-escape --jobname=$(TMP)$(1) $(1).tex > $(1).std 2> $(1).err || { cat $(1).std ; false ; } }
+	[ -e $(TMP)$(1).aux ] || { cat $(1).std; false; }
+		-if grep -E "^[^%]*\\\\(no|print)?bibliography" $(1).tex $(SHORTOUT) ;			\
+		then											\
+			$(PRNTCMD) "[BIBER]"; echo $(TMP)$(1).bbl;					\
+			ERROR_TEMP=$$$$( biber $(TMP)$(1).bcf ) ;					\
+			echo $$$${ERROR_TEMP} | grep error $(SHORTOUT) &&				\
+				echo $$$${ERROR_TEMP};							\
+			$(PRNTCMD) "[LUALATEX]"; echo $(TMP)$(1).aux $(TMP)$(1).idx;			\
+			$(LUALATEX) --draftmode --interaction nonstopmode --shell-escape --jobname=$(TMP)$(1) $(1).tex > $(1).std 2> $(1).err;	\
+		fi
+		-[ -e $(TMP)$(1).nlo ]  && { $(PRNTCMD) "[MAKEIDX]"; echo $(TMP)$(1).nls; } && makeindex $(TMP)$(1).nlo -s nomencl.ist -o $(TMP)$(1).nls $(SHORTOUT) 2>&1
+		-[ -e $(TMP)$(1).glo ]  && { $(PRNTCMD) "[MAKEIDX]"; echo $(TMP)$(1).gls; } && makeindex $(TMP)$(1).glo -s nomencl.ist -o $(TMP)$(1).gls $(SHORTOUT) 2>&1
+		-[ -e $(TMP)$(1).idx ]	&& { $(PRNTCMD) "[MAKEIDX]"; echo $(TMP)$(1).ind; } && makeindex $(TMP)$(1).idx $(SHORTOUT) 2>&1
+	$(PRNTCMD) "[LUALATEX]"; echo $(TMP)$(1).pdf
+	$(LUALATEX) --interaction nonstopmode --shell-escape --jobname=$(TMP)$(1) $(1).tex > $(1).std 2> $(1).err
+		-if grep -E cross-references $(1).std $(SHORTOUT) ;					\
+		then											\
+			$(LUALATEX) --interaction nonstopmode --shell-escape --jobname=$(TMP)$(1) $(1).tex > $(1).std 2> $(1).err;	\
+		fi
+	$(HBLAU) $(PRNTCMD) "[MV]"; $(GRAU) echo $$@
+	mv $(TMP)$(1).pdf $$@
+	$(HBLAU) $(PRNTCMD) "[RM]"; $(GRAU) echo $$$$(ls $(TMP)$(1)*)
+	-rm -f $(TMP)$(1)*
+endef
+endif
+endif
+$(foreach file, $(OUT),$(eval $(call TEX_template,$(file))))
+
+$(sort $(OUTPUT_DIR)):
+	$(HBLAU) $(PRNTCMD) "[MKDIR]"; $(GRAU) echo $@
+	mkdir -p $@
+
+.PHONY: clean
+clean:
+	$(ROT) echo Cleaning up ;$(GRAU)
+	$(HBLAU) $(PRNTCMD) "[RM]"; $(GRAU) echo $$(ls -d $(TMP)* 2> /dev/null) \
+		$(addsuffix .dvi, $(OUT))					\
+		$(addsuffix .std, $(OUT))					\
+		$(addsuffix .err, $(OUT))					\
+		$(foreach file, $(OUT), $($(file)_PICS))			\
+		$(addprefix $(strip $(AUXPICS_TARGET_DIR)), $(AUXPICS))		\
+		$(addprefix $(strip $(AUXTEX_TARGET_DIR)), $(AUXTEX))		\
+		$(AUXPICS_TARGET_DIR)						\
+		$(AUXTEX_TARGET_DIR)						\
+		$(OUTPUT_DIR) | sed s@[[:space:]]*\\.\\/[[:space:]]*@""@g
+	-rm -f $(TMP)*
+	-rm -f $(addsuffix .dvi, $(OUT))
+	-rm -f $(addsuffix .std, $(OUT))
+	-rm -f $(addsuffix .err, $(OUT))
+	-rm -f $(foreach file, $(OUT), $($(file)_PICS))
+	-rm -f $(addprefix $(strip $(AUXPICS_TARGET_DIR)), $(AUXPICS))
+	-rm -f $(addprefix $(strip $(AUXTEX_TARGET_DIR)), $(AUXTEX))
+	-rmdir -p $(AUXPICS_TARGET_DIR) $(SHORTOUT) 2>&1
+	-rmdir -p $(AUXTEX_TARGET_DIR) $(SHORTOUT) 2>&1
+
+.PHONY: mrproper
+mrproper:
+	$(ROT) echo Making proper clean ;$(GRAU)
+	$(MAKE) clean
+	$(HBLAU) $(PRNTCMD) "[RM]"; $(GRAU) echo $(addprefix $(strip $(OUTPUT_DIR)), $(foreach file, $(OUT), $(foreach end, $(ENDING), $(file).$(strip $(end)))))
+	-rm -f $(addprefix $(strip $(OUTPUT_DIR)), $(foreach file, $(OUT), $(foreach end, $(ENDING), $(file).$(strip $(end)))))
+	-if echo $(OUTPUT_DIR) | grep -E "[^[:space:]]" $(SHORTOUT) ;	\
+	then								\
+		$(HBLAU) echo -n "  [RM]       "; $(GRAU) echo $(OUTPUT_DIR) | sed s@[[:space:]]*\\.\\/[[:space:]]*@""@g; \
+		-rmdir -p $(OUTPUT_DIR) $(SHORTOUT) 2>&1;		\
+	fi
+.PHONY: checks
+checks:
+	$(HBLAU) echo Performing checks ;$(GRAU)
+	-grep --color=auto -E "[^\"]ck[aeiou]" *.tex
+	-grep --color=auto -E "[^\"]CK[AEIOU]" *.tex
+	-grep --color=auto -E "[\"]ck[^aeiou]" *.tex
+	-grep --color=auto -E "[\"]CK[^AEIOU]" *.tex
+	-grep --color=auto -E "[[:space:],]+[Mm][Aa][Nn][[:space:],]+" *.tex
+
+.PHONY: intensechecks
+intensechecks:
+	$(HBLAU) echo Performing intensive checks, may result in many false positives $(GRAU;)
+	-grep --color=auto -E "[^\"]((ff)|(ll)|(mm)|(nn)|(pp)|(rr)|(tt))[aeiou]" *.tex
+	-grep --color=auto -E "[\"]((ff)|(ll)|(mm)|(nn)|(pp)|(rr)|(tt)|(FF)|(LL)|(MM)|(NN)|(PP)|(RR)|(TT))[^aeiouAEIOU]" *.tex

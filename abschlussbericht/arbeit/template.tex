@@ -1,0 +1,276 @@
+% vim: set ts=4 sw=4 smartindent expandtab textwidth=100:
+\documentclass[a4paper,
+               final,
+               draft,
+%               oneside,    % einseitiges Layout für kleinere Arbeiten
+               11pt]{book}
+
+\usepackage{fontspec}   % eigene Schriftarten
+\usepackage{microtype}  % besserer Textsatz
+\usepackage{polyglossia}% Sprachbesonderheiten
+\setdefaultlanguage[babelshorthands=true]{german}
+\usepackage[german]{selnolig} % Ligaturen brechen, wo nötig
+
+\usepackage{geometry}   % für Seiteneinrichtung
+\usepackage[usegeometry,
+            BCOR=10mm,
+            twoside=semi]
+           {typearea}   % automatische Berechnung der Seitenraender durch
+                        %  dieses KOMA-Teilpacket, angeblich typographischen
+                        %  Regeln folgend
+
+\usepackage[printonlyused]{acronym}             % Das Packet, ein Abkuerzungsverzeichnis zu erstellen
+    \renewcommand*{\acsfont}[1]{{\rmfamily #1}} % im Abkuerzungsverzeichnis auch roman verwenden
+\usepackage[export]{adjustbox}
+\usepackage[font=small,labelfont=bf]{caption}   % Bildunterschriften leicht anpassen
+\usepackage{csquotes}   % landesspezifische Anführungszeichen
+\usepackage{graphicx}   % Grafiken einbinden
+\usepackage{icomma}     % Umgang mit Komma als Dezimaltrenner
+\usepackage{ltablex}    % lange variabel breite Tabellen
+\usepackage{newfile}    % um temporäre Dateien anzulegen
+\usepackage{overpic}    % um auf Bildern TeX zu setzen
+\usepackage[hyphens, spaces]{url}
+\usepackage[backend=biber,
+            maxbibnames=99,
+            style=alphabetic,
+            citestyle=alphabetic]
+           {biblatex}   % für das Literaturverzeichnis
+
+% scaling just of images, that are too wide
+\makeatletter
+\def\ScaleIfNeeded{%
+    \ifdim\Gin@nat@width>\linewidth
+        \linewidth
+        \else
+        \Gin@nat@width
+        \fi
+}
+\makeatother
+\setkeys{Gin}{width=\ScaleIfNeeded}
+
+\parindent 2em          % Absatzerstzeileneinzuege (1em = Breite des M, 1ex = Hoehe des x
+\parskip 0.5em          % Absatzabstaaende
+
+\pagestyle{headings}
+
+\input{commons.tex}
+
+% setting up the pdf-a information
+\newoutputstream{xmpstream}
+\openoutputfile{\jobname.xmpdata}{xmpstream}
+    \newcommand{\dummyspace}{ }
+
+    \addtostream{xmpstream}{\protect\Title{\dctitle}}
+    \addtostream{xmpstream}{\protect\Author{\dcauthorfirstname  \dcauthorlastname}}
+    \addtostream{xmpstream}{\protect\Keywords{Compiler\protect\sep\dummyspace
+                                              Database\protect\sep\dummyspace
+                                              Index}}
+    \addtostream{xmpstream}{\protect\Publisher{Technische Universität Chemnitz}}
+\closeoutputstream{xmpstream}
+
+% Das ist fuer die Metainformationen in der PDF-Datei und ist entsprechend anzupassen
+%\usepackage{hyperref}
+\usepackage[a-1b]{pdfx}
+
+\hypersetup{unicode,
+            pdftitle={\dctitle},
+            pdfauthor={\dcauthorfirstname~\dcauthorlastname},
+            pdfsubject={\dcsubject},
+%           colorlinks=true,
+%           citecolor=black,
+%           filecolor=black,
+%           linkcolor=black,
+%           urlcolor=black,
+            hidelinks}
+
+% https://tex.stackexchange.com/questions/355071/pdfx-pdf-x-1a-standard-metadata-xmpdata-not-showing-in-pdf
+\pdfinfo{
+    /Title(\dctitle)
+    /Author(\dcauthorfirstname\ \dcauthorlastname)
+    /Subject(\dcsubject)
+%   /Keywords(Compiler, Database, Index)
+%   /PublicationType(Book)
+}
+
+\usepackage{makeidx}           % Das Packet, einen Stichwortindex zu erstellen
+\makeindex                     % Indexerzeugung einschalten
+\addbibresource{literatur.bib} % Bibliographiedatenbank laden
+
+\setcounter{secnumdepth}{4}    % Numerierungstiefe für Überschriften
+\setcounter{tocdepth}{4}       % Numerierungstiefe im TOC auf 3 setzen
+
+
+\author{\dcauthorfirstname~\dcauthorlastname}
+\title{\dctitle}
+\date{\today}
+
+\begin{document}
+\frontmatter
+
+\begin{titlepage}
+    \sffamily
+    \newgeometry{left=2cm,top=2cm,bottom=2cm,right=2cm}
+
+    \centering{
+        \begin{tabularx}{\linewidth}{lp{1.5em}|p{1.5em}X}
+            \includegraphics[width=0.33\textwidth,valign=c]{\tulogo}
+            & & &
+            {\huge\bfseries Fakultät für Informatik}
+        \end{tabularx}
+
+        \vfill\vfill
+
+        {\Huge\bfseries \dctitle}
+        \vfill\vfill
+
+        {\huge Teamorientiertes Praktikum}
+        \vfill
+
+        \vfill
+
+        Angelique Gräfe\\[1ex]
+        Lisa Neuhaus\\[1ex]
+        Sophie Neuhaus\\[1ex]
+        Carlo Kretzschmann\\[1ex]
+        Leon Rollhagen\\[1ex]
+        Linus Thriemer\\[1ex]
+    \vfill\vfill\vfill
+    
+    \large
+    \begin{tabular}[t]{ll}
+        \textbf{Betreuer:}  & Prof. Guido Brunnett  \\
+                            & Tom Uhlmann           \\
+    \end{tabular}
+}
+\end{titlepage}
+
+%\pagestyle{empty}
+
+%-----------------------------
+% Bibliographische Angaben
+%-----------------------------
+\thispagestyle{empty}
+%\ \\[90ex]
+%\null\vfill
+%{
+%    \ \\
+%    \textbf{\dcauthorlastname, \dcauthorfirstname}\\
+%    \dctitle\\
+%    \dcsubject, Fakultät für Informatik\\
+%    Technische Universität Chemnitz,~%
+%        \ifcase\month%
+%            \or Januar%
+%            \or Februar%
+%            \or März%
+%            \or April%
+%            \or Mai%
+%            \or Juni%
+%            \or Juli%
+%            \or August%
+%            \or September%
+%            \or Oktober%
+%            \or November%
+%            \or Dezember%
+%        \fi%
+%    ~\number\year
+%}
+%\par\vfill\null
+
+%-----------------------------
+% Kurzzusammenfassung
+%-----------------------------
+%\clearpage
+%\thispagestyle{empty}
+
+%\null\vfill
+
+\clearpage
+\newpage
+
+\section*{\centering Zusammenfassung}
+
+Dieses Dokument gibt einen Überblick, wie eine wissenschaftliche Arbeit aufgebaut sein sollte. Dies gilt für Praktikumsberichte ebenso wie für Seminar-, Bachelor- und Masterarbeiten.
+
+%\vfill
+%\clearpage{\pagestyle{empty}\cleardoublepage}
+
+%\pagestyle{headings}
+
+%-----------------------------
+% Verzeichnisse
+%-----------------------------
+\tableofcontents            \clearpage{\pagestyle{empty}\cleardoublepage}
+%\listoffigures              \clearpage{\pagestyle{empty}\cleardoublepage}
+%\listoftables               \clearpage{\pagestyle{empty}\cleardoublepage}
+%\lstlistoflistings
+%\input{tex/acronyms.tex}    \clearpage{\pagestyle{empty}\cleardoublepage}	
+\mainmatter	% Zahlendarstellung auf Arabische Zahlen und von vorn anfangen
+\acresetall
+
+%---------------------------------------------------------------------------------------------------
+\chapter{Einleitung}
+\input{tex/einleitung.tex}
+
+\chapter{Aufgabenstellung}
+\input{tex/aufgabenstellung.tex}
+
+\chapter{Motivation}
+\input{tex/motivation.tex}
+
+\chapter{Konzept}
+\input{tex/konzept.tex}
+
+\chapter{Implementierung}
+\input{tex/implementierung.tex}
+
+%\addtocontents{toc}{\protect\pagebreak[4]} % Seitenumbruch im Inhaltsverzeichnis
+
+\chapter{Ergebnisse}
+\input{tex/ergebnisse.tex}
+
+\chapter{Zusammenfassung \& Ausblick}
+\input{tex/ausblick.tex}
+
+\begin{appendix}
+
+\chapter{Nachsätze}
+\input{tex/appendix0.tex}
+
+\end{appendix}
+
+%---------------------------------------------------------------------------------------------------
+\backmatter
+
+%---------------------------------------------------------------------------------------------------
+\printindex
+
+%---------------------------------------------------------------------------------------------------
+%Literatur, die nicht direkt referenziert wird mit \nocite auffuehren
+\addcontentsline{toc}{chapter}{Literaturverzeichnis}
+\begin{sloppypar}
+	\printbibliography
+\end{sloppypar}
+
+%---------------------------------------------------------------------------------------------------
+\clearpage
+\thispagestyle{empty}
+%\addcontentsline{toc}{chapter}{Selbständigkeitserklärung}
+
+%\newgeometry{left=2cm,right=3.5cm,top=2cm,bottom=2cm}
+
+%\newlength\us
+%\settowidth{\us}{-\dcauthorfirstname~\dcauthorlastname-}
+
+%\begin{overpic}[width=\linewidth,grid, tics=1]{pics/selbstaendigkeitserklaerung}
+%\begin{overpic}[width=\linewidth]{pics/selbstaendigkeitserklaerung}
+%    \put (6.5,81.71) {\small\sffamily \dcauthorlastname}
+%    \put (6.5,78.15) {\small\sffamily \dcauthorfirstname}
+%    \put (6.5,74.60) {\small\sffamily \dcauthorbirthdate}
+%    \put (6.5,71.05) {\small\sffamily \dcmatriculation}
+%    \put (5,32.69)   {\small\sffamily \today}
+%    \put (45.8,57.46){\small\sffamily \dcsubject}
+%    \put (38,32.6)   {\rule[-0.1ex]{\us}{0.5pt}}
+%\end{overpic}
+%\restoregeometry
+
+\end{document}
