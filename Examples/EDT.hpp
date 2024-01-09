@@ -50,7 +50,7 @@ namespace CForge {
     class EDT : public ExampleSceneBase {
     public:
         static const bool VISUALIZE_PATH = false;
-        static const bool BULLET_DEBUG_DRAW = true;
+        static const bool BULLET_DEBUG_DRAW = false;
 
         EDT(void) {
 
