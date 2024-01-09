@@ -50,7 +50,7 @@ namespace CForge {
     class EDT : public ExampleSceneBase {
     public:
         static const bool VISUALIZE_PATH = false;
-        static const bool BULLET_DEBUG_DRAW = false;
+        static const bool BULLET_DEBUG_DRAW = true;
 
         EDT(void) {
 
@@ -166,7 +166,6 @@ namespace CForge {
         }//clear
 
         void mainLoop(void) override {
-            glDisable(GL_CULL_FACE);
             m_RenderWin.update();
 
             m_SkyboxSG.update(60.0f / m_FPS);

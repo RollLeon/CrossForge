@@ -20,7 +20,7 @@ namespace CForge {
                     .iter([](flecs::iter it, PlayerComponent *p, PositionComponent *pc) {
                         for (int i: it) {
                             defaultCameraUpdate(p[i].pCamera, p[i].pKeyboard, p[i].pMouse, p[i].gameState, pc[i],
-                                                4, 0.5f, 2.0f);
+                                                6, 0.5f, 2.0f);
                         }
                     });
         }
@@ -42,18 +42,17 @@ namespace CForge {
                 forward.y() = 0;
                 auto right = pCamera->right();
                 right.y() = 0;
+                auto movementDir = Eigen::Vector3f(0,0,0);
                 if (pKeyboard->keyPressed(Keyboard::KEY_W))
-                    pc.translationDelta(forward * S * MovementSpeed);
-                else if (pKeyboard->keyPressed(Keyboard::KEY_S))
-                    pc.translationDelta(forward * S * -MovementSpeed);
-                else if (pKeyboard->keyPressed(Keyboard::KEY_A))
-                    pc.translationDelta(right * -S * MovementSpeed);
-                else if (pKeyboard->keyPressed(Keyboard::KEY_D))
-                    pc.translationDelta(right * S * MovementSpeed);
-                else {
-                    float ySpeed = pc.translationDelta().y() > 0 ? 0 : pc.translationDelta().y();
-                    pc.translationDelta(Eigen::Vector3f(0, ySpeed, 0));
-                }
+                    movementDir+=(forward * S * MovementSpeed);
+                if (pKeyboard->keyPressed(Keyboard::KEY_S))
+                    movementDir+=(forward * S * -MovementSpeed);
+                if (pKeyboard->keyPressed(Keyboard::KEY_A))
+                    movementDir+=(right * -S * MovementSpeed);
+                if (pKeyboard->keyPressed(Keyboard::KEY_D))
+                    movementDir+=(right * S * MovementSpeed);
+                float ySpeed = pc.translationDelta().y() > 0 ? 0 : pc.translationDelta().y();
+                pc.translationDelta(Eigen::Vector3f(movementDir.x(), ySpeed, movementDir.z()));
                 pCamera->position(pc.translation() + Eigen::Vector3f(0, PlayerComponent::HEIGHT, 0));
 
                 const Eigen::Vector2f MouseDelta = pMouse->movement();

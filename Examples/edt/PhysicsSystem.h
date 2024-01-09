@@ -29,7 +29,7 @@ namespace CForge {
 
             auto dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache,
                                                                            solver, collisionConfiguration);
-            dynamicsWorld->setGravity(btVector3(0, -1, 0));
+            dynamicsWorld->setGravity(btVector3(0, -3, 0));
             world.system<PhysicsComponent, PositionComponent>("PhysicsSystem")
                     .iter([dynamicsWorld](flecs::iter it, PhysicsComponent *ps, PositionComponent *pc) {
                         for (size_t i = 0; i < it.count(); i++) {

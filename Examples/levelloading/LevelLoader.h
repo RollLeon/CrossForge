@@ -134,13 +134,13 @@ namespace CForge {
             return actor;
         }
 
-        btCollisionShape *createCapsuleCollider(float radius, float height) {
+        btCollisionShape *createCapsuleCollider(float radius, float height, float yOffset = 0) {
             btCompoundShape *pCompoundShape = new btCompoundShape();
             btCollisionShape *cylinderShape = new btCapsuleShape(radius, height - 2 * radius);
             collisionShapes.push_back(cylinderShape);
             auto transform = btTransform();
             transform.setIdentity();
-            transform.setOrigin(btVector3(0, height / 2.0f, 0));
+            transform.setOrigin(btVector3(0, height / 2.0f + yOffset, 0));
             pCompoundShape->addChildShape(transform, cylinderShape);
             collisionShapes.push_back(pCompoundShape);
             return pCompoundShape;
@@ -174,8 +174,8 @@ namespace CForge {
             delete triangleMesh;
         }
 
-        LevelLoader(){
-            motionState=new btDefaultMotionState();
+        LevelLoader() {
+            motionState = new btDefaultMotionState();
         }
 
     protected:
@@ -183,8 +183,8 @@ namespace CForge {
         std::vector<btCollisionShape *> collisionShapes;
         std::vector<SGNTransformation *> transformations;
         std::vector<SGNGeometry *> geometries;
-        btDefaultMotionState* motionState;
-        btTriangleMesh* triangleMesh;
+        btDefaultMotionState *motionState;
+        btTriangleMesh *triangleMesh;
 
         static void setMeshShader(T3DMesh<float> *pM) {
             for (uint32_t i = 0; i < pM->materialCount(); ++i) {
@@ -257,8 +257,8 @@ namespace CForge {
                 float random = (float) rand() / (float) RAND_MAX;
                 random = random * (plant->maxWaterLevel);
                 plant->waterLevel = random;
-                btRigidBody::btRigidBodyConstructionInfo rbInfo(10, motionState,
-                                                                createCylinderCollider(0.5f, 1.0f));
+                btRigidBody::btRigidBodyConstructionInfo rbInfo(50, motionState,
+                                                                createCapsuleCollider(0.5f, 2.0f));
                 btRigidBody *body = new btRigidBody(rbInfo);
                 entity.emplace<PhysicsComponent>(body);
             }
