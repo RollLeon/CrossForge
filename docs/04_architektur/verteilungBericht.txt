@@ -33,7 +33,6 @@ Linus:
 - Levelloader
 - Pathfinding
 - Physik
-- Partikelsystem
 - Management
 
 Angi und Carlo:

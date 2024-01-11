@@ -4,7 +4,7 @@
 
 \section{Multiagenten System}
 
-\section{Sate Machines}
+\subsection{Sate Machines}
 
 nicht mehr dazu gekommen, weil Zeit vorbei war und Aufgaben von anderen Projektteilnehmern übernommen werden musste
 aber auch nicht nötig, weil Dialogsystem noch nicht fertig war
@@ -17,8 +17,22 @@ aber auch nicht nötig, weil Dialogsystem noch nicht fertig war
 
 \section{Navigationssystem}
 
+Keine Besonderheiten. Ist halt so wie im Konzept
+
 \section{Physiksystem}
 
+Da das Physiksystem mit Observern feststellt, ob eine Physikkomponente hinzugefügt wurde, muss die Komponente schon initialisiert sein und man kann die lazy Initialisierung nicht benutzen. Deswegen mit emplace statt add.
+
+Die Platform und Wendeltreppe ist statische Geometrie und zusätzlich noch Konkav. Deswegen haben wir diese mit einem Dreieckskollider ausgestattet. Dabei wird einfach das 3D-Modell als Kollider benutzt.
+
+Alle Entities haben Kapsel Collider, da die Entities sonst an den Dreieckskanten der statischen Geometrie hängen geblieben sind.
+
 \section{Szenen Editor}
+
+Die Assimp Variante hat nicht funktioniert, weil die eingriffe zu tief in der Engine vorgenommen werden mussten. Außerdem war das Abstraktionslevel zu gering: wenn man nur Knoten hat ist es schwer Entities zu erkennen.
+
+Das Blender Plugin wurde in Python programmiert und man hat zugriff auf alle Optionen, auf die man auch im Editor Zugriff hat. Um jetzt die Entities zu exportieren, wurde über alle Objekte der Szene iteriert und überprüft, ob diese gelinkt sind. Wenn das der Fall ist, dann wurde die Transformation, der Name und der Name der Modelldatei in eine JSON-Datei geschrieben. Um jetzt auch noch die statische Geometrie zu exportieren, wurden alle Entities unsichtbar gemacht und nur die sichtbaren Modelle wurden exportiert.
+
+In CrossForge wurde dann die JSON-Datei geladen und für jeden Eintrag wurde ein entsprechendes Entity zu Welt hinzugefügt.
 
 \section{Dialogsystem}
