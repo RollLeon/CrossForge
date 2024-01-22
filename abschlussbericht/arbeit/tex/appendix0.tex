@@ -1,6 +1,5 @@
 % vim: set ts=4 sw=4 smartindent expandtab textwidth=100:
 
-Im Anhang kommen die Sachen unter, die in der Arbeit keinen Platz haben. Hier finden sich eventuell ausführliche Algorithmenbeschreibungen. Aber auch Ergebnisse, die in der Arbeit sonst überflüssig wären, weil sie beispielsweise das gleiche zeigen wie die restlichen, können hier untergebracht werden.
 
 \section{Arbeitsaufteilung}
 
@@ -9,8 +8,8 @@ Im Anhang kommen die Sachen unter, die in der Arbeit keinen Platz haben. Hier fi
 \item Lisa und Sophie: Dialogsystem
 \item Leon:
 \begin{itemize}
-\item Anbindung von Flecs
-\item Implementierung von Multiagentensystem
+\item Anbindung von Entity Component System: Flecs
+\item Implementierung vom Multiagentensystem
 \item Konzept und Implementierung Partikelsystem
 \end{itemize}
 \item Linus:
@@ -21,3 +20,23 @@ Im Anhang kommen die Sachen unter, die in der Arbeit keinen Platz haben. Hier fi
 \item Konzept und Implementierung von Navigationssystem, Physiksystem, Szenen Editor
 \end{itemize}
 \end{itemize}
+
+\begin{figure}[h!]
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+Metric        & Leon         & Sophie    & Carlo     & Lisa      & Linus         & Angelique \\
+\hline
+Insertions    & 1.877 (7\%)  & 341 (1\%) & 296 (1\%) & 140 (0\%) & 23.092 (82\%) & 2.305 (8\%) \\
+\hline
+Deletions     & 1.010 (20\%) & 143 (3\%) & 6 (0\%)   & 43 (1\%)  & 3.775 (76\%)  & 3 (0\%) \\
+\hline
+Files         & 141 (35\%)   & 16 (4\%)  & 2 (0\%)   & 6 (1\%)   & 230 (57\%)    & 7 (2\%) \\
+\hline
+Commits       & 39 (33\%)    & 6 (5\%)   & 3 (3\%)   & 2 (2\%)   & 64 (55\%)     & 3 (3\%) \\
+\hline
+Lines changed & 2.887 (9\%)  & 484 (1\%) & 302 (1\%) & 183 (1\%) & 26.869 (81\%) & 2.308 (7\%) \\
+\hline
+\end{tabular}
+\caption{Arbeitsverteilung anhand Git Historie im Zeitraum von 01.06.2023 bis 22.01.2024 \cite{gitquickstats}}
+\label{arbeitsaufteilung}
+\end{figure}

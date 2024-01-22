@@ -21,9 +21,9 @@ Keine Besonderheiten. Ist halt so wie im Konzept
 
 \section{Physiksystem}
 
-Da das Physiksystem mit Observern feststellt, ob eine Physikkomponente hinzugefügt wurde, muss die Komponente schon initialisiert sein und man kann die lazy Initialisierung nicht benutzen. Deswegen mit emplace statt add.
+Da das Physiksystem mit Observern feststellt, ob eine Physikkomponente hinzugefügt wurde, muss die Komponente schon initialisiert sein und man kann die lazy Initialisierung nicht benutzen. Deswegen muss man Physikkomponenten mit emplace anstatt add zum Entity hinzufügen.
 
-Die Platform und Wendeltreppe ist statische Geometrie und zusätzlich noch Konkav. Deswegen haben wir diese mit einem Dreieckskollider ausgestattet. Dabei wird einfach das 3D-Modell als Kollider benutzt.
+Die Platform und Wendeltreppe ist statische Geometrie und zusätzlich noch Konkav. Deswegen haben wir diese mit einem Dreieckskollider ausgestattet. Dabei wird einfach das 3D-Modell als Collider benutzt.
 
 Alle Entities haben Kapsel Collider, da die Entities sonst an den Dreieckskanten der statischen Geometrie hängen geblieben sind.
 
@@ -39,42 +39,18 @@ In CrossForge wurde dann die JSON-Datei geladen und für jeden Eintrag wurde ein
 
 \section{Management}
 
-- Zusammensetzung
-.. generell nach versucht aufgaben nach stärken der Personen zu verteilen
-.. Angelique bricht Informatik Studim ab -> bekommt kreative Modellierungsaufgaben
-.. Lisa und Sophie haben bis jetzt weniger Erfahrung und bekommen leichtere Aufgaben
-.. Leon hat gewisse leidensfähigkeit und bekommt mittlere schwere Aufgaben
-.. Carlo und Linus haben meisten Erfahrungen, arbeiten neben dem Studium und bekommen schwersten Aufgaben
+Der nächste Abschnitt ist aus der Ich-Perspektive des Projektmanagers (Linus) geschrieben, weil das einfacher ist.
 
-- Arbeisweise:
-.. wir haben uns auf 6h/Woche geeinigt, da Arbeit/Studium war nicht mehr drin
-.. Jira am Anfang angelegt, nicht wieder benutzt
-.. gegen Scrum entschieden, weil Retros/Plannings/Sprintwechsel zu viel overhead sind und wir leichtgewichtigen prozess brauchen
-.. Linus hat mit Lisa, Sophie, Leon eine Stunde in der Woche Pair Codings gemacht, um bei den Aufgaben zu helfen
-.. halbzeit haben wir eine retro gemacht
-.. retro hat festgestellt, dass wir verschiedene Arbeitsweisen mögen: Lisa und Sophie bringen Pair Codings weniger, Leon schätzt sie sehr und würde gerne fortfahren
+Unser Praktikumsteam bestand aus sechs Personen mit unterschiedlichen Wissensständen, weswegen ich die Aufgaben generell nach Schwierigkeit und Fähigkeiten der Bearbeiter verteilt habe. Angelique bricht ihr Informatikstudium ab und bekommt deshalb die kreative Aufgabe die Modelle und Szene zu erstellen. Lisa und Sophie haben noch sehr wenig Erfahrung und sollten deshalb die einfachsten Themen angehen. Leon auch noch wenig Erfahrung aber dafür eine gewisse leidensfähigkeit. Mittelschwere bis schwere Aufgaben hat er ohne Widerstand in Angriff genommen. Carlo und ich haben die meiste Erfahrung und arbeiten auch schon mehrere Stunden in der Woche als Werkstudenten. Deswegen haben wir die uns auf schwersten Probleme fokusiert.
 
-- Angelique
-.. eigenständige einarbeitung in Blender
-.. völlig autark und angenehmes management: ich hab aufgaben rüber geworfen und die wurden erledigt
-.. hat mir Zeit erspart
+Als Team haben uns darauf geeinigt mindestens sechs Stunden in der Woche dem Teamorientierten Praktikum zu widmen, da mehr neben Studium und Arbeit nicht möglich war. Deswegen haben wir uns auch gegen einen Scrum Prozess entschieden, weil die Retros, Plannings und Sprintwechsel zu viel Zeit in Anspruch nehmen. Um uns zu organisieren wollten wir Jira einsetzen, jedoch hat die Software niemand wirklich benutzt. Da der Fortschritt langsam war konnte man auch ohne Hilfsmittel sehr gut den Überblick darüber behalten, wer an was gearbeitet hat.
 
-- Dialogsystem wurde nicht fertig
-.. generell darauf geachtet, dass stände kompatibel bleiben (09.10.2023 merge aller branches in den master und dann den master branch in alle feature branches)
-.. somit wäre es möglich ab sync merge Dialogsystem in ECS zu integrieren
-.. aber Lisa und Sophie waren Oktober und November mit Aufräumarbeiten und Anzeigen, dass man eine Interaktion starten kann beschäftigt. Somit hatten sie keine Zeit, das Dialogsystem in ECS zu integrieren
-.. Problem liegt hier bei unterschiedlicher Einschätzung von schwierigkeit und dauer. Für eine änderung, für die ich ein paar Stunden brauchen würde, haben die beiden mehrere Wochen benötigt. Den Verlauf kann man auch an der Git Historie sehen.
+Wir haben uns einmal in der Woche, entweder über Discord oder in Präsenz, getroffen um uns zum Projektfortschritt zu synchronisieren. Da die meisten mit ihrer Aufgabe überfordert waren und nicht wussten, wo sie anfangen sollten habe ich mit Lisa, Sophie und Leon jeweils eine Stunde in der Woche eine Pair-Coding-Session gehalten. Das hatte den großen Vorteil, dass ich dann genau wusste, wer welchen Fortschritt hat. Dem gegenüber standen zwei große Nachteile. Erstens konnte ich somit keine Features implementieren, weil meine sechs Stunden voll mit Pair Coding und Management waren und zweitens ist es sehr verlockend bei jeder kleinen Hürde aufzugeben und auf das nächste Pair Coding zu warten, weil es dort ja sowieso gelöst wird.
 
+Nach den Sommerferien habe ich eine Retrospektive vorbereitet und mit dem gesamten Team durchgeführt. Dabei haben sich verschiedene bevorzugte Arbeitsweisen heraus kristallisiert. Während Leon die Pair Coding Sessions bevorzugt und weiter führen möchte, sagen Lisa und Sophie, dass sie ihnen wenig bringen und eigenständig weiter arbeiten möchten. Auf diese Art und Weise haben wir dann auch bis zum Ende weiter gearbeitet.
 
-- Carlo hat das Praktikum abgebrochen
-.. meiste CPP Erfahrung und arbeitet 18h pro Woche -> meiste Erfahrung und somit Aufgabe mit größten unsicherheiten bekommen
-.. Carlo hatte Aufgabe Detour in CrossForge zu integrieren
-.. Carlo hat aufgrund von Arbeit, Uni, Umzug, Problemen mit seiner Entwicklungsumgebung nur langsamen Fortschritt mit seiner Aufgabe was verständlicherweise zu frustration führt
-.. bei Retro hat er Angebot bekommen eine andere Aufgabe zu übernehmen -> hat er nach mehreren Wochen ohne nennenswerte Fortschritte angenommen
-.. nächste Aufgabe war Partikelsystem, Linus übernimmt Detour integration -> wieder IDE Probleme und kein Fortschritt
-.. Lust am programmieren verloren -> nächste Aufgabe war mit Angelique zusammen Modelle (Aufgabe vor Weihnachten erteilt), Leon übernimmt Partikelsystem
-.. über Jahreswechsel hat niemand von uns am Projekt gearbeitet und da Leon am Anfang Februar nach Polen fährt, muss das Projekt bis dahin abgeschlossen sein und die volle Konzentration sollte jetzt auf Bericht und Präsentation liegen -> keine neuen Modelle/Szenen
-.. somit hat Carlo nur extrem wenig beigetragen und somit entschieden, dass er das TP abbricht
+Projektmanagement ist als Student schwer, weil man auf die intrinsische Motivation der Teammitglieder hoffen muss. Manager in der Industrie haben richtige Druckmittel (Mitarbeiter feuern) oder extrinische Motivation (Lohn). Beides kann ich als studentischer Leiter nicht einsetzen. Zusätzlich ist es auch so, dass harte Arbeit und Engagement mit noch mehr Arbeit bestraft wird, weil sich diese Person als verlässlich herausgestellt hat. Es lohnt sich für Gruppenarbeiten also mehr, wenn man nichts macht, weil man am Ende \"doch immer besteht\".
 
-.. mehr unterstützung und klein geschnittene Aufgaben wären hilfreich gewesen, konnte ich aber nicht machen, weil ich mich dafür so sehr in die Materie einlesen müsste, dass ich das Problem auch selber lösen kann. Ich hatte dafür auch keine Zeit, weil ich mit den restlichen Aufgaben und Teilnehmern überfordert war.
+Das Dialogsystem, an dem Lisa und Sophie gearbeitet haben, wurde nicht rechtzeitig fertig weil es noch in das ECS integriert werden musste und das eine sehr zeitaufwendige Aufgabe ist. Ich wurde damit beauftragt einen Abschnitt zu schreiben, wie das passiert ist und deswegen habe ich mir die Git-Historie näher angeschaut. Generell habe ich darauf geachtet, dass sich die einzelnen Feature Branches nicht zu weit voneinander entfernen. Deswegen habe ich am 09.10.2023 alle Branches in den Master gemerged und danach den Master wieder in alle Featurebranches. Damit war der komplette Projektstand synchronisiert und die beiden hätten anfangen können das Dialogsystem in das Entity Component System zu integrieren. Wir haben aber gemeinsam entschieden, dass wir noch Zeit haben und das Dialogsystem zuerst fertig gestellt werden soll. Die beiden haben dann am 05.12.2023 begonnen das Dialogsystem in das Entity Component System zu integrieren. Rückblickend wäre es sinnvoller gewesen zuerst die Integration zu machen und danach das Dialogsystem fertig zu stellen.
 
+Carlo hat das Praktikum vor der Bewertung abgebrochen, weil er nicht genügend Zeit hatte, um einen sinnvollen Beitrag zu leisten. Er war der mit der meisten C++ Erfahrung und arbeitet 18 Stunden in der Woche als Werkstudent, weswegen er die Aufgabe mit der größten unsicherheit an Komplexität lösen sollte. Seine Aufgabe war das Pathfinding System in CrossForge zu integrieren. Aufgrund von Studium, Arbeit, Umzug, Problemen mit seiner Entwicklungsumgebung und mäßiger Dokumentation von Detour hat er nur sehr langsam Fortschritt gemacht.  Bei der Retrospektive haben wir über diese Probleme gesprochen und ich habe ihm vorgeschlagen eine andere, leichtere Aufgabe zu übernehmen. Er wollte nochmal einen Anlauf wagen hat aber dann nach zwei Wochen mein Angebot angenommen. Ich habe seine Aufgabe übernommen und er sollte als nächstes das Partikelsystem implementieren. Durch seine kontinuierlichen IDE Probleme hat er aber die Lust am programmieren verloren. Das Partikelsystem hat dann Leon implementiert und Carlo sollte ab 12.12.2023 Angelique bei den Modellen und einer hübscheren Szene helfen. Er hat in der Woche vor Weihnachten noch die bestehende Szene ein wenig verbessert. Dann waren Weihnachtsferien und im Januar haben wir uns voll dem Bericht schreiben gewidmet. Somit hatte Carlo keine Chance mehr, genug zum Projekt beizutragen, um das Praktikum zu bestehen.
