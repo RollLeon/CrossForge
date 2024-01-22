@@ -30,6 +30,7 @@
 \usepackage{newfile}    % um temporäre Dateien anzulegen
 \usepackage{overpic}    % um auf Bildern TeX zu setzen
 \usepackage[hyphens, spaces]{url}
+\usepackage{pdfpages}
 \usepackage[backend=biber,
             maxbibnames=99,
             style=alphabetic,
@@ -107,42 +108,7 @@
 \begin{document}
 \frontmatter
 
-\begin{titlepage}
-    \sffamily
-    \newgeometry{left=2cm,top=2cm,bottom=2cm,right=2cm}
-
-    \centering{
-        \begin{tabularx}{\linewidth}{lp{1.5em}|p{1.5em}X}
-            \includegraphics[width=0.33\textwidth,valign=c]{\tulogo}
-            & & &
-            {\huge\bfseries Fakultät für Informatik}
-        \end{tabularx}
-
-        \vfill\vfill
-
-        {\Huge\bfseries \dctitle}
-        \vfill\vfill
-
-        {\huge Teamorientiertes Praktikum}
-        \vfill
-
-        \vfill
-
-        Angelique Gräfe\\[1ex]
-        Lisa Neuhaus\\[1ex]
-        Sophie Neuhaus\\[1ex]
-        Carlo Kretzschmann\\[1ex]
-        Leon Rollhagen\\[1ex]
-        Linus Thriemer\\[1ex]
-    \vfill\vfill\vfill
-    
-    \large
-    \begin{tabular}[t]{ll}
-        \textbf{Betreuer:}  & Prof. Guido Brunnett  \\
-                            & M. Sc. Tom Uhlmann    \\
-    \end{tabular}
-}
-\end{titlepage}
+\includepdf[pages={1,2}]{pics/Assignment_of_Tasks_World_Generation_for_EDTs.pdf}
 
 %\pagestyle{empty}
 
@@ -208,11 +174,6 @@
 \acresetall
 
 %---------------------------------------------------------------------------------------------------
-%\chapter{Einleitung}
-%\input{tex/einleitung.tex}
-
-\chapter{Aufgabenstellung}
-\input{tex/aufgabenstellung.tex}
 
 \chapter{Motivation}
 \input{tex/motivation.tex}
