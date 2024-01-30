@@ -6,8 +6,7 @@
 
 \subsection{Sate Machines}
 
-nicht mehr dazu gekommen, weil Zeit vorbei war und Aufgaben von anderen Projektteilnehmern übernommen werden musste
-aber auch nicht nötig, weil Dialogsystem noch nicht fertig war
+Wir haben noch keine State Machines für den Roboter implementiert, weil der Roboter sich nur in den zwei Zuständen \"Pflanzen gießen\" und \"Mit Spieler reden\" befinden kann. Diese Funktionalität kann über ein einfaches if-else abgedeckt werden und deswegen sind State Machines noch nicht nötig. 
 
 \subsection{Behaviour Tree}
 
@@ -17,42 +16,28 @@ aber auch nicht nötig, weil Dialogsystem noch nicht fertig war
 
 \section{Navigationssystem}
 
-Keine Besonderheiten. Ist halt so wie im Konzept
+Um einen Pfad für ein Entity zu finden, muss man dem Entity eine PathRequestComponent mit Start und Ziel hinzufügen. Das Navigationssystem ließt die Daten aus dem Request aus, entfernt diesen und fügt stattdessen eine PathComponent mit dem gefundenen Pfad hinzu.
+
+Um einen Pfad von einem Startpunkt zu einem Zielpunkt zu finden, sind drei Schritte nötig. Zuerst muss man die Navigationsnetzpolygone finden, auf denen Start und Ziel liegen. Danach sucht man die Polygone, die Start- und Zielpolygon verbinden und zum Schluss kann man diese Liste an Polygonen zu einem Pfad aus Punkten umwandeln.
 
 \section{Physiksystem}
 
-Da das Physiksystem mit Observern feststellt, ob eine Physikkomponente hinzugefügt wurde, muss die Komponente schon initialisiert sein und man kann die lazy Initialisierung nicht benutzen. Deswegen muss man Physikkomponenten mit emplace anstatt add zum Entity hinzufügen.
+Die ECS-Bibliothek Flecs unterstützt Entity Event Listener, sogenannte Observer. Man kann eine Callbackfunktion definieren die gerufen wird, wenn eine Komponente eines Entities hinzugefügt, modifiziert oder entfernt wird. Das Physiksystemsystem nutzt zwei Obsover: ein Observer überwacht, wenn eine Physikkomponente zu einem Entity hinzugefügt wird und fügt den enthaltenen Rigidbody auch in die Physikwelt ein. Der zweite Observer wird gerufen, wenn ein Entity aus der Welt entfernt wird, welches eine Physikkomponente besitzt. In dem Fall wird auch der dazugehörige Rigidbody aus der Physikwelt entfernt.
 
-Die Platform und Wendeltreppe ist statische Geometrie und zusätzlich noch Konkav. Deswegen haben wir diese mit einem Dreieckskollider ausgestattet. Dabei wird einfach das 3D-Modell als Collider benutzt.
+Theoretisch benötigen wir nur die Kollisionserkennung und -auflösung von Bullet. Aber es war deutlich schwerer diese beiden Funktionen getrennt von der Physiksimulation zu rufen als die Physikwelt und die ECS-Welt zu synchronisieren. Deswegen funktioniert die Kollisionserkennung und -auflösung jetzt in drei Schritten. Zuerst werden alle Entities mit Physikkomponente und Transformationskomponente gesucht und die Geschwindigkeit und Position der Transformationskomponente auf den Rigidbody der Physikkomponente übertragen. Dann wird die Simulation der Physikwelt mit dem jetzigen Zeitschritt gerufen. Zum Schluss wird die Geschwindigkeit und Position des Rigidbodies wieder in die Transformationskomponente geschrieben.
 
-Alle Entities haben Kapsel Collider, da die Entities sonst an den Dreieckskanten der statischen Geometrie hängen geblieben sind.
+Die Platformen, Zäune und Wendeltreppe sind statische Geometrie und zusätzlich noch Konkav. Deswegen haben sind diese mit einem Dreieckskollider repräsentiert. Dabei wird einfach das 3D-Modell der statischen Geometrie als Collider benutzt.
+
+Alle Entities haben Kapsel Collider anstatt Zylinder Collider, da diese an den Dreieckskanten der statischen Geometrie hängen geblieben sind.
 
 \section{Szenen Editor}
 
-Die Assimp Variante hat nicht funktioniert, weil die eingriffe zu tief in der Engine vorgenommen werden mussten. Außerdem war das Abstraktionslevel zu gering: wenn man nur Knoten hat ist es schwer Entities zu erkennen.
+Die Assimp Variante hat nicht funktioniert, weil die Eingriffe zu tief in der Engine vorgenommen werden mussten. Außerdem war das Abstraktionslevel zu gering: wenn man nur Knoten hat ist es schwer Entities zu erkennen.
 
-Das Blender Plugin wurde in Python programmiert und man hat zugriff auf alle Optionen, auf die man auch im Editor Zugriff hat. Um jetzt die Entities zu exportieren, wurde über alle Objekte der Szene iteriert und überprüft, ob diese gelinkt sind. Wenn das der Fall ist, dann wurde die Transformation, der Name und der Name der Modelldatei in eine JSON-Datei geschrieben. Um jetzt auch noch die statische Geometrie zu exportieren, wurden alle Entities unsichtbar gemacht und nur die sichtbaren Modelle wurden exportiert.
+Das Blender Plugin wurde in Python programmiert und man hat Zugriff auf alle Optionen, auf die man auch im Editor Zugriff hat. Um jetzt die Entities zu exportieren, wurde über alle Objekte der Szene iteriert und überprüft, ob diese gelinkt sind. Wenn das der Fall ist, dann wurde die Transformation, der Name und der Name der Modelldatei in eine JSON-Datei geschrieben. Um jetzt auch noch die statische Geometrie zu exportieren, wurden alle gelinkten Objekte unsichtbar gemacht und nur die sichtbaren Modelle wurden exportiert. Alle unsichtbaren Objekte wurden anschließend wieder sichtbar gemacht.
 
 In CrossForge wurde dann die JSON-Datei geladen und für jeden Eintrag wurde ein entsprechendes Entity zu Welt hinzugefügt.
 
 \section{Dialogsystem}
 
 \section{Modelle und Szene}
-
-\section{Management}
-
-Der nächste Abschnitt ist aus der Ich-Perspektive des Projektmanagers (Linus) geschrieben, weil das einfacher ist.
-
-Unser Praktikumsteam bestand aus sechs Personen mit unterschiedlichen Wissensständen, weswegen ich die Aufgaben generell nach Schwierigkeit und Fähigkeiten der Bearbeiter verteilt habe. Angelique bricht ihr Informatikstudium ab und bekommt deshalb die kreative Aufgabe die Modelle und Szene zu erstellen. Lisa und Sophie haben noch sehr wenig Erfahrung und sollten deshalb die einfachsten Themen angehen. Leon auch noch wenig Erfahrung aber dafür eine gewisse leidensfähigkeit. Mittelschwere bis schwere Aufgaben hat er ohne Widerstand in Angriff genommen. Carlo und ich haben die meiste Erfahrung und arbeiten auch schon mehrere Stunden in der Woche als Werkstudenten. Deswegen haben wir die uns auf schwersten Probleme fokusiert.
-
-Als Team haben uns darauf geeinigt mindestens sechs Stunden in der Woche dem Teamorientierten Praktikum zu widmen, da mehr neben Studium und Arbeit nicht möglich war. Deswegen haben wir uns auch gegen einen Scrum Prozess entschieden, weil die Retros, Plannings und Sprintwechsel zu viel Zeit in Anspruch nehmen. Um uns zu organisieren wollten wir Jira einsetzen, jedoch hat die Software niemand wirklich benutzt. Da der Fortschritt langsam war konnte man auch ohne Hilfsmittel sehr gut den Überblick darüber behalten, wer an was gearbeitet hat.
-
-Wir haben uns einmal in der Woche, entweder über Discord oder in Präsenz, getroffen um uns zum Projektfortschritt zu synchronisieren. Da die meisten mit ihrer Aufgabe überfordert waren und nicht wussten, wo sie anfangen sollten habe ich mit Lisa, Sophie und Leon jeweils eine Stunde in der Woche eine Pair-Coding-Session gehalten. Das hatte den großen Vorteil, dass ich dann genau wusste, wer welchen Fortschritt hat. Dem gegenüber standen zwei große Nachteile. Erstens konnte ich somit keine Features implementieren, weil meine sechs Stunden voll mit Pair Coding und Management waren und zweitens ist es sehr verlockend bei jeder kleinen Hürde aufzugeben und auf das nächste Pair Coding zu warten, weil es dort ja sowieso gelöst wird.
-
-Nach den Sommerferien habe ich eine Retrospektive vorbereitet und mit dem gesamten Team durchgeführt. Dabei haben sich verschiedene bevorzugte Arbeitsweisen heraus kristallisiert. Während Leon die Pair Coding Sessions bevorzugt und weiter führen möchte, sagen Lisa und Sophie, dass sie ihnen wenig bringen und eigenständig weiter arbeiten möchten. Auf diese Art und Weise haben wir dann auch bis zum Ende weiter gearbeitet.
-
-Projektmanagement ist als Student schwer, weil man auf die intrinsische Motivation der Teammitglieder hoffen muss. Manager in der Industrie haben richtige Druckmittel (Mitarbeiter feuern) oder extrinische Motivation (Lohn). Beides kann ich als studentischer Leiter nicht einsetzen. Zusätzlich ist es auch so, dass harte Arbeit und Engagement mit noch mehr Arbeit bestraft wird, weil sich diese Person als verlässlich herausgestellt hat. Es lohnt sich für Gruppenarbeiten also mehr, wenn man nichts macht, weil man am Ende \"doch immer besteht\".
-
-Das Dialogsystem, an dem Lisa und Sophie gearbeitet haben, wurde nicht rechtzeitig fertig weil es noch in das ECS integriert werden musste und das eine sehr zeitaufwendige Aufgabe ist. Ich wurde damit beauftragt einen Abschnitt zu schreiben, wie das passiert ist und deswegen habe ich mir die Git-Historie näher angeschaut. Generell habe ich darauf geachtet, dass sich die einzelnen Feature Branches nicht zu weit voneinander entfernen. Deswegen habe ich am 09.10.2023 alle Branches in den Master gemerged und danach den Master wieder in alle Featurebranches. Damit war der komplette Projektstand synchronisiert und die beiden hätten anfangen können das Dialogsystem in das Entity Component System zu integrieren. Wir haben aber gemeinsam entschieden, dass wir noch Zeit haben und das Dialogsystem zuerst fertig gestellt werden soll. Die beiden haben dann am 05.12.2023 begonnen das Dialogsystem in das Entity Component System zu integrieren. Rückblickend wäre es sinnvoller gewesen zuerst die Integration zu machen und danach das Dialogsystem fertig zu stellen.
-
-Carlo hat das Praktikum vor der Bewertung abgebrochen, weil er nicht genügend Zeit hatte, um einen sinnvollen Beitrag zu leisten. Er war der mit der meisten C++ Erfahrung und arbeitet 18 Stunden in der Woche als Werkstudent, weswegen er die Aufgabe mit der größten unsicherheit an Komplexität lösen sollte. Seine Aufgabe war das Pathfinding System in CrossForge zu integrieren. Aufgrund von Studium, Arbeit, Umzug, Problemen mit seiner Entwicklungsumgebung und mäßiger Dokumentation von Detour hat er nur sehr langsam Fortschritt gemacht.  Bei der Retrospektive haben wir über diese Probleme gesprochen und ich habe ihm vorgeschlagen eine andere, leichtere Aufgabe zu übernehmen. Er wollte nochmal einen Anlauf wagen hat aber dann nach zwei Wochen mein Angebot angenommen. Ich habe seine Aufgabe übernommen und er sollte als nächstes das Partikelsystem implementieren. Durch seine kontinuierlichen IDE Probleme hat er aber die Lust am programmieren verloren. Das Partikelsystem hat dann Leon implementiert und Carlo sollte ab 12.12.2023 Angelique bei den Modellen und einer hübscheren Szene helfen. Er hat in der Woche vor Weihnachten noch die bestehende Szene ein wenig verbessert. Dann waren Weihnachtsferien und im Januar haben wir uns voll dem Bericht schreiben gewidmet. Somit hatte Carlo keine Chance mehr, genug zum Projekt beizutragen, um das Praktikum zu bestehen.
