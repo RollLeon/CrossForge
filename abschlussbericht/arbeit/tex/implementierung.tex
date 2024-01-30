@@ -37,6 +37,25 @@ In CrossForge wurde dann die JSON-Datei geladen und für jeden Eintrag wurde ein
 
 \section{Dialogsystem}
 
+Die gesamte Implementierung des Dialogsystems haben wir (Lisa und Sophie) im Pair-Coding übernommen. 
+
+\subsection{Imgui}
+
+Die Bibliothek für Imgui konnte über vcpkg recht schnell und einfach in das Projekt eingebunden werden. Zur Erzeugung von Dialogfenstern erstellen wir mit Imgui Frames, in denen oben der aktuelle Text des Dialogs angezeigt wird und unten die möglichen Antworten als Buttons. Wir nutzen außerdem einige Style-Anpassungen, um den Dialog etwas anschaulicher für den Nutzer zu gestalten, sodass z.B. das Fenster immer im Viewport zentriert ist.
+
+\subsection{JsonCpp}
+
+Ähnlich wie Imgui konnten wir auch JsonCpp über vcpkg einbinden. Mithilfe dieser Bibliothek können wir dann den Dialoggraphen initialisieren. Dafür sollten die Json-Dateien die gleiche Baumstruktur aufweisen, wie der Dialoggraph selbst. Über JsonCpp werden die Informationen aus der Datei gelesen und gespeichert, sodass sie dann weiter genutzt werden können, um den Dialoggraph zu füllen.
+
+\subsection{Dialoggraph}
+
+Den Dialoggraph haben wir so wie im Konzeptteil bechrieben implementiert. In einer dafür erstellten Klasse werden die zuvor genannten Daten gespeichert: der Dialogtext, ein Boolean für die Unterscheidung zwischen Roboter und Spieler und die möglichen Antworten. Zusätzlich gibt es noch eine Funktion, die die Initialisierung des Baumes umsetzt und eine Funktion für das Ersetzen der Strings mithlfe der Dialogmap.
+
+\subsection{Dialogmap}
+
+Mit der implementierten Dialogmap kann eine Funktion aufgerufen werden, die den Name einer Pflanze zurückgibt. Der Rückgabewert dieser Funktion ist allerdings statisch festgelegt, da zum Zeitpunkt der Abgabe das Dialogsystem noch nicht in das ECS eingebunden ist. Diese Integration wäre aber notwendig um die Positionen von Roboter und Spieler zu ermitteln, die gebraucht werden um zu bestimmen welcher Pflanzenname zurückgegeben werden soll. Auch die Pflanzennamen selbst sind im ECS gespeichert, weshalb ein Zugriff darauf vom Dialogsystem aus aktuell nicht möglich ist.  
+Weitere Funktionalitäten der Dialogmap, wie Eventhandling sind ebenfalls noch nicht implementiert.
+
 \section{Modelle und Szene}
 
 Wie bereits im >Konzept< beschrieben ging die Anfangszeit in die Konzeptbearbeitung hinein. Ebenso hat es etwas Zeit in Anspruch genommen sich in Blender einzuarbeiten. Alle Modelle wurden mehrmals modelliert aufgrund von verschiedenen Problemen, wie z.B. Designunklarheiten, zu viele Polygone innerhalb des Models aufgrund zu vieler Details oder falscher Vorgehensweise, oder anderen Extras etc. >BILD EINFÜGEN ersten robomodels, ersten blätter mit wireframe<

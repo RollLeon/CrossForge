@@ -104,6 +104,26 @@ Wir können ein Blender Plugin schreiben, was die Transformationen der einzelnen
 
 \section{Dialogsystem}
 
+Wir haben uns dazu entschieden ein Dialogsystem zu implementieren, damit man als Nutzer mit den Robotern kommunizieren kann. Der Nutzer soll dazu ein Dialogfenster öffnen können, wenn er sich nah genug an einem Roboter befindet. Im Dialogfenster werden dann die Aussagen des Roboters und die Antwortoptionen des Nutzers angezeigt. Durch Klicken auf die Antworten wird der Dialog fortgesetzt. Wenn der Dialog beendet ist wird das Dialogfenster wieder geschlossen. Ziel des Dialogsystems für das Minimum Viable Product ist es, dass man den Roboter nach dem Name einer Pflanze fragen kann. 
+
+\subsection{Imgui}
+
+Unsere erste Idee für die Umsetzung des Dialogfensters war die Features zu nutzen, die in CrossForge schon implementiert waren. Dafür wollten wir ursprünglich Texturen verwenden. Da das allerdings wahrscheinlich sehr aufwendig geworden wäre, hat Linus vorgeschlagen Imgui zu nutzen.
+Imgui ist eine C++-Bibliothek für grafische Benutzeroberflächen. Normalerweise ist Imgui zwar eher für Debug-Tools gedacht, da es grafisch relativ simpel ist und nur sehr eingeschränkte Möglichkeiten zur grafischen Individualisierung bietet. Für unsere Zwecke ist es aber trotzdem gut geeignet, weil es uns, insbesondere für das Minimum Viable Product, wichtiger ist schnell ein Dialogfenster angezeigt zu bekommen als, dass es besonders hübsch aussieht. 
+
+\subsection{JsonCpp}
+
+Die Dialoge selbst wollen wir in Json-Dateien speichern. Json-Dateien ermöglichen es uns zum einen die Dialoge vom Code zu trennen uns somit zum anderen leicht neue Dialoge hinzuzufügen und andere Dialoge auszuwählen. Damit wir die Daten aus diesen Dateien auslesen können nutzen wir JsonCpp, eine C++-Bibliothek, die es ermöglicht Json-Dateien mit C++ ein- und auszulesen. 
+
+\subsection{Dialoggraph}
+
+Als Datenstruktur für den Dialog nutzen wir eine Baumstruktur. Dabei beinhaltet jeder Knoten einen Text, einen Boolean, der angibt ob der Text vom Spieler gesprochen wird, und eine Liste mit möglichen Antworten, die jeweils durch weitere Knoten repräsentiert werden. Dieser Baum wird erstellt, indem die entsprechenden Informationen aus einer Json-Datei ausgelesen werden. 
+
+\subsection{Dialogmap}
+
+Um den Dialog zum Erfragen eines Pflanzennamens umsetzen zu können, benötigt man im Dialog in der Json-Datei einen Platzhalter für den Name der Pflanze. Dieser Platzhalter wird dann durch den entsprechenden Name ersetzt. Dafür wollen wir eine Map nutzen, die den Platzhalter als Key entgegen nimmt und einen Funktionspointer zurückgibt. Mithilfe der dadurch aufgerufenen Funktion wird dann der Name der Pflanze in Abhängigkeit von der Position des Roboters und der Position des Spielers ermittelt, sodass die Map letztendlich indirekt den Pflanzennamen zurückgibt.  
+Die Nutzung einer Map ermöglicht es schnell und einfach neue Platzhalter/Keys hinzuzufügen, durch die auch andere Ersetzungen mithilfe entsprechender Funktionen möglich sind. Die genutzten Funktionen können aber auch andere Funktionalitäten erfüllen als nur einfache Textersetzungen; eine Funktion kann auch beispielsweise ein Event auslösen. Ein solches Event könnte zum Beispiel sein, dass man den Roboter anweist dem Spieler zu folgen oder aus dem Weg zu gehen.
+
 \section{Modelle und Szene}
 
 Die Szene und die dazu gehörigen Modelle sind ein essenzieller Teil, um alle anderen Funktionen überhaupt darstellen zu können. Natürlich kann man dafür auch jedes x-beliebige Modell nutzen, wie einen einfachen Würfel. Allerdings hatten wir ein klares Ziel vor Augen, was wir ungefähr darstellen wollen. Wie schon im Abschnitt >Motivation< erklärt, besteht unser MVP aus zwei Plattformen mit jeweils einem Roboter und dazu einige Pflanzen.
