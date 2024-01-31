@@ -112,7 +112,7 @@ Imgui ist eine C++-Bibliothek für grafische Benutzeroberflächen. Normalerweise
 
 \subsection{JsonCpp}
 
-Die Dialoge selbst wollen wir in Json-Dateien speichern. Json-Dateien ermöglichen es uns zum einen die Dialoge vom Code zu trennen uns somit zum anderen leicht neue Dialoge hinzuzufügen und andere Dialoge auszuwählen. Damit wir die Daten aus diesen Dateien auslesen können nutzen wir JsonCpp, eine C++-Bibliothek, die es ermöglicht Json-Dateien mit C++ ein- und auszulesen. 
+Die Dialoge selbst wollen wir in Json-Dateien speichern. Json-Dateien ermöglichen es uns zum einen die Dialoge vom Code zu trennen und somit zum anderen leicht neue Dialoge hinzuzufügen und andere Dialoge auszuwählen. Damit wir die Daten aus diesen Dateien auslesen können nutzen wir JsonCpp, eine C++-Bibliothek, die es ermöglicht Json-Dateien mit C++ ein- und auszulesen. 
 
 \subsection{Dialoggraph}
 
@@ -121,12 +121,47 @@ Als Datenstruktur für den Dialog nutzen wir eine Baumstruktur. Dabei beinhaltet
 \subsection{Dialogmap}
 
 Um den Dialog zum Erfragen eines Pflanzennamens umsetzen zu können, benötigt man im Dialog in der Json-Datei einen Platzhalter für den Name der Pflanze. Dieser Platzhalter wird dann durch den entsprechenden Name ersetzt. Dafür wollen wir eine Map nutzen, die den Platzhalter als Key entgegen nimmt und einen Funktionspointer zurückgibt. Mithilfe der dadurch aufgerufenen Funktion wird dann der Name der Pflanze in Abhängigkeit von der Position des Roboters und der Position des Spielers ermittelt, sodass die Map letztendlich indirekt den Pflanzennamen zurückgibt.  
+\par
 Die Nutzung einer Map ermöglicht es schnell und einfach neue Platzhalter/Keys hinzuzufügen, durch die auch andere Ersetzungen mithilfe entsprechender Funktionen möglich sind. Die genutzten Funktionen können aber auch andere Funktionalitäten erfüllen als nur einfache Textersetzungen; eine Funktion kann auch beispielsweise ein Event auslösen. Ein solches Event könnte zum Beispiel sein, dass man den Roboter anweist dem Spieler zu folgen oder aus dem Weg zu gehen.
 
 \section{Modelle und Szene}
 
-Die Szene und die dazu gehörigen Modelle sind ein essenzieller Teil, um alle anderen Funktionen überhaupt darstellen zu können. Natürlich kann man dafür auch jedes x-beliebige Modell nutzen, wie einen einfachen Würfel. Allerdings hatten wir ein klares Ziel vor Augen, was wir ungefähr darstellen wollen. Wie schon im Abschnitt Motivation erklärt, besteht unser MVP aus zwei Plattformen mit jeweils einem Roboter und dazu einige Pflanzen.
-Der erste und wichtigste Schritt war sich erst einmal zu überlegen, wie unsere Roboter aussehen sollen, da diese unsere ‚Hauptakteure‘ sind. Da die Roboter auch mit dem Spieler agieren, sollten diese eigentlich erst ein eher menschlicheres Design bekommen. Für den Anfang allerdings, sollte es recht einfach gehalten werden. Daher habe ich mich für ein eher ‚simples und knuffiges‘ Design entschieden und verschiedene Überlegungen skizziert. Zusätzlich habe ich mir zum Design noch einige Randnotizen zu eventuellen Funktionen gemacht. \includegraphics[height=0.3\pageheight,keepaspectratio]{pics/1} Eine weitere Idee war es, auch um einige Zusatzprogrammierungen zu vermeiden, dass der Roboter schwebt und nicht fährt. Allerdings war dies zu zukunftsbasiert und daher erstmal eher abgelehnt. Bei der finalen Skizze habe ich dann noch einmal das Radsystem überdacht und dieses im Nachhinein noch abgeändert.  \includegraphics[height=0.3\pageheight,keepaspectratio]{pics/2}
+Die Szene und die dazu gehörigen Modelle sind ein essenzieller Teil, um alle anderen Funktionen überhaupt darstellen zu können. Natürlich kann man dafür auch jedes beliebige Modell nutzen, wie einen einfachen Würfel. Allerdings hatten wir ein klares Ziel vor Augen, was wir darstellen wollen. Wie schon im Abschnitt Motivation erklärt, besteht unser MVP aus zwei Plattformen mit jeweils einem Roboter und einigen Pflanzen.
+\par
+Der erste und wichtigste Schritt war sich erst einmal zu überlegen, wie unsere Roboter aussehen sollen, da diese unsere ‚Hauptakteure‘ sind. Da die Roboter auch mit dem Spieler agieren, sollten diese eigentlich erst ein eher menschlicheres Design bekommen. Für den Anfang allerdings, sollte es recht einfach gehalten werden. Daher habe ich mich für ein eher ‚simples und knuffiges‘ Design entschieden und verschiedene Überlegungen skizziert. Zusätzlich habe ich mir zum Design noch einige Randnotizen zu eventuellen Funktionen gemacht. 
+\begin{figure}[h]
+	\centering
+	\includegraphics[height=0.3\pageheight,keepaspectratio]{pics/1} 
+	\caption{Konzeptskizze für den Roboter}
+\end{figure}
+\par
+Eine weitere Idee war es, auch um einige Zusatzprogrammierungen zu vermeiden, dass der Roboter schwebt und nicht fährt. Allerdings war dies zu zukunftsbasiert und wurde daher erstmal eher abgelehnt. Bei der finalen Skizze habe ich dann noch einmal das Radsystem überdacht und dieses im Nachhinein noch abgeändert.  
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=0.3\pageheight,keepaspectratio]{pics/2} 
+	\caption{Finaler Entwurf für den Gärtnerroboter}
+\end{figure}
+\par
 Die nächsten Überlegungen gingen an die Pflanzen. Bei diesen habe ich eher etwas spontan, ohne Skizzen, gearbeitet. Es sollte sich um eine einfache Pflanze und eine eher exotische Pflanze handeln, sodass auch etwas Variation darin steckt.
-Ebenso viel Aufwand im Konzept wie die Roboter, haben die Plattformen und die Szene allgemein eingenommen. Bei diesen habe ich ebenso einige Ideen skizziert und im Nachhinein abgesprochen. Anfangs habe ich direkt zukunftsbasiert gedacht und eher ausgebautere Szenen skizziert. \includegraphics[height=0.3\pageheight,keepaspectratio]{pics/3} Speziell ans MVP basiert minimierte ich dann die Skizzen und überlegte mir eine ganz andere Form, was letztlich nach einigen Änderungen auch die finale Form wurde. \includegraphics[height=0.3\pageheight,keepaspectratio]{pics/4}
-Im späteren Verlauf forderten die Modelle natürlich auch Texturen. Zu diesem Punkt gehe ich dann im Teil Implementierung nochmal näher ein.
+\par
+Ähnlich viel Aufwand im Konzept wie die Roboter, haben die Plattformen und die Szene allgemein eingenommen. Bei diesen habe ich ebenso einige Ideen skizziert und im Nachhinein abgesprochen. Anfangs habe ich sehr weit gedacht und eher ausgebautere Szenen entworfen. 
+\begin{figure}[H]
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[height=0.3\pageheight,keepaspectratio]{pics/3} 
+		\caption{Ursprüngliche Idee}
+	\end{subfigure}	
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[height=0.3\pageheight,keepaspectratio]{pics/4} 
+		\caption{Szene für das MVP}
+	\end{subfigure}	
+	\caption{Konzeptskizzen für die Szene}
+\end{figure}
+\par
+Speziell am MVP orientiert habe ich dann die Skizzen vereinfacht und mir eine ganz andere Form überlegt, was letztlich nach einigen Änderungen auch die finale Form wurde. Im späteren Verlauf forderten die Modelle natürlich auch Texturen. Auf diesem Punkt gehe ich im Teil Implementierung nochmal näher ein.
+\begin{figure}[h]
+	\centering
+	\includegraphics[height=0.3\pageheight,keepaspectratio]{pics/5} 
+	\caption{Finaler Entwurf die Szene für das MVP}
+\end{figure}
