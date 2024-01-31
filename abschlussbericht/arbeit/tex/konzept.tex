@@ -2,11 +2,11 @@
 
 \section{Vorbedingungen}
 
-Gemeinsam mit unserem Betreuer haben wir uns darauf geeinigt CrossForge zu verwenden. Die Engine unterstützt Windows, Linux und WebAssembly und benutzt nur OpenGL als Grafik API. Sie unterstützt physikalisch basiertes Rendering und Materialien, Deferred und Forward Rendering Pipelines und ein Shadersystem. Aber besonders wichtig für uns sind der Szenengraph, die Skelettanimationen und Text Rendering.
+Gemeinsam mit unserem Betreuer haben wir uns darauf geeinigt, CrossForge zu verwenden. Die Engine unterstützt Windows, Linux und WebAssembly und benutzt nur OpenGL als Grafik API. Sie unterstützt physikalisch basiertes Rendering und Materialien, Deferred und Forward Rendering Pipelines und ein Shadersystem. Aber besonders wichtig für uns sind der Szenengraph, die Skelettanimationen und Text Rendering.
 
 \section{Architektur und benötigte Systeme}
 
-Aus dem MVP-Szenario und der Engine Wahl ergeben sich mehrere Anforderungen, die über verschiedene Systeme gelöst werden können. Die Roboter sind selbständige Agenten, die Entscheidungen treffen und diese auch ausführen sollen. Dieses Problem löst das Multiagentensystem. Sie müssen ihren Weg zur nächsten durstigen Pflanze finden, dafür ist das Navigationssystem zuständig. Die Roboter müssen die Pflanze gießen, was durch ein Partikelsystem visualisiert werden soll. Der Spieler und die Roboter sollen sich auf verschieden Plattformen bewegen und von einer zur nächsten laufen können. Zusätzlich sollen die Pflanzen verschiebbar sein. Um diese beiden Sachen zu realisieren, wird ein Physiksystem benötigt.
+Aus dem MVP-Szenario und der Engine Wahl ergeben sich mehrere Anforderungen, die über verschiedene Systeme gelöst werden können. Die Roboter sind selbständige Agenten, die Entscheidungen treffen und diese auch ausführen sollen. Dieses Problem löst das Multiagentensystem. Sie müssen ihren Weg zur nächsten durstigen Pflanze finden, dafür ist das Navigationssystem zuständig. Die Roboter müssen die Pflanze gießen, was durch ein Partikelsystem visualisiert werden soll. Der Spieler und die Roboter sollen sich auf verschiedenen Plattformen bewegen und von einer zur nächsten laufen können. Zusätzlich sollen die Pflanzen verschiebbar sein. Um diese beiden Sachen zu realisieren, wird ein Physiksystem benötigt.
 Der Spieler soll sich mit den Robotern unterhalten können, was durch das Dialogsystem abgedeckt wird.
 Da CrossForge keinen eigenen Szenen Editor hat und die MVP Szene schon zu komplex ist, um diese mit Programmcode zu beschreiben, ist ein Szenen Editor nötig.
 
@@ -21,7 +21,7 @@ Partikelsysteme werden verwendet, um natürliche Phänomene, wie Wasser, Rauch o
 
 \section{Multiagentensystem}
 
-Das Multiagentensystem ist das Herz unseres Projektes da das Verhalten von allen belebten und unbelebten Agenten von diesem System gesteuert werden sollen. Man unterscheidet zwischen Zentraler KI und Agentenbasierter KI. Bei Zentraler KI werden die Entitäten von einem externen, globalen und allwissenden System gesteuert. Individuen haben deswegen keine Kontrolle über ihre eigenen Handlungen. Zentrale KI wird sehr oft eingesetzt, weil sich damit Gruppendynamiken und taktische Vorgehensweisen einfacher implementieren lassen. Bei Agentenbasierter KI treffen die Agenten unabhängige und individuelle Entscheidungen basierend auf den Informationen, die ihnen bereit stehen. Es gibt zwar trotzdem globale Informationen, die aber nicht dafür missbraucht werden dürfen die Handlungen eines Agenten zu diktieren. Wir haben uns für Agentenbasierte KI entschieden, weil sie für unser Szenario leichter umzusetzen ist. Die Hoffnung ist, dass die Akteure dadurch natürliche Verhaltensweisen und Interaktionen zur Schau stellen.
+Das Multiagentensystem ist das Herz unseres Projektes, da das Verhalten von allen belebten und unbelebten Agenten von diesem System gesteuert werden soll. Man unterscheidet zwischen Zentraler KI und Agentenbasierter KI. Bei Zentraler KI werden die Entitäten von einem externen, globalen und allwissenden System gesteuert. Individuen haben deswegen keine Kontrolle über ihre eigenen Handlungen. Zentrale KI wird sehr oft eingesetzt, weil sich damit Gruppendynamiken und taktische Vorgehensweisen einfacher implementieren lassen. Bei Agentenbasierter KI treffen die Agenten unabhängige und individuelle Entscheidungen basierend auf den Informationen, die ihnen bereit stehen. Es gibt zwar trotzdem globale Informationen, die aber nicht dafür missbraucht werden dürfen, die Handlungen eines Agenten zu diktieren. Wir haben uns für Agentenbasierte KI entschieden, weil sie für unser Szenario leichter umzusetzen ist. Die Hoffnung ist, dass die Akteure dadurch natürliche Verhaltensweisen und Interaktionen zur Schau stellen.
 
 In verschiedenen GDC \cite{YouTube_2019}\cite{YouTube_2022}\cite{YouTube_2023} Talks wurde empfohlen, ein KI-Systen in mehreren Schichten aufzubauen:
 
@@ -40,7 +40,7 @@ Sensoren sind ein Querschnittskonzept und tauchen deshalb in allen Ebenen auf. S
 
 Für die Entscheidungsfindung standen die folgenden Algorithmen in der näheren Auswahl: Beliefs, Desires, Intentions (BDI), Goal Oriented Action Planning (GOAP) und Finite State Machines (FSM). Am Ende haben wir uns für Finite State Machines entschieden, weil das das einfachste Verfahren war und vorerst für die Roboter ausreicht.
 
-Eine State Machine ist ein gerichteter Graph mit limitierter Anzahl an Stati und Aktionen. Der Agent wechselt von einem Status in den nächsten, falls eine Bedingung erfüllt ist. In unserer Simulation sollen FSMs für die Roboter eingesetzt werden, um die Stati \textit{Pflanzen gießen}, \textit{Dialog mit Spieler}, \textit{Spieler folgen}, etc abdecken zu können. 
+Eine State Machine ist ein gerichteter Graph mit limitierter Anzahl an Stati und Aktionen. Der Agent wechselt von einem Status in den nächsten, falls eine Bedingung erfüllt ist. In unserer Simulation sollen FSMs für die Roboter eingesetzt werden, um die Stati \textit{Pflanzen gießen}, \textit{Dialog mit Spieler}, \textit{Spieler folgen}, etc. abdecken zu können. 
 
 \subsection{Entscheidungsausführung}
 
@@ -48,20 +48,20 @@ Wenn der Agent eine Entscheidung getroffen hat, dann lässt sich diese Entscheid
 
 \begin{itemize}
 \item eine durstige Pflanze finden
-\item zur Pflanze hin fahren
+\item zur Pflanze hinfahren
 \item die Gießkanne zur Pflanze ausrichten
 \item und schließlich die Pflanze gießen
 \end{itemize}
 
-Diese Sequenz von Handlungen lässt sich nur sehr schlecht mit FSMs darstellen, weswegen dieser Nachteil durch Behaviour Trees ausgeglichen werden soll. Behaviour Trees sind sehr gut darin solche Sequenzen darzustellen oder sogar nebenläufige Handlungen zu beschreiben. Ihr Nachteil ist jedoch, dass sie nur sehr schwierig auf Übergänge von einen Status in den nächsten reagieren können. Ein Beispiel hierfür ist, dass der Spieler den Roboter anspricht und ihn über Pflanzen befragt. Um das mit Behaviour Trees festzustellen, müssen überall Monitore eingebaut werden, die dieses Ereignis erkennen und behandlen. Das macht den Baum unübersichtlich und nicht wartbar. Behaviour Trees und State Machines ergänzen sich also sehr gut.
+Diese Sequenz von Handlungen lässt sich nur sehr schlecht mit FSMs darstellen, weswegen dieser Nachteil durch Behaviour Trees ausgeglichen werden soll. Behaviour Trees sind sehr gut darin, solche Sequenzen darzustellen oder sogar nebenläufige Handlungen zu beschreiben. Ihr Nachteil ist jedoch, dass sie nur sehr schwierig auf Übergänge von einen Status in den nächsten reagieren können. Ein Beispiel hierfür ist, dass der Spieler den Roboter anspricht und ihn über Pflanzen befragt. Um das mit Behaviour Trees festzustellen, müssen überall Monitore eingebaut werden, die dieses Ereignis erkennen und behandeln. Das macht den Baum unübersichtlich und nicht wartbar. Behaviour Trees und State Machines ergänzen sich also sehr gut.
 
-In Behaviour Trees werden Handlungen durch Knoten beschrieben. Die Knoten können die Stati: \textit{Laufend}, \textit{Fehler} oder \textit{Abgeschlossen} haben.
+In Behaviour Trees werden Handlungen durch Knoten beschrieben. Die Knoten können die Stati \textit{Laufend}, \textit{Fehler} oder \textit{Abgeschlossen} haben.
 Knoten können dabei über die Bearbeitung ihrer Kindknoten entscheiden. Bei einem Sequenzknoten werden die Kinder von links nach rechts abgearbeitet. Nur wenn der Knoten den Status \textit{Abgeschlossen} hat, wird der rechte Geschwisterknoten aufgerufen. Wenn der Status \textit{Laufend} ist, dann wird der Knoten solange bearbeitet, bis der Status \textit{Abgeschlossen} oder \textit{Fehler} erreicht ist. Bei dem Status \textit{Fehler} wird die Abarbeitung abgebrochen und dieser nach oben propagiert. Der Elternknoten kann dann entscheiden, wie dieser Fehlerstatus behandelt wird.
 Der Fallbackknoten behandelt den Fehler zum Beispiel, indem er den ersten Kindknoten findet, der nicht fehlschlägt und somit erfolgreich ausführt. Nur wenn alle Kindknoten fehlschlagen, ist der Status des Fallbackknotens \textit{Fehler}.
 
 \subsection{Bewegungssteuerung}
 
-Die Ebene der Bewegungssteuerung ist dafür verantwortlich die Entscheidungen in Beschleunigung, Geschwindigkeit und Rotation umzuwandeln. Dafür haben wir uns Steering Behaviour \cite{SteeringBehaviour} näher angeschaut. Es gibt verschiedene Bewegungsmuster:
+Die Ebene der Bewegungssteuerung ist dafür verantwortlich, die Entscheidungen in Beschleunigung, Geschwindigkeit und Rotation umzuwandeln. Dafür haben wir uns Steering Behaviour \cite{SteeringBehaviour} näher angeschaut. Es gibt verschiedene Bewegungsmuster:
 
 \begin{itemize}
 \item Seek
@@ -81,28 +81,28 @@ Das letzte Lenkverhalten ist das auf der Stelle Drehen. Dieses wird genutzt, wen
 
 \section{Navigationssystem}
 
-In der Mitte der MVP-Szene befindet sich die Wendeltreppe, weswegen die Roboter nicht immer den direkten Weg zur Pflanze fahren können, weil sie dieses Hindernis beachten müssen. Das Navigationssystem übernimmt die Aufgabe einen Pfad von einem Startpunkt zum Zielpunkt zu finden. Um Zeit zu sparen und uns auf die Hauptaufgabe konzentrieren zu können haben wir uns entschieden die Bibliothek Recast und Detour einzusetzen. Recast berechnet das Navigationsmesh aus der statischen Geometrie und Detour findet zur Laufzeit einen Pfad auf diesem Navigationsmesh. Da das Navigationsmesh nicht dynamisch angepasst werden muss, reicht es aus, wenn man es einmal vor der Kompilierung berechnet, speichert und dann in CrossForge lädt. Die Bibliothek stellt hierfür ein Beispielprogramm bereit, was wir nutzen.
+In der Mitte der MVP-Szene befindet sich die Wendeltreppe, weswegen die Roboter nicht immer den direkten Weg zur Pflanze fahren können, weil sie dieses Hindernis beachten müssen. Das Navigationssystem übernimmt die Aufgabe, einen Pfad von einem Startpunkt zum Zielpunkt zu finden. Um Zeit zu sparen und uns auf die Hauptaufgabe konzentrieren zu können, haben wir uns entschieden, die Bibliothek Recast und Detour einzusetzen. Recast berechnet das Navigationsmesh aus der statischen Geometrie, und Detour findet zur Laufzeit einen Pfad auf diesem Navigationsmesh. Da das Navigationsmesh nicht dynamisch angepasst werden muss, reicht es aus, wenn man es einmal vor der Kompilierung berechnet, speichert und dann in CrossForge lädt. Die Bibliothek stellt hierfür ein Beispielprogramm bereit, was wir nutzen.
 
 \section{Physiksystem}
 
-Die Entities und der Spieler sollen mit der statischen Szenengeometrie und sich selber kollidieren. Um diese Kollisionen zu erkennen und aufzulösen, ist das Physiksystem nötig. Dafür möchten wir die Bullet Bibliothek einsetzen, da Linus schon einmal den Separating Axis Theorem Algorihmus in 2D implementiert hat und das sich als sehr Zeitaufwändig und Fehleranfällig herausgestellt hat. 
+Die Entities und der Spieler sollen mit der statischen Szenengeometrie und sich selber kollidieren. Um diese Kollisionen zu erkennen und aufzulösen, ist das Physiksystem nötig. Dafür möchten wir die Bullet Bibliothek einsetzen, da Linus schon einmal den Separating Axis Theorem Algorihmus in 2D implementiert hat und das sich als sehr zeitaufwändig und fehleranfällig herausgestellt hat. 
 
 
 \section{Szenen Editor}
 
-Wir benötigen einen Szenen Editor, weil schon bei einer geringen Anzahl an platzierten Entitäten der Code unübersichtlich und schwer zu warten ist. Als alternative könnten wir die Agenten und Pflanzen prozedural platzieren, was aber ein zu komplexes Gebiet wäre und damit den Rahmen sprengen würde. Selber einen Szenen Editor von Grund auf neu zu schreiben ist keine Option, weil auch das eine riesige Aufgabe ist. Deswegen haben wir uns dazu entschieden die Open Source Software Blender zu verwenden. Blender ist ein mächtiger 3D-Editor den man über Addons erweitern kann. Somit haben wir zwei Möglichkeiten, unsere Szenen zu erstellen und in CrossForge zu laden. Wir können die Szene als GLTF-Datei exportieren und dann die vorhandenen Funktionen in CrossForge erweitern um aus der GLTF-Datei die einzelnen Transformationen für die Entitäten zu extrahieren. Oder wir schreiben ein Addon, welches die Szene nach unseren Anforderungen exportiert.
+Wir benötigen einen Szenen Editor, weil schon bei einer geringen Anzahl an platzierten Entitäten der Code unübersichtlich und schwer zu warten ist. Als Alternative könnten wir die Agenten und Pflanzen prozedural platzieren, was aber ein zu komplexes Gebiet wäre und damit den Rahmen sprengen würde. Selber einen Szenen Editor von Grund auf neu zu schreiben ist keine Option, weil auch das eine riesige Aufgabe ist. Deswegen haben wir uns dazu entschieden, die Open Source Software Blender zu verwenden. Blender ist ein mächtiger 3D-Editor, den man über Addons erweitern kann. Somit haben wir zwei Möglichkeiten, unsere Szenen zu erstellen und in CrossForge zu laden. Wir können die Szene als GLTF-Datei exportieren und dann die vorhandenen Funktionen in CrossForge erweitern, um aus der GLTF-Datei die einzelnen Transformationen für die Entitäten zu extrahieren. Oder wir schreiben ein Add-On, welches die Szene nach unseren Anforderungen exportiert.
 
 \subsection{GLTF als Szenenbeschreibung}
 
 Khronos Group veröffentlichte am 19.10.2015 das offene GLTF Format, um dreidimensionale Szenen und Modelle darzustellen. In dem Format können Szenen mit ihren Knoten, Kamerainformationen, Animationen, Texturen, Materialien und natürlich auch Modellinformationen gespeichert werden. CrossForge unterstützt über die Assimp Bibliothek verschiedene Dateiformate, unter anderem auch GLTF.
 
-Die Idee ist, dass alle Entities einer bestimmten Namenskonvention folgen. Die Szene wird als ganzes in das GLTF-Format exportiert und mit Assimp geladen. Assimp hat einen eigenen Szenengraph, den man traversieren kann und wenn man an einem Knoten mit bestimmer Namenskonvention angelangt ist, weiß man, dass es sich um ein Entity handelt. Die Transformation des Knotens wird dann zur Transformation des Entities. Alle Kindknoten können dann zu einem Modell zusammengefasst werden und für die Geometriekomponente des Entities benutzt werden.
+Die Idee ist, dass alle Entities einer bestimmten Namenskonvention folgen. Die Szene wird als Ganzes in das GLTF-Format exportiert und mit Assimp geladen. Assimp hat einen eigenen Szenengraph, den man traversieren kann, und wenn man an einem Knoten mit bestimmter Namenskonvention angelangt ist, weiß man, dass es sich um ein Entity handelt. Die Transformation des Knotens wird dann zur Transformation des Entities. Alle Kindknoten können dann zu einem Modell zusammengefasst werden und für die Geometriekomponente des Entities benutzt werden.
 
-Dieser Ansatz hat den Vorteil, dass er Editoragnostisch ist und wir können vorhandenes Wissen über Assimp nutzen. Leider hat diese Variante aber auch große Nachteile: man muss die Änderungen ziemlich tief in CrossForge vornehmen, was sehr viele Code Änderungen nach sich zieht. Der Szenenersteller muss die Knoten im Editor korrekt benennen, weil man sie in CrossForge sonst nicht mehr erkennen kann.
+Dieser Ansatz hat den Vorteil, dass er editoragnostisch ist, und wir können vorhandenes Wissen über Assimp nutzen. Leider hat diese Variante aber auch große Nachteile: man muss die Änderungen ziemlich tief in CrossForge vornehmen, was sehr viele Code-Änderungen nach sich zieht. Der Szenenersteller muss die Knoten im Editor korrekt benennen, weil man sie in CrossForge sonst nicht mehr erkennen kann.
 
 \subsection{Eigenes Format zur Szenenbeschreibung}
 
-Wir können ein Blender Plugin schreiben, was die Transformationen der einzelnen Entities in eine JSON-Datei exportiert. Das Problem ist, dass Blender erkennen muss, was statische Geometrie ist und was Entities sind. Es gibt aber eine Funktion um externe .blend Dateien in die aktuelle zu linken. Jetzt kann man die Regel aufstellen, dass alles, was gelinkt ist ein eigenes Entity ist. Die Vorteile sind, dass keine Eingriffe ins Engine-Innere nötig sind. Da man das Dateiformat selber bestimmen kann, ist die Implementierung auf CrossForge Seite auch sehr simpel. Der Nachteil ist, dass noch niemand von uns ein Blender Addon geschrieben hat und wir deswegen noch keine Erfahrung in diesem Bereich haben.
+Wir können ein Blender Plugin schreiben, das die Transformationen der einzelnen Entities in eine JSON-Datei exportiert. Das Problem ist, dass Blender erkennen muss, was statische Geometrie ist und was Entities sind. Es gibt aber eine Funktion, um externe .blend-Dateien in die aktuelle Szene zu linken. Jetzt kann man die Regel aufstellen, dass alles, was gelinkt ist, ein eigenes Entity ist. Die Vorteile sind, dass keine Eingriffe ins Engine-Innere nötig sind und auch die Implementierung auf CrossForge-Seite sehr simpel ist, da man das Dateiformat selber bestimmen kann. Der Nachteil ist, dass noch niemand von uns ein Blender Add-On geschrieben hat und wir deswegen noch keine Erfahrung in diesem Bereich haben.
 
 \section{Dialogsystem}
 
