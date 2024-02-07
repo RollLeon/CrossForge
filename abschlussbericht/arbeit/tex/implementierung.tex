@@ -81,7 +81,7 @@ Weitere Funktionalitäten der Dialogmap, wie Eventhandling sind ebenfalls noch n
 
 \section{Modelle und Szene}
 
-Wie bereits im Konzept beschrieben ging die Anfangszeit in die Konzeptbearbeitung hinein. Ebenso hat es etwas Zeit in Anspruch genommen sich in Blender einzuarbeiten. Alle Modelle wurden aufgrund von verschiedenen Problemen mehrmals modelliert, wie z.B. Designunklarheiten, zu vielen Polygonen innerhalb des Models aufgrund zu vieler Details oder falscher Vorgehensweise, etc.
+Wie im Konzept bereits erläutert, wurde ein beträchtlicher Teil der Anfangsphase für die Konzeptentwicklung aufgewendet. Darüber hinaus erforderte die Einarbeitung in Blender eine gewisse Zeit. Die Modellierung aller Objekte musste aufgrund verschiedener Herausforderungen mehrfach überarbeitet werden, darunter Unklarheiten im Design, zu viele Polygone aufgrund detaillierter Elemente oder inkorrekter Vorgehensweisen, usw.
 \begin{figure}[H]
 	\begin{subfigure}{0.5\textwidth}
 		\centering
@@ -106,16 +106,16 @@ Wie bereits im Konzept beschrieben ging die Anfangszeit in die Konzeptbearbeitun
 	\caption{Erste Versuche für die Modelle}
 \end{figure}
 \par
-Die Modelle wurden via Blender erstellt und die jeweils dazugehörigen Texturen selbstständig auf dem iPad mit ProCreate gezeichnet.
+Die Modelle wurden mithilfe von Blender erstellt, während die zugehörigen Texturen eigenständig auf dem iPad mit ProCreate gezeichnet wurden.
 \par
-Der Roboter wurde grundsätzlich aus einfachen Zylindern modelliert und entsprechend angepasst. Die Grundüberlegung bei diesem war es, dass er nicht zu klassisch aussieht, da man mit ihm kommunizieren kann. Die Solarplatte auf seinem Kopf wurde mit der Intention bzw. Überlegung integriert, dass er sich über die Sonne aufladen kann. Der Arm soll einen Schlauch darstellen, mit dem die Pflanzen gegossen werden können. Alle einzelnen Objekte, bis auf den Schlauch, wurden zum Schluss zu einem Objekt vereint. Der Schlauch blieb als einzelnes Objekt, da er im späteren Verlauf animierbar sein soll. Was die Texturen angeht, wurden bis auf die Solarplatte, alle direkt in Blender via Geometry Nodes eingestellt. Daher bekam der Körper einen metallischen, und die Räder einen gummiartigen Look. Die Solarplatte wurde in ProCreate selbst gezeichnet und im UV-Editor eingefügt und angepasst. Nach Absprachen mit dem Team entstand dann unser Roboter wie man ihn aktuell im MVP sehen kann.
+Der Roboter wurde primär aus simplen Zylindern modelliert und entsprechend angepasst. Bei der Gestaltung lag der Fokus darauf, dass er ein nicht allzu klassisches Aussehen erhält, da er für Kommunikationszwecke genutzt wird. Die Integration der Solarplatte auf seinem Kopf erfolgte mit der Absicht, dass er sich mittels Sonnenenergie aufladen kann. Der Arm wurde als Schlauch konzipiert, um damit die Pflanzen zu bewässern. Alle einzelnen Objekte wurden bis auf den Schlauch zum Abschluss zu einem einzigen Objekt vereint, während der Schlauch separat blieb, da er später animiert werden soll. In Bezug auf die Texturen wurden bis auf die Solarplatte alle direkt in Blender mithilfe von Geometry Nodes eingestellt. Dadurch erhielt der Körper ein metallisches Aussehen und die Räder einen gummiartigen Look. Die Solarplatte wurde in ProCreate handgezeichnet und anschließend im UV-Editor eingefügt und angepasst. Nach Rücksprache mit dem Team entstand dann unser aktueller Roboter, wie er im MVP zu sehen ist.
 \begin{figure}[h]
 	\centering
 	\includegraphics[height=0.3\pageheight,keepaspectratio]{pics/10}
 	\caption{Finales Modell für den Roboter}
 \end{figure}
 \par
-Die beiden Pflanzen sind relativ frei aus dem Kopf entstanden. Die einzige Überlegung dabei war es, zwei unterschiedliche Pflanzen zu haben. Bei beiden entstanden die Blumentöpfe aus einfachen Zylindern. Der Stiel der kleineren Pflanze entstand anfangs erst aus einem einfachen Mesh mit verschiedenen Einstellungen der Geometry Nodes \cite{Geometry_Node_Tutorial}. Diese Variante wurde allerdings verworfen und dann doch vereinfacht. Die Blätter, welche anfangs relativ 3D-getreu, aber zu detailliert waren bestehen jetzt nur noch aus zwei einfachen 2D-Texturen. Alle Texturen, sowohl Blätter als auch die Töpfe mit Erde, wurden in ProCreate selbstständig erstellt. Der erste Versuch bestand darin, die Modelle in ProCreate zu importieren und direkt darauf zu zeichnen. Diese Texturen hätten dann in Blender ganz einfach importiert werden können. Allerdings funktionierte diese Variante nicht ganz so wie erhofft, weswegen die Texturen dann einfach 2D gezeichnet wurden und dann via UV-Mapping in Blender angepasst wurden. Wie auch bei dem Roboter wurden die Pflanzen nach Absprache mit dem Team abgesegnet und ins MVP aufgenommen.
+Die beiden Pflanzen wurden größtenteils aus spontanen Ideen heraus gestaltet. Die Hauptüberlegung bestand darin, zwei verschiedene Pflanzen zu kreieren. Die Blumentöpfe für beide Pflanzen wurden aus simplen Zylindern modelliert. Ursprünglich wurde der Stiel der kleineren Pflanze mit verschiedenen Einstellungen der Geometry Nodes als komplexes Mesh erstellt. Diese Herangehensweise wurde jedoch verworfen und stattdessen vereinfacht. Die Blätter, die anfangs zu detailliert waren, wurden letztendlich auf zwei einfache 2D-Texturen reduziert. Sowohl die Texturen für die Blätter als auch für die Töpfe mit Erde wurden eigenständig in ProCreate erstellt. Zunächst wurde versucht, die Modelle direkt in ProCreate zu importieren und darauf zu zeichnen. Diese Methode sollte es ermöglichen, die Texturen einfach in Blender zu importieren. Leider funktionierte dieser Ansatz nicht wie erwartet, daher wurden die Texturen schließlich als 2D-Bilder gezeichnet und dann mittels UV-Mapping in Blender angepasst. Ähnlich wie beim Roboter wurden die Pflanzen nach Absprache mit dem Team genehmigt und in das MVP integriert.
 \begin{figure}[H]
 	\begin{subfigure}{0.5\textwidth}
 		\centering
@@ -130,17 +130,17 @@ Die beiden Pflanzen sind relativ frei aus dem Kopf entstanden. Die einzige Über
 	\caption{Finale Modelle der Pflanzen}
 \end{figure}
 \par
-Die größere Hürde waren die Plattformen und deren Design. Wie bereits im Konzept beschrieben, entstanden dafür anfangs verschiedene Ideen. Beide Plattformen entstanden letzten Endes frei Hand und dazu eine etwas ausgefallenere Verbindung zwischen eben diesen Beiden. Damit die Roboter sich im Notfall auch zwischen den beiden Plattformen bewegen können, entstand dazu mit Inspiration noch eine Rampe um die Säule herum \cite{Spiral_Road}. Damit sowohl die Rampe als auch die Plattformen etwas sicherer sind, bekamen diese noch jeweils einen Zaun und ein Geländer herum. Auch hier entstanden alle Texturen via ProCreate aus eigener Hand. Dieses Modell wurde ebenso mit dem Team abgesprochen, bevor es final war.
+Die größte Herausforderung lag in der Gestaltung und Implementierung der Plattformen. Wie bereits im Konzept beschrieben, wurden zunächst verschiedene Ansätze dafür entwickelt. Letztendlich wurden beide Plattformen frei nach Gefühl gestaltet, zusammen mit einer etwas unkonventionellen Verbindung zwischen ihnen. Um sicherzustellen, dass die Roboter im Notfall zwischen den Plattformen navigieren können, wurde eine Rampenstruktur um die Säule herum entwickelt. Zusätzlich erhielten sowohl die Rampe als auch die Plattformen Zäune und Geländer, um ihre Sicherheit zu erhöhen. Auch hier wurden alle Texturen eigenhändig mit ProCreate erstellt. Das Modell wurde ebenfalls mit dem Team abgestimmt, bevor es finalisiert wurde.
 \begin{figure}[H]
 	\centering
 	\includegraphics[height=0.3\pageheight,keepaspectratio]{pics/13}
 	\caption{Finales Modell der Szene}
 \end{figure}
 \par
-Am Ende ist leider etwas zu spät aufgefallen, dass die Rampe breiter sein sollte, für den Fall, dass beide Roboter gleichzeitig die Ebenen wechseln wollen und sich auf der Rampe treffen. Zum aktuellen Zeitpunkt ist dort leider kein Platz zum Ausweichen und einer der Roboter driftet ab.
-Nachdem alle Modelle fertig waren, wurden diese in der Szene zusammengesetzt und weitestgehend angepasst. Das Ganze wurde dann mithilfe eines Dropper-Addons ins Projekt geladen. Hier gab es Anfangs einige Probleme und Unklarheiten, welche aber letzten Endes mit Hilfe des Teamleiters gelöst wurden. Um die Zusammenarbeit zwischen den Modellen und den restlichen Programmieraufgaben, wie dem Navigationssystem, zu verbessern, wurden die Modelle in ‚linked‘ (Pflanzen und Roboter) und ‚static‘ (Plattformen \& co) eingeteilt.
-Als die Szene an sich so weit fertig war und auch im Projekt geladen war, gab es nur noch ein paar generelle Probleme zu lösen, was Texturen und einige Ordnerstrukturen anging.
-Die nächste Aufgabe war dann eigentlich die MVP-Szene weiter auszubauen und schöner zu gestalten. Hierfür entstanden über ein entsprechendes Addon zwei Bäume und ein Haus. Auch hier wurden sowohl für die Bäume als auch für das Haus alle Texturen über ProCreate erstellt, wobei das Haus noch nicht ganz fertig war.
+Zum Schluss wurde leider bemerkt, dass die Rampe breiter sein sollte, um Platz für beide Roboter zu bieten, wenn sie gleichzeitig die Ebenen wechseln und sich auf der Rampe treffen. Derzeit gibt es dort keinen Raum zum Ausweichen, was dazu führt, dass einer der Roboter abdriftet.
+Nachdem alle Modelle fertiggestellt waren, wurden sie in der Szene zusammengesetzt und weitgehend angepasst. Das gesamte Setup wurde dann mithilfe eines Dropper-Addons in das Projekt integriert. Zunächst gab es einige Probleme und Unklarheiten, die jedoch unter der Leitung des Teamleiters erfolgreich gelöst wurden. Um die Zusammenarbeit zwischen den Modellen und anderen programmatischen Aufgaben wie dem Navigationssystem zu verbessern, wurden die Modelle in "linked" (Pflanzen und Roboter) und "static" (Plattformen & Co.) unterteilt.
+Nachdem die Szene weitgehend fertiggestellt und in das Projekt integriert war, mussten nur noch einige allgemeine Probleme hinsichtlich Texturen und Ordnerstrukturen gelöst werden.
+Die nächste Aufgabe bestand darin, die MVP-Szene weiter auszubauen und zu verschönern. Dazu wurden mit Hilfe eines entsprechenden Addons zwei Bäume und ein Haus erstellt. Auch hier wurden alle Texturen für die Bäume und das Haus mit ProCreate erstellt, wobei das Haus noch nicht vollständig fertiggestellt wurde.
 \begin{figure}[H]
 
 	\begin{subfigure}{0.5\textwidth}
@@ -159,4 +159,4 @@ Die nächste Aufgabe war dann eigentlich die MVP-Szene weiter auszubauen und sch
 	\caption{Modelle für erweiterte Szene}
 \end{figure}
 \par
- Aufgrund des Zeitlimits wurde der Ausbau der Szene allerdings vorzeitig abgebrochen.
+Der Ausbau der Szene wurde jedoch vorzeitig beendet, um die verbleibende Zeit dem Bericht zu widmen.
